@@ -41,13 +41,23 @@ export function ReportBuilder() {
   });
 
   const fetchPerformanceData = async () => {
-    const { data, error } = await supabase
+    let query = supabase
       .from("campaign_metrics")
-      .select("*")
-      .eq(selectedCampaign !== "all" ? "campaign_id" : "id", selectedCampaign)
-      .gte("date", dateRange?.from?.toISOString() || "")
-      .lte("date", dateRange?.to?.toISOString() || "");
+      .select("*");
 
+    if (selectedCampaign !== "all") {
+      query = query.eq("campaign_id", selectedCampaign);
+    }
+
+    if (dateRange?.from) {
+      query = query.gte("date", dateRange.from.toISOString().split('T')[0]);
+    }
+
+    if (dateRange?.to) {
+      query = query.lte("date", dateRange.to.toISOString().split('T')[0]);
+    }
+
+    const { data, error } = await query;
     if (error) throw error;
     return data;
   };
@@ -63,13 +73,23 @@ export function ReportBuilder() {
   };
 
   const fetchSentimentData = async () => {
-    const { data, error } = await supabase
+    let query = supabase
       .from("brand_sentiment")
-      .select("*")
-      .eq(selectedCampaign !== "all" ? "campaign_id" : "id", selectedCampaign)
-      .gte("analysis_timestamp", dateRange?.from?.toISOString() || "")
-      .lte("analysis_timestamp", dateRange?.to?.toISOString() || "");
+      .select("*");
 
+    if (selectedCampaign !== "all") {
+      query = query.eq("campaign_id", selectedCampaign);
+    }
+
+    if (dateRange?.from) {
+      query = query.gte("analysis_timestamp", dateRange.from.toISOString());
+    }
+
+    if (dateRange?.to) {
+      query = query.lte("analysis_timestamp", dateRange.to.toISOString());
+    }
+
+    const { data, error } = await query;
     if (error) throw error;
     return data;
   };
