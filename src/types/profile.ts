@@ -10,6 +10,8 @@ export interface Profile {
   state: string | null;
   postal_code: string | null;
   country: string | null;
+  subscription_tier: "free" | "starter" | "growth" | "enterprise" | null;
+  trial_ends_at: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { BusinessInfoForm } from "./BusinessInfoForm";
 import { SecurityForm } from "./SecurityForm";
+import { SubscriptionForm } from "./SubscriptionForm";
 import type { Profile, ProfileUpdate } from "@/types/profile";
 
 export function AccountSettings() {
@@ -84,11 +85,16 @@ export function AccountSettings() {
       <Tabs defaultValue="business" className="w-full">
         <TabsList>
           <TabsTrigger value="business">Business Information</TabsTrigger>
+          <TabsTrigger value="subscription">Subscription</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
         </TabsList>
 
         <TabsContent value="business" className="space-y-4">
           <BusinessInfoForm profile={profile} onUpdate={updateProfile} />
+        </TabsContent>
+
+        <TabsContent value="subscription" className="space-y-4">
+          <SubscriptionForm />
         </TabsContent>
 
         <TabsContent value="security" className="space-y-4">

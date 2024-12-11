@@ -521,6 +521,10 @@ export type Database = {
           phone_number: string | null
           postal_code: string | null
           state: string | null
+          subscription_tier:
+            | Database["public"]["Enums"]["subscription_tier"]
+            | null
+          trial_ends_at: string | null
           updated_at: string
         }
         Insert: {
@@ -534,6 +538,10 @@ export type Database = {
           phone_number?: string | null
           postal_code?: string | null
           state?: string | null
+          subscription_tier?:
+            | Database["public"]["Enums"]["subscription_tier"]
+            | null
+          trial_ends_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -547,9 +555,102 @@ export type Database = {
           phone_number?: string | null
           postal_code?: string | null
           state?: string | null
+          subscription_tier?:
+            | Database["public"]["Enums"]["subscription_tier"]
+            | null
+          trial_ends_at?: string | null
           updated_at?: string
         }
         Relationships: []
+      }
+      subscription_plans: {
+        Row: {
+          ai_recommendations_limit: number | null
+          annual_price: number | null
+          created_at: string
+          description: string | null
+          features: Json
+          id: string
+          name: string
+          planning_limit: number | null
+          platform_limit: number | null
+          price: number | null
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          updated_at: string
+        }
+        Insert: {
+          ai_recommendations_limit?: number | null
+          annual_price?: number | null
+          created_at?: string
+          description?: string | null
+          features?: Json
+          id?: string
+          name: string
+          planning_limit?: number | null
+          platform_limit?: number | null
+          price?: number | null
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+        }
+        Update: {
+          ai_recommendations_limit?: number | null
+          annual_price?: number | null
+          created_at?: string
+          description?: string | null
+          features?: Json
+          id?: string
+          name?: string
+          planning_limit?: number | null
+          platform_limit?: number | null
+          price?: number | null
+          tier?: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean | null
+          created_at: string
+          current_period_end: string
+          current_period_start: string
+          id: string
+          plan_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end: string
+          current_period_start: string
+          id?: string
+          plan_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string
+          current_period_start?: string
+          id?: string
+          plan_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -574,6 +675,7 @@ export type Database = {
         | "search_display"
         | "ecommerce"
         | "audio"
+      subscription_tier: "free" | "starter" | "growth" | "enterprise"
     }
     CompositeTypes: {
       [_ in never]: never
