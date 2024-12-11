@@ -18,9 +18,28 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { TargetingObjective } from "./types";
+
+type CampaignPlan = {
+  id: string;
+  name: string;
+  objective: string;
+  total_budget: number;
+  status: string;
+  budget_allocation: Record<string, number>;
+  targeting_objectives: TargetingObjective[];
+  audience_insights?: {
+    platform: string;
+    demographics: unknown;
+  };
+  campaigns?: {
+    name: string;
+  };
+  notes?: string;
+};
 
 export function PlansList() {
-  const { data: plans, isLoading } = useQuery({
+  const { data: plans, isLoading } = useQuery<CampaignPlan[]>({
     queryKey: ["campaign-plans"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -77,61 +96,60 @@ export function PlansList() {
                     </Button>
                   </DialogTrigger>
 
-<DialogContent className="max-w-2xl">
-  <DialogHeader>
-    <DialogTitle>{plan.name}</DialogTitle>
-  </DialogHeader>
-  <div className="space-y-4">
-    <div>
-      <h4 className="font-medium mb-2">Budget Allocation</h4>
-      <div className="grid grid-cols-2 gap-4">
-        {Object.entries(plan.budget_allocation).map(([platform, amount]) => (
-          <div key={platform} className="flex justify-between">
-            <span className="capitalize">{platform}</span>
-            <span>${(amount as number).toLocaleString()}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-    {plan.targeting_objectives && plan.targeting_objectives.length > 0 && (
-      <div>
-        <h4 className="font-medium mb-2">Targeting Objectives</h4>
-        <div className="space-y-2">
-          {plan.targeting_objectives.map((objective, index) => (
-            <div key={index} className="flex justify-between items-center p-2 bg-muted rounded">
-              <div>
-                <span className="capitalize font-medium">{objective.type}</span>
-                <p className="text-sm text-muted-foreground">{objective.description}</p>
-              </div>
-              <span className="text-sm capitalize px-2 py-1 rounded bg-background">
-                {objective.priority}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-    )}
-    {plan.audience_insights && (
-      <div>
-        <h4 className="font-medium mb-2">Audience Insights</h4>
-        <p>Platform: {plan.audience_insights.platform}</p>
-      </div>
-    )}
-    {plan.campaigns && (
-      <div>
-        <h4 className="font-medium mb-2">Reference Campaign</h4>
-        <p>{plan.campaigns.name}</p>
-      </div>
-    )}
-    {plan.notes && (
-      <div>
-        <h4 className="font-medium mb-2">Notes</h4>
-        <p>{plan.notes}</p>
-      </div>
-    )}
-  </div>
-</DialogContent>
-
+                  <DialogContent className="max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle>{plan.name}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="font-medium mb-2">Budget Allocation</h4>
+                        <div className="grid grid-cols-2 gap-4">
+                          {Object.entries(plan.budget_allocation).map(([platform, amount]) => (
+                            <div key={platform} className="flex justify-between">
+                              <span className="capitalize">{platform}</span>
+                              <span>${amount.toLocaleString()}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      {plan.targeting_objectives && plan.targeting_objectives.length > 0 && (
+                        <div>
+                          <h4 className="font-medium mb-2">Targeting Objectives</h4>
+                          <div className="space-y-2">
+                            {plan.targeting_objectives.map((objective, index) => (
+                              <div key={index} className="flex justify-between items-center p-2 bg-muted rounded">
+                                <div>
+                                  <span className="capitalize font-medium">{objective.type}</span>
+                                  <p className="text-sm text-muted-foreground">{objective.description}</p>
+                                </div>
+                                <span className="text-sm capitalize px-2 py-1 rounded bg-background">
+                                  {objective.priority}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {plan.audience_insights && (
+                        <div>
+                          <h4 className="font-medium mb-2">Audience Insights</h4>
+                          <p>Platform: {plan.audience_insights.platform}</p>
+                        </div>
+                      )}
+                      {plan.campaigns && (
+                        <div>
+                          <h4 className="font-medium mb-2">Reference Campaign</h4>
+                          <p>{plan.campaigns.name}</p>
+                        </div>
+                      )}
+                      {plan.notes && (
+                        <div>
+                          <h4 className="font-medium mb-2">Notes</h4>
+                          <p>{plan.notes}</p>
+                        </div>
+                      )}
+                    </div>
+                  </DialogContent>
                 </Dialog>
               </TableCell>
             </TableRow>
