@@ -7,6 +7,11 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
   const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
   
   if (!openAIApiKey) {
@@ -15,10 +20,6 @@ serve(async (req) => {
       JSON.stringify({ error: 'OpenAI API key not configured' }), 
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-  }
-  
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
   }
 
   try {
@@ -34,17 +35,6 @@ serve(async (req) => {
 
     console.log('Processing audience data:', JSON.stringify(audienceData, null, 2));
 
-    const prompt = `As a marketing expert, analyze this audience data and provide 3 specific targeting recommendations:
-    ${JSON.stringify(audienceData, null, 2)}
-    
-    Format your response as a JSON array with exactly 3 objects, each containing:
-    - type: "demographic" | "behavioral" | "interest"
-    - recommendation: string (the actual recommendation)
-    - reasoning: string (why this would be effective)
-    - potentialImpact: "high" | "medium" | "low"
-    
-    Make sure to return valid JSON that can be parsed.`;
-
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -58,16 +48,28 @@ serve(async (req) => {
             role: 'system', 
             content: 'You are a marketing expert AI that provides targeting recommendations based on audience data. Always respond with valid JSON.' 
           },
-          { role: 'user', content: prompt }
+          { 
+            role: 'user', 
+            content: `Analyze this audience data and provide 3 specific targeting recommendations:
+              ${JSON.stringify(audienceData, null, 2)}
+              
+              Format your response as a JSON array with exactly 3 objects, each containing:
+              - type: "demographic" | "behavioral" | "interest"
+              - recommendation: string (the actual recommendation)
+              - reasoning: string (why this would be effective)
+              - potentialImpact: "high" | "medium" | "low"
+              
+              Make sure to return valid JSON that can be parsed.`
+          }
         ],
         temperature: 0.7,
       }),
     });
 
     if (!response.ok) {
-      const errorData = await response.text();
-      console.error('OpenAI API error:', errorData);
-      throw new Error(`OpenAI API error: ${response.status} ${errorData}`);
+      const errorText = await response.text();
+      console.error('OpenAI API error:', errorText);
+      throw new Error(`OpenAI API error: ${response.status} ${errorText}`);
     }
 
     const data = await response.json();
