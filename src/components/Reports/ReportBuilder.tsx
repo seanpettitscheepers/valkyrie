@@ -4,17 +4,13 @@ import { ReportMetricsSelector } from "./ReportMetricsSelector";
 import { ReportFilters } from "./ReportFilters";
 import { ReportPreview } from "./ReportPreview";
 import { ReportInsights } from "./ReportInsights";
-import { useToast } from "@/hooks/use-toast";
+import { ReportExportButton } from "./ReportExportButton";
+import { ReportLoadingState } from "./ReportLoadingState";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DateRange } from "react-day-picker";
-import { Button } from "@/components/ui/button";
-import { FileDown } from "lucide-react";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 
 export function ReportBuilder() {
-  const { toast } = useToast();
   const reportRef = useRef<HTMLDivElement>(null);
   const [selectedCampaign, setSelectedCampaign] = useState<string>("all");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
@@ -75,54 +71,6 @@ export function ReportBuilder() {
     return data;
   };
 
-  const exportToPDF = async () => {
-    if (!reportRef.current) return;
-
-    try {
-      toast({
-        title: "Generating PDF...",
-        description: "Please wait while we prepare your report.",
-      });
-
-      const canvas = await html2canvas(reportRef.current, {
-        scale: 2,
-        logging: false,
-        useCORS: true,
-      });
-
-      const imgWidth = 210; // A4 width in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
-      const pdf = new jsPDF({
-        orientation: imgHeight > imgWidth ? "portrait" : "landscape",
-        unit: "mm",
-      });
-
-      pdf.addImage(
-        canvas.toDataURL("image/png"),
-        "PNG",
-        0,
-        0,
-        imgWidth,
-        imgHeight
-      );
-
-      pdf.save("campaign-report.pdf");
-
-      toast({
-        title: "PDF Generated",
-        description: "Your report has been downloaded successfully.",
-      });
-    } catch (error) {
-      console.error("PDF generation error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to generate PDF. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -141,14 +89,11 @@ export function ReportBuilder() {
       </div>
 
       {isLoading ? (
-        <div>Loading report data...</div>
+        <ReportLoadingState />
       ) : reportData ? (
         <>
           <div className="flex justify-end">
-            <Button onClick={exportToPDF} className="gap-2">
-              <FileDown className="h-4 w-4" />
-              Export PDF
-            </Button>
+            <ReportExportButton reportRef={reportRef} />
           </div>
           <div ref={reportRef}>
             <ReportPreview
