@@ -1,9 +1,22 @@
-import { BarChart, LineChart } from "recharts";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { PerformanceCard } from "@/components/Dashboard/PerformanceCard";
 import { Header } from "@/components/Layout/Header";
 import { AppSidebar } from "@/components/Layout/Sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const performanceData = [
   { title: "Total Spend", value: "$12,543", change: 12, trend: "up" as const },
@@ -23,7 +36,18 @@ const performanceData = [
   { title: "Conversions", value: "1,543", change: 24, trend: "up" as const },
 ];
 
+const campaigns = [
+  { id: "1", name: "Summer Sale 2024" },
+  { id: "2", name: "Spring Collection Launch" },
+  { id: "3", name: "Easter Promotion" },
+  { id: "4", name: "Mother's Day Special" },
+  { id: "5", name: "Back to School Campaign" },
+];
+
 const Index = () => {
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [selectedCampaign, setSelectedCampaign] = useState<string>("all");
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
@@ -31,6 +55,45 @@ const Index = () => {
         <div className="flex-1">
           <Header />
           <main className="p-6">
+            <div className="mb-6 flex flex-wrap gap-4">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-[240px] justify-start text-left font-normal",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? format(date, "PPP") : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+
+              <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
+                <SelectTrigger className="w-[240px]">
+                  <SelectValue placeholder="Select campaign" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Campaigns</SelectItem>
+                  {campaigns.map((campaign) => (
+                    <SelectItem key={campaign.id} value={campaign.id}>
+                      {campaign.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
               {performanceData.map((data) => (
                 <PerformanceCard key={data.title} {...data} />
@@ -38,11 +101,15 @@ const Index = () => {
             </div>
             <div className="mt-6 grid gap-4 md:grid-cols-2">
               <Card className="p-4">
-                <h3 className="mb-4 text-lg font-semibold">Campaign Performance</h3>
+                <h3 className="mb-4 text-lg font-semibold">
+                  Campaign Performance
+                </h3>
                 {/* Add LineChart component here */}
               </Card>
               <Card className="p-4">
-                <h3 className="mb-4 text-lg font-semibold">Channel Distribution</h3>
+                <h3 className="mb-4 text-lg font-semibold">
+                  Channel Distribution
+                </h3>
                 {/* Add BarChart component here */}
               </Card>
             </div>
