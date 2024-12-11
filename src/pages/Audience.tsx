@@ -5,6 +5,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/Layout/Sidebar";
 import { Header } from "@/components/Layout/Header";
 import { PlatformFilter } from "@/components/Audience/PlatformFilter";
+import { CampaignFilter } from "@/components/Audience/CampaignFilter";
 import { DemographicsCard } from "@/components/Audience/DemographicsCard";
 import { InterestsCard } from "@/components/Audience/InterestsCard";
 import { AIRecommendationsCard } from "@/components/Audience/AIRecommendationsCard";
@@ -38,15 +39,20 @@ interface AudienceInsight {
 
 const Audience = () => {
   const [selectedPlatform, setSelectedPlatform] = useState("all");
+  const [selectedCampaign, setSelectedCampaign] = useState("all");
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const { data: insights, isLoading } = useQuery({
-    queryKey: ["audience-insights", selectedPlatform],
+    queryKey: ["audience-insights", selectedPlatform, selectedCampaign],
     queryFn: async () => {
       let query = supabase.from("audience_insights").select("*");
       
       if (selectedPlatform !== "all") {
         query = query.eq("platform", selectedPlatform);
+      }
+      
+      if (selectedCampaign !== "all") {
+        query = query.eq("campaign_id", selectedCampaign);
       }
       
       const { data, error } = await query;
@@ -140,10 +146,16 @@ const Audience = () => {
               </Dialog>
             </div>
             
-            <PlatformFilter
-              selectedPlatform={selectedPlatform}
-              onPlatformChange={setSelectedPlatform}
-            />
+            <div className="flex gap-4 mb-6">
+              <PlatformFilter
+                selectedPlatform={selectedPlatform}
+                onPlatformChange={setSelectedPlatform}
+              />
+              <CampaignFilter
+                selectedCampaign={selectedCampaign}
+                onCampaignChange={setSelectedCampaign}
+              />
+            </div>
 
             {aggregatedData && (
               <div className="space-y-6">
