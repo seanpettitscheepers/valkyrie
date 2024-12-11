@@ -9,8 +9,6 @@ interface InterestsCardProps {
 }
 
 export function InterestsCard({ interests }: InterestsCardProps) {
-  const maxValue = Math.max(...Object.values(interests));
-
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -20,20 +18,18 @@ export function InterestsCard({ interests }: InterestsCardProps) {
         </Button>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-3">
           {Object.entries(interests).map(([interest, value]) => (
-            <div key={interest} className="space-y-1">
-              <div className="flex justify-between text-sm">
-                <span className="capitalize text-muted-foreground">{interest}</span>
-                <span className="font-medium">{value}%</span>
-              </div>
-              <div className="h-2 bg-secondary/20 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full transition-all"
-                  style={{ width: `${(value / maxValue) * 100}%` }}
-                />
-              </div>
-            </div>
+            <Button
+              key={interest}
+              variant="outline"
+              className="justify-between h-auto py-3"
+            >
+              <span className="capitalize text-sm">{interest}</span>
+              <span className="ml-2 text-sm font-medium text-muted-foreground">
+                {value}%
+              </span>
+            </Button>
           ))}
         </div>
       </CardContent>
