@@ -33,7 +33,7 @@ export function PricingSection() {
         <div className="grid md:grid-cols-3 gap-8">
           {plans?.map((plan) => (
             <Card key={plan.id} className="relative overflow-hidden">
-              {plan.tier === 'pro' && (
+              {plan.tier === 'growth' && (
                 <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-3 py-1 text-sm">
                   Popular
                 </div>
@@ -60,7 +60,7 @@ export function PricingSection() {
                 </ul>
                 <Button 
                   className="w-full" 
-                  variant={plan.tier === 'pro' ? 'default' : 'outline'}
+                  variant={plan.tier === 'growth' ? 'default' : 'outline'}
                   onClick={() => document.getElementById("auth-section")?.scrollIntoView({ behavior: "smooth" })}
                 >
                   Get Started
