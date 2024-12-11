@@ -121,10 +121,6 @@ const Index = () => {
                 <PerformanceCard key={data.title} {...data} />
               ))}
             </div>
-            
-            <div className="mt-6">
-              <AIInsightsCard campaignType="consideration" insights={mockInsights} />
-            </div>
 
             <div className="mt-6 grid gap-4 md:grid-cols-2">
               <Card className="p-4">
@@ -139,6 +135,10 @@ const Index = () => {
                 </h3>
                 {/* Add BarChart component here */}
               </Card>
+            </div>
+
+            <div className="mt-6">
+              <AIInsightsCard campaignType="consideration" insights={mockInsights} />
             </div>
           </main>
         </div>
