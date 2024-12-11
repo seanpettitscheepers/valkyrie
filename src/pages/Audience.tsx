@@ -7,6 +7,7 @@ import { Header } from "@/components/Layout/Header";
 import { PlatformFilter } from "@/components/Audience/PlatformFilter";
 import { DemographicsCard } from "@/components/Audience/DemographicsCard";
 import { InterestsCard } from "@/components/Audience/InterestsCard";
+import { AIRecommendationsCard } from "@/components/Audience/AIRecommendationsCard";
 import { AddInsightForm } from "@/components/Audience/AddInsightForm";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
@@ -145,9 +146,12 @@ const Audience = () => {
             />
 
             {aggregatedData && (
-              <div className="grid gap-6 md:grid-cols-2">
-                <DemographicsCard demographics={aggregatedData.demographics} />
-                <InterestsCard interests={aggregatedData.interests} />
+              <div className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <DemographicsCard demographics={aggregatedData.demographics} />
+                  <InterestsCard interests={aggregatedData.interests} />
+                </div>
+                <AIRecommendationsCard audienceData={aggregatedData} />
               </div>
             )}
           </main>
