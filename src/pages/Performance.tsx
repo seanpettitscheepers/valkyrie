@@ -31,7 +31,7 @@ const Performance = () => {
 
     const insights = [
       {
-        type: "success",
+        type: "success" as const,
         message: "Campaign Performance Overview",
         metric: `Total Spend: ${performanceMetrics.spend.value}`,
         recommendation: performanceMetrics.spend.trend === "up" 
@@ -39,7 +39,7 @@ const Performance = () => {
           : "Consider reviewing budget allocation for better results"
       },
       {
-        type: "info",
+        type: "info" as const,
         message: "Engagement Metrics",
         metric: `Engagement Rate: ${performanceMetrics.engagementRate.value}`,
         recommendation: performanceMetrics.engagementRate.trend === "up"
@@ -47,7 +47,7 @@ const Performance = () => {
           : "Consider refreshing content strategy to boost engagement"
       },
       {
-        type: "success",
+        type: "success" as const,
         message: "Video Performance",
         metric: `VTR: ${performanceMetrics.vtr.value}`,
         recommendation: performanceMetrics.vtr.trend === "up"
@@ -55,7 +55,7 @@ const Performance = () => {
           : "Consider optimizing video length and content"
       },
       {
-        type: "info",
+        type: "info" as const,
         message: "Cost Efficiency",
         metric: `CPM: ${performanceMetrics.cpm.value}`,
         recommendation: performanceMetrics.cpm.trend === "up"
@@ -65,34 +65,6 @@ const Performance = () => {
     ];
 
     return insights;
-  };
-
-  const renderContent = () => {
-    if (campaignsLoading) {
-      return (
-        <div className="space-y-6">
-          <Skeleton className="h-[200px] w-full" />
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {[...Array(12)].map((_, i) => (
-              <Skeleton key={i} className="h-[160px] w-full" />
-            ))}
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className="space-y-6">
-        <PerformanceMetricsGrid metrics={performanceMetrics} />
-        
-        <AIInsightsCard
-          campaignType="awareness"
-          insights={generateInsights()}
-        />
-
-        <MetricsExplanation />
-      </div>
-    );
   };
 
   return (
@@ -109,7 +81,17 @@ const Performance = () => {
           onCampaignChange={setSelectedCampaign}
         />
       </div>
-      {renderContent()}
+      
+      <div className="space-y-6">
+        <PerformanceMetricsGrid metrics={performanceMetrics} />
+        
+        <AIInsightsCard
+          campaignType="awareness"
+          insights={generateInsights()}
+        />
+
+        <MetricsExplanation />
+      </div>
     </PageLayout>
   );
 };

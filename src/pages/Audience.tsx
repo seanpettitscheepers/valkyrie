@@ -5,10 +5,30 @@ import { PlatformFilter } from "@/components/Audience/PlatformFilter";
 import { DemographicsCard } from "@/components/Audience/DemographicsCard";
 import { InterestsCard } from "@/components/Audience/InterestsCard";
 import { AIRecommendationsCard } from "@/components/Audience/AIRecommendationsCard";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Audience = () => {
   const [selectedCampaign, setSelectedCampaign] = useState("all");
   const [selectedPlatform, setSelectedPlatform] = useState("all");
+
+  const { data: audienceData } = useQuery({
+    queryKey: ["audience-insights", selectedCampaign, selectedPlatform],
+    queryFn: async () => {
+      let query = supabase.from("audience_insights").select("*");
+      
+      if (selectedCampaign !== "all") {
+        query = query.eq("campaign_id", selectedCampaign);
+      }
+      if (selectedPlatform !== "all") {
+        query = query.eq("platform", selectedPlatform);
+      }
+      
+      const { data, error } = await query;
+      if (error) throw error;
+      return data[0] || { demographics: {}, interests: {} };
+    },
+  });
 
   return (
     <PageLayout title="Audience Insights">
@@ -32,21 +52,12 @@ const Audience = () => {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <DemographicsCard
-          campaignId={selectedCampaign}
-          platform={selectedPlatform}
-        />
-        <InterestsCard
-          campaignId={selectedCampaign}
-          platform={selectedPlatform}
-        />
+        <DemographicsCard demographics={audienceData?.demographics || {}} />
+        <InterestsCard interests={audienceData?.interests || {}} />
       </div>
 
       <div className="mt-6">
-        <AIRecommendationsCard
-          campaignId={selectedCampaign}
-          platform={selectedPlatform}
-        />
+        <AIRecommendationsCard audienceData={audienceData} />
       </div>
     </PageLayout>
   );

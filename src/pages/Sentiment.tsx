@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { DateRange } from "react-day-picker";
 import { PageLayout } from "@/components/Layout/PageLayout";
 import { SentimentHeader } from "@/components/Sentiment/SentimentHeader";
 import { SentimentFilters } from "@/components/Sentiment/SentimentFilters";
@@ -7,10 +8,11 @@ import { SentimentContent } from "@/components/Sentiment/SentimentContent";
 const Sentiment = () => {
   const [selectedCampaign, setSelectedCampaign] = useState("all");
   const [selectedPlatform, setSelectedPlatform] = useState("all");
-  const [selectedDateRange, setSelectedDateRange] = useState<[Date | undefined, Date | undefined]>([
-    undefined,
-    undefined,
-  ]);
+  const [selectedDateRange, setSelectedDateRange] = useState<DateRange>();
+
+  const handleDateRangeChange = (range: DateRange | undefined) => {
+    setSelectedDateRange(range);
+  };
 
   return (
     <PageLayout title="Brand Sentiment">
@@ -21,7 +23,7 @@ const Sentiment = () => {
         selectedPlatform={selectedPlatform}
         onPlatformChange={setSelectedPlatform}
         selectedDateRange={selectedDateRange}
-        onDateRangeChange={setSelectedDateRange}
+        onDateRangeChange={handleDateRangeChange}
       />
       <SentimentContent
         campaignId={selectedCampaign}
