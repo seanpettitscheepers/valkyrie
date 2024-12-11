@@ -7,6 +7,16 @@ import { Header } from "@/components/Layout/Header";
 import { PlatformFilter } from "@/components/Audience/PlatformFilter";
 import { DemographicsCard } from "@/components/Audience/DemographicsCard";
 import { InterestsCard } from "@/components/Audience/InterestsCard";
+import { AddInsightForm } from "@/components/Audience/AddInsightForm";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface AudienceInsight {
   id: string;
@@ -27,6 +37,7 @@ interface AudienceInsight {
 
 const Audience = () => {
   const [selectedPlatform, setSelectedPlatform] = useState("all");
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const { data: insights, isLoading } = useQuery({
     queryKey: ["audience-insights", selectedPlatform],
@@ -110,7 +121,23 @@ const Audience = () => {
         <div className="flex-1">
           <Header />
           <main className="p-6">
-            <h1 className="text-3xl font-bold mb-6">Audience Insights</h1>
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-3xl font-bold">Audience Insights</h1>
+              <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add New Insight
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Add New Audience Insight</DialogTitle>
+                  </DialogHeader>
+                  <AddInsightForm />
+                </DialogContent>
+              </Dialog>
+            </div>
             
             <PlatformFilter
               selectedPlatform={selectedPlatform}
