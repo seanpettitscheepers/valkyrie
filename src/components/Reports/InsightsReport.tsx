@@ -12,13 +12,7 @@ export function InsightsReport() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Insights Report</h1>
-          <p className="text-sm text-muted-foreground">
-            An insights report is a comprehensive document that provides in-depth analysis
-            and valuable information on a specific topic, issue, or dataset
-          </p>
-        </div>
+        <h1 className="text-2xl font-semibold tracking-tight">Insights Report</h1>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon">
             <MoreHorizontal className="h-4 w-4" />
@@ -29,6 +23,11 @@ export function InsightsReport() {
           </Button>
         </div>
       </div>
+
+      <p className="text-sm text-muted-foreground">
+        An insights report is a comprehensive document that provides in-depth analysis
+        and valuable information on a specific topic, issue, or dataset
+      </p>
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">

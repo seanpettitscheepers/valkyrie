@@ -96,26 +96,26 @@ export function ReportBuilder() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <Card className="p-6 w-full">
-          <ReportFilters
-            selectedCampaign={selectedCampaign}
-            onCampaignChange={setSelectedCampaign}
-            dateRange={dateRange}
-            onDateRangeChange={setDateRange}
-          />
-          <ReportMetricsSelector
-            selectedMetrics={selectedMetrics}
-            onMetricsChange={setSelectedMetrics}
-          />
-        </Card>
-      </div>
-
       <Tabs defaultValue="insights" className="space-y-6">
-        <TabsList>
+        <TabsList className="mb-6">
           <TabsTrigger value="insights">Insights Report</TabsTrigger>
           <TabsTrigger value="custom">Custom Report</TabsTrigger>
         </TabsList>
+
+        <div className="flex items-center justify-between">
+          <Card className="p-6 w-full">
+            <ReportFilters
+              selectedCampaign={selectedCampaign}
+              onCampaignChange={setSelectedCampaign}
+              dateRange={dateRange}
+              onDateRangeChange={setDateRange}
+            />
+            <ReportMetricsSelector
+              selectedMetrics={selectedMetrics}
+              onMetricsChange={setSelectedMetrics}
+            />
+          </Card>
+        </div>
 
         <TabsContent value="insights">
           <InsightsReport />
