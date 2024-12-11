@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -18,12 +18,20 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+interface Pattern {
+  id: string;
+  name: string;
+  pattern: string;
+  description: string | null;
+}
+
 interface CreatePatternSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  patternToEdit?: Pattern | null;
 }
 
-export function CreatePatternSheet({ open, onOpenChange }: CreatePatternSheetProps) {
+export function CreatePatternSheet({ open, onOpenChange, patternToEdit }: CreatePatternSheetProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const queryClient = useQueryClient();
 
@@ -36,26 +44,56 @@ export function CreatePatternSheet({ open, onOpenChange }: CreatePatternSheetPro
     },
   });
 
+  useEffect(() => {
+    if (patternToEdit) {
+      form.reset({
+        name: patternToEdit.name,
+        pattern: patternToEdit.pattern,
+        description: patternToEdit.description || "",
+      });
+    } else {
+      form.reset({
+        name: "",
+        pattern: "",
+        description: "",
+      });
+    }
+  }, [patternToEdit, form]);
+
   const onSubmit = async (values: FormValues) => {
     setIsSubmitting(true);
     try {
-      const { error } = await supabase
-        .from("naming_patterns")
-        .insert({
-          name: values.name,
-          pattern: values.pattern,
-          description: values.description || null,
-        });
+      if (patternToEdit) {
+        const { error } = await supabase
+          .from("naming_patterns")
+          .update({
+            name: values.name,
+            pattern: values.pattern,
+            description: values.description || null,
+          })
+          .eq("id", patternToEdit.id);
 
-      if (error) throw error;
+        if (error) throw error;
+        toast.success("Pattern updated successfully");
+      } else {
+        const { error } = await supabase
+          .from("naming_patterns")
+          .insert({
+            name: values.name,
+            pattern: values.pattern,
+            description: values.description || null,
+          });
 
-      toast.success("Pattern created successfully");
+        if (error) throw error;
+        toast.success("Pattern created successfully");
+      }
+
       queryClient.invalidateQueries({ queryKey: ["naming-patterns"] });
       onOpenChange(false);
       form.reset();
     } catch (error) {
-      toast.error("Failed to create pattern");
-      console.error("Error creating pattern:", error);
+      toast.error(patternToEdit ? "Failed to update pattern" : "Failed to create pattern");
+      console.error("Error saving pattern:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -65,7 +103,7 @@ export function CreatePatternSheet({ open, onOpenChange }: CreatePatternSheetPro
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Create New Naming Pattern</SheetTitle>
+          <SheetTitle>{patternToEdit ? "Edit Naming Pattern" : "Create New Naming Pattern"}</SheetTitle>
         </SheetHeader>
 
         <Form {...form}>
@@ -121,7 +159,9 @@ export function CreatePatternSheet({ open, onOpenChange }: CreatePatternSheetPro
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Creating..." : "Create Pattern"}
+                {isSubmitting 
+                  ? (patternToEdit ? "Updating..." : "Creating...") 
+                  : (patternToEdit ? "Update Pattern" : "Create Pattern")}
               </Button>
             </div>
           </form>

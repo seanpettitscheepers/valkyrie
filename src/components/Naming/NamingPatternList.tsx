@@ -14,9 +14,19 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import { CreatePatternSheet } from "./CreatePatternSheet";
+
+interface Pattern {
+  id: string;
+  name: string;
+  pattern: string;
+  description: string | null;
+}
 
 export function NamingPatternList() {
   const [patternToDelete, setPatternToDelete] = useState<string | null>(null);
+  const [patternToEdit, setPatternToEdit] = useState<Pattern | null>(null);
+  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: patterns, isLoading } = useQuery({
@@ -28,7 +38,7 @@ export function NamingPatternList() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as Pattern[];
     },
   });
 
@@ -52,6 +62,11 @@ export function NamingPatternList() {
     deleteMutation.mutate(id);
   };
 
+  const handleEdit = (pattern: Pattern) => {
+    setPatternToEdit(pattern);
+    setIsEditSheetOpen(true);
+  };
+
   if (isLoading) {
     return <div>Loading patterns...</div>;
   }
@@ -72,7 +87,11 @@ export function NamingPatternList() {
               )}
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleEdit(pattern)}
+              >
                 <Edit className="h-4 w-4" />
               </Button>
               <Button
@@ -105,6 +124,12 @@ export function NamingPatternList() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <CreatePatternSheet
+        open={isEditSheetOpen}
+        onOpenChange={setIsEditSheetOpen}
+        patternToEdit={patternToEdit}
+      />
     </>
   );
 }

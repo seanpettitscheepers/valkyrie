@@ -30,7 +30,11 @@ export default function Naming() {
           </CardContent>
         </Card>
 
-        <CreatePatternSheet open={isCreateOpen} onOpenChange={setIsCreateOpen} />
+        <CreatePatternSheet 
+          open={isCreateOpen} 
+          onOpenChange={setIsCreateOpen}
+          patternToEdit={null}
+        />
       </main>
     </div>
   );
