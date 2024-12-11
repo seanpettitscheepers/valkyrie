@@ -39,6 +39,12 @@ const Sentiment = () => {
     },
   });
 
+  const calculateAverageSentiment = () => {
+    if (!sentimentData || sentimentData.length === 0) return 0;
+    const total = sentimentData.reduce((sum, item) => sum + Number(item.sentiment_score), 0);
+    return (total / sentimentData.length).toFixed(2);
+  };
+
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -73,7 +79,24 @@ const Sentiment = () => {
             {dateRange?.from && dateRange?.to && ` from ${dateRange.from.toLocaleDateString()} to ${dateRange.to.toLocaleDateString()}`}
           </AlertDescription>
         </Alert>
-        <SentimentOverviewCard data={sentimentData} />
+        <div className="grid gap-6 md:grid-cols-3">
+          <SentimentOverviewCard
+            title="Average Sentiment Score"
+            value={calculateAverageSentiment()}
+            change={5}
+            trend="up"
+          />
+          <SentimentOverviewCard
+            title="Total Mentions"
+            value={sentimentData.length}
+            change={10}
+            trend="up"
+          />
+          <SentimentOverviewCard
+            title="Risk Level"
+            value={sentimentData[0]?.risk_level || "Low"}
+          />
+        </div>
       </div>
     );
   };

@@ -64,8 +64,29 @@ const Index = () => {
           </AlertDescription>
         </Alert>
         <div className="grid gap-6 md:grid-cols-2">
-          <PerformanceCard />
-          <AIInsightsCard />
+          <PerformanceCard
+            title="Campaign Performance"
+            value="85%"
+            change={12}
+            trend="up"
+          />
+          <AIInsightsCard
+            campaignType="awareness"
+            insights={[
+              {
+                type: "success",
+                message: "Campaign performance is above average",
+                metric: "Engagement rate: 4.2%",
+                recommendation: "Consider increasing budget allocation"
+              },
+              {
+                type: "info",
+                message: "New audience segment identified",
+                metric: "18-24 age group showing high engagement",
+                recommendation: "Optimize content for younger audience"
+              }
+            ]}
+          />
         </div>
       </div>
     );
