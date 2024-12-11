@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import { BusinessInfoForm } from "./BusinessInfoForm";
 import { SecurityForm } from "./SecurityForm";
 import { SubscriptionForm } from "./SubscriptionForm";
+import { AdminSection } from "./AdminSection";
 import type { Profile, ProfileUpdate } from "@/types/profile";
 
 export function AccountSettings() {
@@ -101,6 +102,8 @@ export function AccountSettings() {
           <SecurityForm email={email} />
         </TabsContent>
       </Tabs>
+
+      <AdminSection />
     </div>
   );
 }

@@ -15,6 +15,7 @@ export interface Profile {
   created_at: string;
   updated_at: string;
   avatar_url: string | null;
+  role: "user" | "admin" | "super_admin";
 }
 
 export type ProfileUpdate = Partial<Profile>;
