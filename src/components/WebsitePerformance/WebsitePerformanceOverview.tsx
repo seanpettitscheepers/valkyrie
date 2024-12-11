@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
@@ -9,24 +8,21 @@ export function WebsitePerformanceOverview() {
   const { data: analyticsData, error } = useQuery({
     queryKey: ["analytics-overview"],
     queryFn: async () => {
-      // Modified query to handle no results case
       const { data, error } = await supabase
         .from("analytics_integrations")
         .select("*")
-        .eq("platform_type", "google_analytics_4");
+        .eq("platform_type", "google_analytics_4")
+        .maybeSingle(); // This handles the case of no rows or multiple rows gracefully
 
       if (error) throw error;
       
-      // Return null if no integrations exist
-      if (!data || data.length === 0) {
+      if (!data) {
         return null;
       }
 
-      const integration = data[0];
-
       // Fetch data from GA4 via Edge Function
       const { data: gaData, error: gaError } = await supabase.functions.invoke("fetch-ga4-overview", {
-        body: { propertyId: integration.property_id }
+        body: { propertyId: data.property_id }
       });
 
       if (gaError) throw gaError;
@@ -44,6 +40,15 @@ export function WebsitePerformanceOverview() {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {error && (
+        <Alert variant="destructive" className="col-span-full">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Failed to load analytics data. Please try again later.
+          </AlertDescription>
+        </Alert>
+      )}
+      
       {overviewMetrics.map((metric) => (
         <Card key={metric.title}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
