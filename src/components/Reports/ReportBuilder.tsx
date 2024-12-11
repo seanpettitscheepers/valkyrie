@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function ReportBuilder() {
   const reportRef = useRef<HTMLDivElement>(null);
+  const [selectedTab, setSelectedTab] = useState("insights");
   const [selectedCampaign, setSelectedCampaign] = useState<string>("all");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedMetrics, setSelectedMetrics] = useState<{
@@ -96,26 +97,28 @@ export function ReportBuilder() {
 
   return (
     <div className="space-y-6">
-      <Tabs defaultValue="insights" className="space-y-6">
+      <Tabs defaultValue="insights" className="space-y-6" onValueChange={setSelectedTab}>
         <TabsList className="mb-6">
           <TabsTrigger value="insights">Insights Report</TabsTrigger>
           <TabsTrigger value="custom">Custom Report</TabsTrigger>
         </TabsList>
 
-        <div className="flex items-center justify-between">
-          <Card className="p-6 w-full">
-            <ReportFilters
-              selectedCampaign={selectedCampaign}
-              onCampaignChange={setSelectedCampaign}
-              dateRange={dateRange}
-              onDateRangeChange={setDateRange}
-            />
-            <ReportMetricsSelector
-              selectedMetrics={selectedMetrics}
-              onMetricsChange={setSelectedMetrics}
-            />
-          </Card>
-        </div>
+        {selectedTab === "custom" && (
+          <div className="flex items-center justify-between">
+            <Card className="p-6 w-full">
+              <ReportFilters
+                selectedCampaign={selectedCampaign}
+                onCampaignChange={setSelectedCampaign}
+                dateRange={dateRange}
+                onDateRangeChange={setDateRange}
+              />
+              <ReportMetricsSelector
+                selectedMetrics={selectedMetrics}
+                onMetricsChange={setSelectedMetrics}
+              />
+            </Card>
+          </div>
+        )}
 
         <TabsContent value="insights">
           <InsightsReport />
