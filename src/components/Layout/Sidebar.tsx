@@ -30,8 +30,14 @@ export function AppSidebar() {
   const location = useLocation();
 
   return (
-    <Sidebar>
+    <Sidebar className="border-r border-border/5 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <SidebarContent>
+        <div className="flex items-center gap-2 px-4 py-4">
+          <div className="w-8 h-8 rounded-lg bg-gradient-brand" />
+          <h1 className="text-xl font-bold bg-gradient-brand bg-clip-text text-transparent">
+            AdConnective
+          </h1>
+        </div>
         <SidebarGroup>
           <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -41,6 +47,7 @@ export function AppSidebar() {
                   <SidebarMenuButton 
                     asChild
                     data-active={location.pathname === item.path}
+                    className="hover:bg-primary/10 hover:text-primary data-[active=true]:bg-primary/10 data-[active=true]:text-primary"
                   >
                     <RouterLink to={item.path} className="flex items-center gap-3">
                       <item.icon className="h-5 w-5" />

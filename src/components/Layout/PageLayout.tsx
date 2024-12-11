@@ -12,11 +12,11 @@ export function PageLayout({ children, title }: PageLayoutProps) {
   return (
     <ProtectedRoute>
       <SidebarProvider>
-        <div className="min-h-screen flex w-full">
+        <div className="min-h-screen flex w-full bg-gradient-subtle">
           <AppSidebar />
           <div className="flex-1">
             <Header title={title} />
-            <main className="p-6 max-w-7xl mx-auto">
+            <main className="p-6 max-w-7xl mx-auto animate-fade-in">
               {children}
             </main>
           </div>
