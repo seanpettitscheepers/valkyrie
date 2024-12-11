@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Brain, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Recommendation {
   type: "demographic" | "behavioral" | "interest";
@@ -19,20 +20,15 @@ export function AIRecommendationsCard({ audienceData }: AIRecommendationsCardPro
   const { data: recommendations, isLoading, error } = useQuery({
     queryKey: ['targeting-recommendations', audienceData],
     queryFn: async () => {
-      const response = await fetch(
-        'https://qothiaalyhdfuesmvcvu.supabase.co/functions/v1/generate-targeting-recommendations',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ audienceData }),
-        }
-      );
-      if (!response.ok) {
-        throw new Error('Failed to generate recommendations');
+      const { data, error } = await supabase.functions.invoke('generate-targeting-recommendations', {
+        body: { audienceData },
+      });
+      
+      if (error) {
+        console.error('Error calling edge function:', error);
+        throw error;
       }
-      const data = await response.json();
+      
       return data.recommendations as Recommendation[];
     },
     enabled: !!audienceData,
