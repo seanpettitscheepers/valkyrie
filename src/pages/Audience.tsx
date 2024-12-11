@@ -7,6 +7,9 @@ import { InterestsCard } from "@/components/Audience/InterestsCard";
 import { AIRecommendationsCard } from "@/components/Audience/AIRecommendationsCard";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Filter, Share2, MoreHorizontal, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 const Audience = () => {
   const [selectedCampaign, setSelectedCampaign] = useState("all");
@@ -32,32 +35,54 @@ const Audience = () => {
 
   return (
     <PageLayout title="Audience Insights">
-      <div className="flex justify-between items-center mb-6">
+      <div className="space-y-8">
         <div>
-          <h1 className="text-3xl font-bold">Audience Insights</h1>
-          <p className="text-muted-foreground mt-1">
-            Analyze your audience demographics and interests across platforms
-          </p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-semibold">User Analysis</h1>
+              <p className="text-muted-foreground mt-1">
+                Unlock valuable insights into user behavior and preferences through our comprehensive user analysis, empowering your decision-making with data-driven strategies.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm">
+                <Filter className="h-4 w-4 mr-2" />
+                Filter
+              </Button>
+              <Button variant="outline" size="sm">
+                <Share2 className="h-4 w-4 mr-2" />
+                Share
+              </Button>
+              <Button variant="outline" size="sm">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+              <Button size="sm">
+                <Plus className="h-4 w-4 mr-2" />
+                Add
+              </Button>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <CampaignFilter
+              selectedCampaign={selectedCampaign}
+              onCampaignChange={setSelectedCampaign}
+            />
+            <PlatformFilter
+              selectedPlatform={selectedPlatform}
+              onPlatformChange={setSelectedPlatform}
+            />
+          </div>
         </div>
-        <div className="flex gap-4">
-          <CampaignFilter
-            selectedCampaign={selectedCampaign}
-            onCampaignChange={setSelectedCampaign}
-          />
-          <PlatformFilter
-            selectedPlatform={selectedPlatform}
-            onPlatformChange={setSelectedPlatform}
-          />
+
+        <Separator />
+
+        <div className="grid gap-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            <DemographicsCard demographics={audienceData?.demographics || {}} />
+            <InterestsCard interests={audienceData?.interests || {}} />
+          </div>
+          <AIRecommendationsCard audienceData={audienceData} />
         </div>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        <DemographicsCard demographics={audienceData?.demographics || {}} />
-        <InterestsCard interests={audienceData?.interests || {}} />
-      </div>
-
-      <div className="mt-6">
-        <AIRecommendationsCard audienceData={audienceData} />
       </div>
     </PageLayout>
   );
