@@ -1,6 +1,29 @@
 import { Campaign } from "@/types/campaign";
 
-export function usePerformanceMetrics(campaigns: Campaign[] | null, selectedCampaign: string) {
+type Trend = "up" | "down";
+
+interface PerformanceMetric {
+  value: string;
+  trend: Trend;
+  change: number;
+}
+
+export interface PerformanceMetrics {
+  spend: PerformanceMetric;
+  cpm: PerformanceMetric;
+  engagements: PerformanceMetric;
+  videoViews: PerformanceMetric;
+  cpv: PerformanceMetric;
+  cpc: PerformanceMetric;
+  engagementRate: PerformanceMetric;
+  vtr: PerformanceMetric;
+  cpcv: PerformanceMetric;
+  ctr: PerformanceMetric;
+  cpe: PerformanceMetric;
+  cpa: PerformanceMetric;
+}
+
+export function usePerformanceMetrics(campaigns: Campaign[] | null, selectedCampaign: string): PerformanceMetrics | null {
   if (!campaigns?.length) return null;
 
   let filteredCampaigns = campaigns;
@@ -32,62 +55,62 @@ export function usePerformanceMetrics(campaigns: Campaign[] | null, selectedCamp
   return {
     spend: {
       value: `$${totalSpend.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-      trend: totalSpend > 1000 ? "up" : "down",
+      trend: totalSpend > 1000 ? "up" : "down" as Trend,
       change: 10
     },
     cpm: {
       value: `$${cpm.toFixed(2)}`,
-      trend: cpm < 10 ? "up" : "down",
+      trend: cpm < 10 ? "up" : "down" as Trend,
       change: Number((Math.abs(cpm - 10)).toFixed(1))
     },
     engagements: {
       value: totalEngagements.toLocaleString(),
-      trend: totalEngagements > 1000 ? "up" : "down",
+      trend: totalEngagements > 1000 ? "up" : "down" as Trend,
       change: 15
     },
     videoViews: {
       value: totalVideoViews.toLocaleString(),
-      trend: totalVideoViews > 1000 ? "up" : "down",
+      trend: totalVideoViews > 1000 ? "up" : "down" as Trend,
       change: 20
     },
     cpv: {
       value: `$${cpv.toFixed(2)}`,
-      trend: cpv < 0.05 ? "up" : "down",
+      trend: cpv < 0.05 ? "up" : "down" as Trend,
       change: Number((Math.abs(cpv - 0.05)).toFixed(1))
     },
     cpc: {
       value: `$${cpc.toFixed(2)}`,
-      trend: cpc < 2 ? "up" : "down",
+      trend: cpc < 2 ? "up" : "down" as Trend,
       change: Number((Math.abs(cpc - 2)).toFixed(1))
     },
     engagementRate: {
       value: `${engagementRate.toFixed(2)}%`,
-      trend: engagementRate > 2 ? "up" : "down",
+      trend: engagementRate > 2 ? "up" : "down" as Trend,
       change: Number((Math.abs(engagementRate - 2)).toFixed(1))
     },
     vtr: {
       value: `${vtr.toFixed(2)}%`,
-      trend: vtr > 50 ? "up" : "down",
+      trend: vtr > 50 ? "up" : "down" as Trend,
       change: Number((Math.abs(vtr - 50)).toFixed(1))
     },
     cpcv: {
       value: `$${cpcv.toFixed(2)}`,
-      trend: cpcv < 0.1 ? "up" : "down",
+      trend: cpcv < 0.1 ? "up" : "down" as Trend,
       change: Number((Math.abs(cpcv - 0.1)).toFixed(1))
     },
     ctr: {
       value: `${ctr.toFixed(2)}%`,
-      trend: ctr > 1 ? "up" : "down",
+      trend: ctr > 1 ? "up" : "down" as Trend,
       change: Number((Math.abs(ctr - 1)).toFixed(1))
     },
     cpe: {
       value: `$${cpe.toFixed(2)}`,
-      trend: cpe < 0.5 ? "up" : "down",
+      trend: cpe < 0.5 ? "up" : "down" as Trend,
       change: Number((Math.abs(cpe - 0.5)).toFixed(1))
     },
     cpa: {
       value: `$${cpa.toFixed(2)}`,
-      trend: cpa < 10 ? "up" : "down",
+      trend: cpa < 10 ? "up" : "down" as Trend,
       change: Number((Math.abs(cpa - 10)).toFixed(1))
     }
   };

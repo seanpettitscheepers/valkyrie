@@ -1,25 +1,5 @@
 import { PerformanceCard } from "@/components/Dashboard/PerformanceCard";
-
-interface PerformanceMetric {
-  value: string;
-  trend: "up" | "down";
-  change: number;
-}
-
-interface PerformanceMetrics {
-  spend: PerformanceMetric;
-  cpm: PerformanceMetric;
-  engagements: PerformanceMetric;
-  videoViews: PerformanceMetric;
-  cpv: PerformanceMetric;
-  cpc: PerformanceMetric;
-  engagementRate: PerformanceMetric;
-  vtr: PerformanceMetric;
-  cpcv: PerformanceMetric;
-  ctr: PerformanceMetric;
-  cpe: PerformanceMetric;
-  cpa: PerformanceMetric;
-}
+import { PerformanceMetrics } from "./usePerformanceMetrics";
 
 interface PerformanceMetricsGridProps {
   metrics: PerformanceMetrics | null;
