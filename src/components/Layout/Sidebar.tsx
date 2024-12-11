@@ -1,4 +1,4 @@
-import { Home, BarChart, Target, Users, Settings, Signal, LineChart, FileText, CalendarRange, UserCircle, Link, HelpCircle, Globe } from "lucide-react";
+import { BarChart, Target, Users, Settings, Signal, LineChart, FileText, CalendarRange, UserCircle, Link, HelpCircle, Globe } from "lucide-react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -12,18 +12,16 @@ import {
 } from "@/components/ui/sidebar";
 
 const menuItems = [
-  { icon: Home, label: "Dashboard", path: "/" },
   { icon: BarChart, label: "Campaigns", path: "/campaigns" },
-  { icon: LineChart, label: "Performance", path: "/performance" },
   { icon: Globe, label: "Website Performance", path: "/website-performance" },
-  { icon: Target, label: "Naming Rules", path: "/naming" },
+  { icon: LineChart, label: "Performance", path: "/performance" },
   { icon: Users, label: "Audience", path: "/audience" },
   { icon: Signal, label: "Brand Sentiment", path: "/sentiment" },
   { icon: CalendarRange, label: "Planning", path: "/planning" },
+  { icon: Target, label: "Naming Rules", path: "/naming" },
   { icon: FileText, label: "Reports", path: "/reports" },
   { icon: Link, label: "Connections", path: "/connections" },
   { icon: HelpCircle, label: "Help", path: "/help" },
-  { icon: Settings, label: "Settings", path: "/settings" },
   { icon: UserCircle, label: "Account", path: "/account" },
 ];
 
