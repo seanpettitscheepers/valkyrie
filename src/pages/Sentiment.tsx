@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Signal, AlertCircle, MessageSquare } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { SentimentOverviewCard } from "@/components/Sentiment/SentimentOverviewCard";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function Sentiment() {
   const { data: sentimentData, isLoading } = useQuery({
@@ -21,6 +23,28 @@ export default function Sentiment() {
     }
   });
 
+  // Calculate overall sentiment percentage
+  const calculateOverallSentiment = () => {
+    if (!sentimentData?.length) return 0;
+    const avgSentiment = sentimentData.reduce((acc, curr) => acc + Number(curr.sentiment_score), 0) / sentimentData.length;
+    // Convert from -1 to 1 scale to 0-100%
+    return Math.round(((avgSentiment + 1) / 2) * 100);
+  };
+
+  // Calculate volume change
+  const calculateVolumeChange = () => {
+    if (!sentimentData?.length || sentimentData.length < 2) return { change: 0, trend: 'up' as const };
+    const currentVolume = sentimentData[0].volume;
+    const previousVolume = sentimentData[1].volume;
+    const change = Math.round(((currentVolume - previousVolume) / previousVolume) * 100);
+    return {
+      change,
+      trend: change >= 0 ? 'up' as const : 'down' as const
+    };
+  };
+
+  const volumeChange = calculateVolumeChange();
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
@@ -29,7 +53,6 @@ export default function Sentiment() {
           <Header />
           <main className="p-8 max-w-7xl mx-auto">
             <div className="space-y-8">
-              {/* Header Section */}
               <div>
                 <h1 className="text-3xl font-bold tracking-tight">Brand Sentiment Analysis</h1>
                 <p className="text-muted-foreground mt-2">
@@ -39,45 +62,58 @@ export default function Sentiment() {
 
               {/* Overview Cards */}
               <div className="grid gap-4 md:grid-cols-3">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Overall Sentiment</CardTitle>
-                    <Signal className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">Positive</div>
-                    <p className="text-xs text-muted-foreground">
-                      Based on latest analysis
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Risk Level</CardTitle>
-                    <AlertCircle className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">Low</div>
-                    <p className="text-xs text-muted-foreground">
-                      Current risk assessment
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Mention Volume</CardTitle>
-                    <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">1,234</div>
-                    <p className="text-xs text-muted-foreground">
-                      Last 24 hours
-                    </p>
-                  </CardContent>
-                </Card>
+                <SentimentOverviewCard
+                  title="Overall Sentiment"
+                  value={`${calculateOverallSentiment()}%`}
+                />
+                <SentimentOverviewCard
+                  title="Mention Volume"
+                  value={sentimentData?.[0]?.volume || 0}
+                  change={volumeChange.change}
+                  trend={volumeChange.trend}
+                />
+                <SentimentOverviewCard
+                  title="Risk Level"
+                  value={sentimentData?.[0]?.risk_level?.toUpperCase() || 'N/A'}
+                />
               </div>
+
+              {/* Volume Trend Chart */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Mention Volume Trend</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    {!isLoading && sentimentData && (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart
+                          data={[...sentimentData].reverse()}
+                          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis 
+                            dataKey="analysis_timestamp" 
+                            tickFormatter={(timestamp) => new Date(timestamp).toLocaleDateString()}
+                          />
+                          <YAxis />
+                          <Tooltip 
+                            labelFormatter={(timestamp) => new Date(timestamp).toLocaleString()}
+                            formatter={(value) => [value, "Volume"]}
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="volume"
+                            stroke="#8884d8"
+                            fill="#8884d8"
+                            fillOpacity={0.3}
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
 
               {/* Detailed Analysis Card */}
               <Card>
