@@ -3,8 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, Loader2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 export function PricingSection() {
+  const { toast } = useToast();
+
   const { data: plans, isLoading } = useQuery({
     queryKey: ["subscription-plans"],
     queryFn: async () => {
@@ -17,6 +20,39 @@ export function PricingSection() {
       return data;
     },
   });
+
+  const { data: session } = useQuery({
+    queryKey: ["session"],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      return session;
+    },
+  });
+
+  const handleSubscribe = async (priceId: string) => {
+    try {
+      if (!session) {
+        document.getElementById("auth-section")?.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: { priceId },
+      });
+
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start subscription process. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -61,9 +97,9 @@ export function PricingSection() {
                 <Button 
                   className="w-full" 
                   variant={plan.tier === 'growth' ? 'default' : 'outline'}
-                  onClick={() => document.getElementById("auth-section")?.scrollIntoView({ behavior: "smooth" })}
+                  onClick={() => handleSubscribe(plan.price_id)}
                 >
-                  Get Started
+                  {session ? 'Subscribe Now' : 'Sign Up'}
                 </Button>
               </CardContent>
             </Card>
