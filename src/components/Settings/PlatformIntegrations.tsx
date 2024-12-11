@@ -61,7 +61,7 @@ export const PlatformIntegrations = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <Badge variant={platform.is_active ? "success" : "secondary"}>
+                <Badge variant={platform.is_active ? "secondary" : "outline"}>
                   {platform.is_active ? "Connected" : "Not Connected"}
                 </Badge>
                 <Button
