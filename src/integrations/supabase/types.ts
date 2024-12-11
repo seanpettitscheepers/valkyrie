@@ -198,6 +198,42 @@ export type Database = {
         }
         Relationships: []
       }
+      custom_kpis: {
+        Row: {
+          created_at: string
+          current_value: number | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          metric_name: string
+          target_value: number
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_value?: number | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          metric_name: string
+          target_value: number
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_value?: number | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          metric_name?: string
+          target_value?: number
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       generated_names: {
         Row: {
           ad_name: string
@@ -237,6 +273,39 @@ export type Database = {
           placement?: string
           strategy_name?: string
           utm_tag?: string
+        }
+        Relationships: []
+      }
+      industry_benchmarks: {
+        Row: {
+          baseline_value: number
+          created_at: string
+          description: string | null
+          id: string
+          industry: Database["public"]["Enums"]["industry_type"]
+          metric_name: string
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          baseline_value: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          industry: Database["public"]["Enums"]["industry_type"]
+          metric_name: string
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          baseline_value?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          industry?: Database["public"]["Enums"]["industry_type"]
+          metric_name?: string
+          unit?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -358,6 +427,14 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      industry_type:
+        | "e_commerce"
+        | "b2b_saas"
+        | "finance"
+        | "healthcare"
+        | "retail"
+        | "technology"
+        | "other"
       platform_type:
         | "social_media"
         | "video"

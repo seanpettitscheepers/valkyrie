@@ -1,18 +1,15 @@
-import { AppSidebar } from "@/components/Layout/Sidebar";
-import { Header } from "@/components/Layout/Header";
+import { PageLayout } from "@/components/Layout/PageLayout";
 import { PlatformIntegrations } from "@/components/Settings/PlatformIntegrations";
+import { BenchmarksSection } from "@/components/Settings/Benchmarks/BenchmarksSection";
 
 const Settings = () => {
   return (
-    <div className="flex min-h-screen">
-      <AppSidebar />
-      <div className="flex-1">
-        <Header title="Settings" />
-        <main className="container mx-auto p-6">
-          <PlatformIntegrations />
-        </main>
+    <PageLayout title="Settings">
+      <div className="space-y-10">
+        <PlatformIntegrations />
+        <BenchmarksSection />
       </div>
-    </div>
+    </PageLayout>
   );
 };
 
