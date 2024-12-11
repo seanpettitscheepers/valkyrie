@@ -43,13 +43,28 @@ export function AdminSection() {
   const { data: users, refetch } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // First get all auth users to get their emails
+      const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+      if (authError) throw authError;
+
+      // Then get all profiles
+      const { data: profiles, error: profilesError } = await supabase
         .from("profiles")
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      return data;
+      if (profilesError) throw profilesError;
+
+      // Merge the data to include emails
+      const mergedUsers = profiles.map(profile => {
+        const authUser = authUsers.users.find(user => user.id === profile.id);
+        return {
+          ...profile,
+          email: authUser?.email || null
+        };
+      });
+
+      return mergedUsers;
     },
     enabled: currentUser?.role === "super_admin",
   });
