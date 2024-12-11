@@ -9,7 +9,7 @@ export function PerformanceMetricsGrid({ metrics }: PerformanceMetricsGridProps)
   if (!metrics) return null;
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
       <PerformanceCard
         title="Total Spend"
         value={metrics.spend.value}
@@ -29,6 +29,13 @@ export function PerformanceMetricsGrid({ metrics }: PerformanceMetricsGridProps)
         value={metrics.reach.value}
         change={Number(metrics.reach.change)}
         trend={metrics.reach.trend}
+      />
+
+      <PerformanceCard
+        title="Clicks"
+        value={metrics.clicks.value}
+        change={Number(metrics.clicks.change)}
+        trend={metrics.clicks.trend}
       />
 
       <PerformanceCard
