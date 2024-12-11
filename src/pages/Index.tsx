@@ -52,7 +52,7 @@ const Index = () => {
 
     return {
       rate: engagementRate.toFixed(2),
-      trend: engagementRate > 2 ? "up" : "down",
+      trend: engagementRate > 2 ? ("up" as const) : ("down" as const),
       change: Math.abs(engagementRate - 2).toFixed(1)
     };
   };
@@ -66,7 +66,7 @@ const Index = () => {
 
     return {
       score: avgSentiment.toFixed(2),
-      trend: avgSentiment > previousAvg ? "up" : "down",
+      trend: avgSentiment > previousAvg ? ("up" as const) : ("down" as const),
       change: Math.abs(avgSentiment - previousAvg).toFixed(1)
     };
   };
