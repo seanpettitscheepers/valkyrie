@@ -3,6 +3,7 @@ import { PerformanceMetricsGrid } from "@/components/Performance/PerformanceMetr
 import { DemographicsCard } from "@/components/Audience/DemographicsCard";
 import { InterestsCard } from "@/components/Audience/InterestsCard";
 import { SentimentTrendChart } from "@/components/Sentiment/SentimentTrendChart";
+import { usePerformanceMetrics } from "@/components/Performance/usePerformanceMetrics";
 
 interface ReportPreviewProps {
   data: {
@@ -19,6 +20,12 @@ interface ReportPreviewProps {
 
 export function ReportPreview({ data, selectedMetrics }: ReportPreviewProps) {
   const { performanceData, audienceData, sentimentData } = data;
+  
+  // Use the hook to transform the raw performance data into the expected format
+  const performanceMetrics = usePerformanceMetrics(
+    [{ id: "report", campaign_metrics: performanceData }], 
+    "report"
+  );
 
   return (
     <div className="space-y-6">
@@ -28,7 +35,7 @@ export function ReportPreview({ data, selectedMetrics }: ReportPreviewProps) {
             <CardTitle>Performance Metrics</CardTitle>
           </CardHeader>
           <CardContent>
-            <PerformanceMetricsGrid metrics={performanceData} />
+            <PerformanceMetricsGrid metrics={performanceMetrics} />
           </CardContent>
         </Card>
       )}
