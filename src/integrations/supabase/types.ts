@@ -186,6 +186,7 @@ export type Database = {
           platforms: Json
           previous_campaign_id: string | null
           status: string
+          targeting_objectives: Json
           total_budget: number
           updated_at: string
         }
@@ -200,6 +201,7 @@ export type Database = {
           platforms?: Json
           previous_campaign_id?: string | null
           status?: string
+          targeting_objectives?: Json
           total_budget?: number
           updated_at?: string
         }
@@ -214,6 +216,7 @@ export type Database = {
           platforms?: Json
           previous_campaign_id?: string | null
           status?: string
+          targeting_objectives?: Json
           total_budget?: number
           updated_at?: string
         }
