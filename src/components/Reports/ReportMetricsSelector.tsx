@@ -22,10 +22,18 @@ export function ReportMetricsSelector({
   const performanceMetrics = [
     { id: "spend", label: "Total Spend" },
     { id: "impressions", label: "Impressions" },
+    { id: "reach", label: "Reach" },
     { id: "clicks", label: "Clicks" },
-    { id: "ctr", label: "CTR" },
+    { id: "cpm", label: "CPM" },
+    { id: "engagements", label: "Engagements" },
+    { id: "video_views", label: "Video Views" },
+    { id: "cpv", label: "CPV" },
     { id: "cpc", label: "CPC" },
-    { id: "conversions", label: "Conversions" },
+    { id: "engagement_rate", label: "Engagement Rate" },
+    { id: "vtr", label: "VTR" },
+    { id: "cpcv", label: "CPCV" },
+    { id: "ctr", label: "CTR" },
+    { id: "cpe", label: "CPE" },
     { id: "cpa", label: "CPA" },
   ];
 
