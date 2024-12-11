@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Filter, Share2, MoreHorizontal, Plus } from "lucide-react";
+import { Filter, MoreHorizontal, Plus } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { CampaignFilter } from "./CampaignFilter";
 import { KPIProgressCard } from "./KPIProgressCard";
+import { ShareDialog } from "../Share/ShareDialog";
 
 export function CampaignDashboard() {
   const [selectedCampaign, setSelectedCampaign] = useState("all");
+  const dashboardRef = useRef<HTMLDivElement>(null);
 
   // Fetch performance metrics
   const { data: performanceData } = useQuery({
@@ -66,7 +68,7 @@ export function CampaignDashboard() {
   })) || [];
 
   return (
-    <div className="space-y-8 p-6">
+    <div className="space-y-8 p-6" ref={dashboardRef}>
       {/* Header */}
       <div>
         <div className="flex items-center justify-between mb-4">
@@ -88,10 +90,7 @@ export function CampaignDashboard() {
                 <Filter className="h-4 w-4 mr-2" />
                 Filter
               </Button>
-              <Button variant="outline" size="sm">
-                <Share2 className="h-4 w-4 mr-2" />
-                Share
-              </Button>
+              <ShareDialog contentRef={dashboardRef} pageTitle="Campaign Dashboard" />
               <Button variant="outline" size="sm">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
