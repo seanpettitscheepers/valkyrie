@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { PerformanceCard } from "@/components/Dashboard/PerformanceCard";
+import { AIInsightsCard } from "@/components/Dashboard/AIInsightsCard";
 import { Header } from "@/components/Layout/Header";
 import { AppSidebar } from "@/components/Layout/Sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -42,6 +43,27 @@ const campaigns = [
   { id: "3", name: "Easter Promotion" },
   { id: "4", name: "Mother's Day Special" },
   { id: "5", name: "Back to School Campaign" },
+];
+
+const mockInsights = [
+  {
+    type: "success" as const,
+    message: "Strong video completion rate indicates engaging content",
+    metric: "VTR: 65%",
+    recommendation: "Consider increasing video ad budget allocation",
+  },
+  {
+    type: "warning" as const,
+    message: "CPC is higher than industry benchmark",
+    metric: "CPC: $0.52",
+    recommendation: "Review targeting settings and ad relevance to improve quality score",
+  },
+  {
+    type: "info" as const,
+    message: "Engagement rate shows strong audience interest",
+    metric: "Engagement Rate: 3.8%",
+    recommendation: "Test similar audiences to scale reach while maintaining engagement",
+  },
 ];
 
 const Index = () => {
@@ -99,6 +121,11 @@ const Index = () => {
                 <PerformanceCard key={data.title} {...data} />
               ))}
             </div>
+            
+            <div className="mt-6">
+              <AIInsightsCard campaignType="consideration" insights={mockInsights} />
+            </div>
+
             <div className="mt-6 grid gap-4 md:grid-cols-2">
               <Card className="p-4">
                 <h3 className="mb-4 text-lg font-semibold">
