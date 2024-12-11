@@ -7,7 +7,7 @@ import { InterestsCard } from "@/components/Audience/InterestsCard";
 import { AIRecommendationsCard } from "@/components/Audience/AIRecommendationsCard";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Filter, Share2, MoreHorizontal, Plus } from "lucide-react";
+import { Filter, Share2, MoreHorizontal, Plus, ChevronLeft, ChevronRight, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
@@ -45,6 +45,19 @@ const Audience = () => {
               </p>
             </div>
             <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm">
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </Button>
+              <Button variant="outline" size="sm">
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm">
+                <List className="h-4 w-4" />
+                Topics
+              </Button>
+              <Separator orientation="vertical" className="h-6" />
               <Button variant="outline" size="sm">
                 <Filter className="h-4 w-4 mr-2" />
                 Filter
