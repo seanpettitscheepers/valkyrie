@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Brain, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Recommendation {
   type: "demographic" | "behavioral" | "interest";
@@ -17,21 +18,44 @@ interface AIRecommendationsCardProps {
 }
 
 export function AIRecommendationsCard({ audienceData }: AIRecommendationsCardProps) {
+  const { toast } = useToast();
+
   const { data: recommendations, isLoading, error } = useQuery({
     queryKey: ['targeting-recommendations', audienceData],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke('generate-targeting-recommendations', {
-        body: { audienceData },
-      });
-      
-      if (error) {
-        console.error('Error calling edge function:', error);
-        throw error;
+      try {
+        console.log('Calling edge function with data:', audienceData);
+        const { data, error } = await supabase.functions.invoke('generate-targeting-recommendations', {
+          body: { audienceData },
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (error) {
+          console.error('Error calling edge function:', error);
+          toast({
+            title: "Error",
+            description: "Failed to generate recommendations. Please try again.",
+            variant: "destructive",
+          });
+          throw error;
+        }
+
+        console.log('Edge function response:', data);
+        return data.recommendations as Recommendation[];
+      } catch (err) {
+        console.error('Error in query function:', err);
+        toast({
+          title: "Error",
+          description: "Failed to generate recommendations. Please try again.",
+          variant: "destructive",
+        });
+        throw err;
       }
-      
-      return data.recommendations as Recommendation[];
     },
     enabled: !!audienceData,
+    retry: 1,
   });
 
   const getImpactColor = (impact: string) => {
