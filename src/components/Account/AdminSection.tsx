@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
+import type { User } from "@supabase/supabase-js";
 
 export function AdminSection() {
   const { toast } = useToast();
@@ -44,7 +45,7 @@ export function AdminSection() {
     queryKey: ["users"],
     queryFn: async () => {
       // First get all auth users to get their emails
-      const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+      const { data: { users }, error: authError } = await supabase.auth.admin.listUsers();
       if (authError) throw authError;
 
       // Then get all profiles
@@ -57,7 +58,7 @@ export function AdminSection() {
 
       // Merge the data to include emails
       const mergedUsers = profiles.map(profile => {
-        const authUser = authUsers.users.find(user => user.id === profile.id);
+        const authUser = users.find(user => user.id === profile.id);
         return {
           ...profile,
           email: authUser?.email || null
