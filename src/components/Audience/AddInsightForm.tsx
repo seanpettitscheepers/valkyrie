@@ -1,6 +1,5 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +10,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -20,25 +18,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-
-const formSchema = z.object({
-  platform: z.string().min(1, "Platform is required"),
-  campaign_id: z.string().uuid("Invalid campaign ID"),
-  age_18_24: z.string().transform(Number),
-  age_25_34: z.string().transform(Number),
-  age_35_44: z.string().transform(Number),
-  age_45_plus: z.string().transform(Number),
-  gender_male: z.string().transform(Number),
-  gender_female: z.string().transform(Number),
-  education_highschool: z.string().transform(Number),
-  education_bachelors: z.string().transform(Number),
-  education_masters: z.string().transform(Number),
-  occupation_professional: z.string().transform(Number),
-  occupation_student: z.string().transform(Number),
-  occupation_other: z.string().transform(Number),
-  marital_single: z.string().transform(Number),
-  marital_married: z.string().transform(Number),
-});
+import { AgeDistribution } from "./FormSections/AgeDistribution";
+import { GenderDistribution } from "./FormSections/GenderDistribution";
+import { EducationDistribution } from "./FormSections/EducationDistribution";
+import { formSchema } from "./schemas/insightFormSchema";
+import { z } from "zod";
 
 export function AddInsightForm() {
   const { toast } = useToast();
@@ -47,20 +31,20 @@ export function AddInsightForm() {
     defaultValues: {
       platform: "",
       campaign_id: "",
-      age_18_24: "0",
-      age_25_34: "0",
-      age_35_44: "0",
-      age_45_plus: "0",
-      gender_male: "0",
-      gender_female: "0",
-      education_highschool: "0",
-      education_bachelors: "0",
-      education_masters: "0",
-      occupation_professional: "0",
-      occupation_student: "0",
-      occupation_other: "0",
-      marital_single: "0",
-      marital_married: "0",
+      age_18_24: 0,
+      age_25_34: 0,
+      age_35_44: 0,
+      age_45_plus: 0,
+      gender_male: 0,
+      gender_female: 0,
+      education_highschool: 0,
+      education_bachelors: 0,
+      education_masters: 0,
+      occupation_professional: 0,
+      occupation_student: 0,
+      occupation_other: 0,
+      marital_single: 0,
+      marital_married: 0,
     },
   });
 
@@ -159,134 +143,9 @@ export function AddInsightForm() {
           )}
         />
 
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium">Age Distribution (%)</h3>
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { name: "age_18_24", label: "18-24" },
-              { name: "age_25_34", label: "25-34" },
-              { name: "age_35_44", label: "35-44" },
-              { name: "age_45_plus", label: "45+" },
-            ].map((age) => (
-              <FormField
-                key={age.name}
-                control={form.control}
-                name={age.name as keyof z.infer<typeof formSchema>}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{age.label}</FormLabel>
-                    <FormControl>
-                      <Input type="number" min="0" max="100" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium">Gender Distribution (%)</h3>
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { name: "gender_male", label: "Male" },
-              { name: "gender_female", label: "Female" },
-            ].map((gender) => (
-              <FormField
-                key={gender.name}
-                control={form.control}
-                name={gender.name as keyof z.infer<typeof formSchema>}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{gender.label}</FormLabel>
-                    <FormControl>
-                      <Input type="number" min="0" max="100" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium">Education (%)</h3>
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { name: "education_highschool", label: "High School" },
-              { name: "education_bachelors", label: "Bachelor's" },
-              { name: "education_masters", label: "Master's" },
-            ].map((education) => (
-              <FormField
-                key={education.name}
-                control={form.control}
-                name={education.name as keyof z.infer<typeof formSchema>}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{education.label}</FormLabel>
-                    <FormControl>
-                      <Input type="number" min="0" max="100" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium">Occupation (%)</h3>
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { name: "occupation_professional", label: "Professional" },
-              { name: "occupation_student", label: "Student" },
-              { name: "occupation_other", label: "Other" },
-            ].map((occupation) => (
-              <FormField
-                key={occupation.name}
-                control={form.control}
-                name={occupation.name as keyof z.infer<typeof formSchema>}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{occupation.label}</FormLabel>
-                    <FormControl>
-                      <Input type="number" min="0" max="100" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium">Marital Status (%)</h3>
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { name: "marital_single", label: "Single" },
-              { name: "marital_married", label: "Married" },
-            ].map((status) => (
-              <FormField
-                key={status.name}
-                control={form.control}
-                name={status.name as keyof z.infer<typeof formSchema>}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{status.label}</FormLabel>
-                    <FormControl>
-                      <Input type="number" min="0" max="100" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ))}
-          </div>
-        </div>
+        <AgeDistribution form={form} />
+        <GenderDistribution form={form} />
+        <EducationDistribution form={form} />
 
         <Button type="submit" className="w-full">
           Add Audience Insight
