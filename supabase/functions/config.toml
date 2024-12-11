@@ -1,0 +1,4 @@
+project_id = "qothiaalyhdfuesmvcvu"
+
+[global.env]
+RESEND_API_KEY = "re_"
