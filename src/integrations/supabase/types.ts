@@ -121,6 +121,80 @@ export type Database = {
         }
         Relationships: []
       }
+      naming_components: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          options: Json | null
+          pattern_id: string
+          position: number
+          required: boolean | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          options?: Json | null
+          pattern_id: string
+          position: number
+          required?: boolean | null
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          options?: Json | null
+          pattern_id?: string
+          position?: number
+          required?: boolean | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "naming_components_pattern_id_fkey"
+            columns: ["pattern_id"]
+            isOneToOne: false
+            referencedRelation: "naming_patterns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      naming_patterns: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          pattern: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          pattern: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          pattern?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
