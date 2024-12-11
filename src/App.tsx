@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Audience from "./pages/Audience";
 import Naming from "./pages/Naming";
 import Sentiment from "./pages/Sentiment";
+import Performance from "./pages/Performance";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/naming" element={<Naming />} />
           <Route path="/audience" element={<Audience />} />
           <Route path="/sentiment" element={<Sentiment />} />
+          <Route path="/performance" element={<Performance />} />
           <Route path="/settings" element={<Index />} />
         </Routes>
       </BrowserRouter>
