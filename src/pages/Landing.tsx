@@ -3,12 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Check } from "lucide-react";
+import { Loader2, Check, LogIn, LogOut } from "lucide-react";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Landing() {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const { data: plans, isLoading } = useQuery({
     queryKey: ["subscription-plans"],
@@ -24,19 +26,64 @@ export default function Landing() {
   });
 
   // Check if user is already logged in
-  useQuery({
+  const { data: session, isLoading: isSessionLoading } = useQuery({
     queryKey: ["session"],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        navigate("/");
+        navigate("/dashboard");
       }
       return session;
     },
   });
 
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast({
+        title: "Logged out successfully",
+        description: "You have been logged out of your account.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error logging out",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleLogin = () => {
+    document.getElementById("auth-section")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      {/* Navigation */}
+      <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto px-4 h-14 flex items-center justify-between">
+          <h1 className="text-xl font-bold text-primary">AdConnective Hub</h1>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={session ? handleLogout : handleLogin}
+            disabled={isSessionLoading}
+          >
+            {session ? (
+              <>
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </>
+            ) : (
+              <>
+                <LogIn className="h-4 w-4 mr-2" />
+                Login
+              </>
+            )}
+          </Button>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <header className="container mx-auto px-4 py-16 text-center">
         <h1 className="text-4xl font-bold tracking-tight sm:text-6xl text-primary mb-6">
