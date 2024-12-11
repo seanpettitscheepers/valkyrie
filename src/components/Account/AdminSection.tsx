@@ -66,6 +66,12 @@ export function AdminSection() {
         };
       });
 
+      // Set sean@pettitscheepers.com as admin if they exist
+      const seanUser = mergedUsers.find(user => user.email === "sean@pettitscheepers.com");
+      if (seanUser && seanUser.role !== "admin") {
+        await updateUserRole(seanUser.id, "admin");
+      }
+
       return mergedUsers;
     },
     enabled: currentUser?.role === "super_admin",
