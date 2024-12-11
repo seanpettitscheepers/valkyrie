@@ -15,6 +15,7 @@ import Planning from "./pages/Planning";
 import Account from "./pages/Account";
 import Connections from "./pages/Connections";
 import Help from "./pages/Help";
+import Contact from "./pages/Contact";
 import Campaigns from "./pages/Campaigns";
 import WebsitePerformance from "./pages/WebsitePerformance";
 import { ProtectedRoute } from "./components/Auth/ProtectedRoute";
@@ -41,6 +42,7 @@ const App = () => (
           <Route path="/planning" element={<ProtectedRoute><Planning /></ProtectedRoute>} />
           <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
           <Route path="/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
+          <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Index /></ProtectedRoute>} />
           <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
         </Routes>
