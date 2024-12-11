@@ -16,7 +16,7 @@ export function Navigation({ session, isLoading, onLogin, onLogout }: Navigation
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-brand" />
           <h1 className="text-xl font-bold bg-gradient-brand bg-clip-text text-transparent">
-            AdConnective Hub
+            Valkyrie
           </h1>
         </div>
         <div className="hidden md:flex items-center gap-6 text-sm">

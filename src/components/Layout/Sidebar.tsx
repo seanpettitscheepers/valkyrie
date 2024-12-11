@@ -35,7 +35,7 @@ export function AppSidebar() {
         <div className="flex items-center gap-2 px-4 py-4">
           <div className="w-8 h-8 rounded-lg bg-gradient-brand" />
           <h1 className="text-xl font-bold bg-gradient-brand bg-clip-text text-transparent">
-            AdConnective
+            Valkyrie
           </h1>
         </div>
         <SidebarGroup>
