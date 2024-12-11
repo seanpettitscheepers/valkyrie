@@ -18,3 +18,4 @@ export const planningFormSchema = z.object({
 });
 
 export type PlanningFormValues = z.infer<typeof planningFormSchema>;
+export type TargetingObjective = z.infer<typeof targetingObjectiveSchema>;

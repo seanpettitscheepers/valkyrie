@@ -19,11 +19,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { TargetingObjective } from "./types";
+import { Database } from "@/integrations/supabase/types";
 
 type CampaignPlan = {
   id: string;
   name: string;
-  objective: string;
+  objective: Database["public"]["Enums"]["campaign_objective"];
   total_budget: number;
   status: string;
   budget_allocation: Record<string, number>;
@@ -31,11 +32,11 @@ type CampaignPlan = {
   audience_insights?: {
     platform: string;
     demographics: unknown;
-  };
+  } | null;
   campaigns?: {
     name: string;
-  };
-  notes?: string;
+  } | null;
+  notes?: string | null;
 };
 
 export function PlansList() {
@@ -57,7 +58,13 @@ export function PlansList() {
         .order("created_at", { ascending: false });
       
       if (error) throw error;
-      return data;
+      
+      // Transform the data to match our CampaignPlan type
+      return data.map(plan => ({
+        ...plan,
+        budget_allocation: plan.budget_allocation as Record<string, number>,
+        targeting_objectives: plan.targeting_objectives as TargetingObjective[],
+      }));
     },
   });
 
