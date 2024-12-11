@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { NamingPatternList } from "@/components/Naming/NamingPatternList";
 import { CreatePatternSheet } from "@/components/Naming/CreatePatternSheet";
+import { NameGenerator } from "@/components/Naming/NameGenerator";
 
 export default function Naming() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -36,6 +37,8 @@ export default function Naming() {
               </ul>
             </CardContent>
           </Card>
+
+          <NameGenerator />
 
           <Card>
             <CardHeader>

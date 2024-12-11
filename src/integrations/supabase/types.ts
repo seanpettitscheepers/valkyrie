@@ -97,6 +97,33 @@ export type Database = {
           },
         ]
       }
+      campaign_name_components: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          options: Json
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          options?: Json
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          options?: Json
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       campaigns: {
         Row: {
           created_at: string
@@ -118,6 +145,48 @@ export type Database = {
           name?: string
           type?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      generated_names: {
+        Row: {
+          ad_name: string
+          adset_name: string
+          advertiser: string
+          campaign_name: string
+          channel: string
+          created_at: string
+          id: string
+          objective: string
+          placement: string
+          strategy_name: string
+          utm_tag: string
+        }
+        Insert: {
+          ad_name: string
+          adset_name: string
+          advertiser: string
+          campaign_name: string
+          channel: string
+          created_at?: string
+          id?: string
+          objective: string
+          placement: string
+          strategy_name: string
+          utm_tag: string
+        }
+        Update: {
+          ad_name?: string
+          adset_name?: string
+          advertiser?: string
+          campaign_name?: string
+          channel?: string
+          created_at?: string
+          id?: string
+          objective?: string
+          placement?: string
+          strategy_name?: string
+          utm_tag?: string
         }
         Relationships: []
       }
