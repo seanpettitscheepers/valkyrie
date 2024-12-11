@@ -314,6 +314,42 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_integrations: {
+        Row: {
+          created_at: string
+          credentials: Json | null
+          id: string
+          is_active: boolean | null
+          last_sync_at: string | null
+          metadata: Json | null
+          platform_name: string
+          platform_type: Database["public"]["Enums"]["platform_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          credentials?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          metadata?: Json | null
+          platform_name: string
+          platform_type: Database["public"]["Enums"]["platform_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          credentials?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          metadata?: Json | null
+          platform_name?: string
+          platform_type?: Database["public"]["Enums"]["platform_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -322,7 +358,12 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      platform_type:
+        | "social_media"
+        | "video"
+        | "search_display"
+        | "ecommerce"
+        | "audio"
     }
     CompositeTypes: {
       [_ in never]: never
