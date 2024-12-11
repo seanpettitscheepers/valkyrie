@@ -15,6 +15,7 @@ import Planning from "./pages/Planning";
 import Account from "./pages/Account";
 import Connections from "./pages/Connections";
 import Help from "./pages/Help";
+import Campaigns from "./pages/Campaigns";
 import { ProtectedRoute } from "./components/Auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -29,7 +30,7 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-          <Route path="/campaigns" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+          <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
           <Route path="/naming" element={<ProtectedRoute><Naming /></ProtectedRoute>} />
           <Route path="/audience" element={<ProtectedRoute><Audience /></ProtectedRoute>} />
           <Route path="/sentiment" element={<ProtectedRoute><Sentiment /></ProtectedRoute>} />
