@@ -2,30 +2,58 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export function WebsitePerformanceOverview() {
-  const { data: analyticsData } = useQuery({
+  const { data: analyticsData, error } = useQuery({
     queryKey: ["analytics-overview"],
     queryFn: async () => {
-      const { data: analyticsIntegration } = await supabase
+      const { data, error } = await supabase
         .from("analytics_integrations")
         .select("*")
-        .eq("platform_type", "google_analytics_4")
-        .single();
+        .eq("platform_type", "google_analytics_4");
 
-      if (!analyticsIntegration) {
+      if (error) throw error;
+      
+      // If no integration exists, return null
+      if (!data || data.length === 0) {
         return null;
       }
 
+      const integration = data[0];
+
       // Fetch data from GA4 via Edge Function
-      const { data, error } = await supabase.functions.invoke("fetch-ga4-overview", {
-        body: { propertyId: analyticsIntegration.property_id }
+      const { data: gaData, error: gaError } = await supabase.functions.invoke("fetch-ga4-overview", {
+        body: { propertyId: integration.property_id }
       });
 
-      if (error) throw error;
-      return data;
-    }
+      if (gaError) throw gaError;
+      return gaData;
+    },
   });
+
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          Failed to load analytics data. Please try again later.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  if (!analyticsData) {
+    return (
+      <Alert>
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          Please connect your Google Analytics 4 account to view website performance metrics.
+        </AlertDescription>
+      </Alert>
+    );
+  }
 
   const overviewMetrics = [
     { title: "Total Users", value: analyticsData?.totalUsers || "0", change: "+5.2%" },
