@@ -1,5 +1,5 @@
-import { Home, BarChart, Target, Users, Settings, Signal, LineChart, FileText, CalendarRange, UserCircle } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Home, BarChart, Target, Users, Settings, Signal, LineChart, FileText, CalendarRange, UserCircle, Link } from "lucide-react";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -20,6 +20,7 @@ const menuItems = [
   { icon: Signal, label: "Brand Sentiment", path: "/sentiment" },
   { icon: CalendarRange, label: "Planning", path: "/planning" },
   { icon: FileText, label: "Reports", path: "/reports" },
+  { icon: Link, label: "Connections", path: "/connections" },
   { icon: Settings, label: "Settings", path: "/settings" },
   { icon: UserCircle, label: "Account", path: "/account" },
 ];
@@ -40,10 +41,10 @@ export function AppSidebar() {
                     asChild
                     data-active={location.pathname === item.path}
                   >
-                    <Link to={item.path} className="flex items-center gap-3">
+                    <RouterLink to={item.path} className="flex items-center gap-3">
                       <item.icon className="h-5 w-5" />
                       <span>{item.label}</span>
-                    </Link>
+                    </RouterLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

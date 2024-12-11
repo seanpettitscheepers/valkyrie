@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      analytics_integrations: {
+        Row: {
+          created_at: string
+          credentials: Json
+          id: string
+          is_active: boolean | null
+          last_sync_at: string | null
+          platform_type: Database["public"]["Enums"]["analytics_platform_type"]
+          property_id: string
+          updated_at: string
+          user_id: string | null
+          view_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          credentials?: Json
+          id?: string
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          platform_type: Database["public"]["Enums"]["analytics_platform_type"]
+          property_id: string
+          updated_at?: string
+          user_id?: string | null
+          view_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          credentials?: Json
+          id?: string
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          platform_type?: Database["public"]["Enums"]["analytics_platform_type"]
+          property_id?: string
+          updated_at?: string
+          user_id?: string | null
+          view_id?: string | null
+        }
+        Relationships: []
+      }
       audience_insights: {
         Row: {
           campaign_id: string
@@ -660,6 +699,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      analytics_platform_type: "google_analytics_4" | "universal_analytics"
       campaign_objective: "awareness" | "consideration" | "conversion"
       industry_type:
         | "e_commerce"
