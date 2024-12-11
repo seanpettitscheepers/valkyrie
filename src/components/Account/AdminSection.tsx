@@ -19,6 +19,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import type { User } from "@supabase/supabase-js";
+import type { Profile } from "@/types/profile";
 
 export function AdminSection() {
   const { toast } = useToast();
@@ -58,7 +59,7 @@ export function AdminSection() {
 
       // Merge the data to include emails
       const mergedUsers = profiles.map(profile => {
-        const authUser = users.find(user => user.id === profile.id);
+        const authUser = (users as User[]).find(user => user.id === profile.id);
         return {
           ...profile,
           email: authUser?.email || null
