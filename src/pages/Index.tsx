@@ -1,11 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/Layout/Sidebar";
-import { Header } from "@/components/Layout/Header";
+import { PageLayout } from "@/components/Layout/PageLayout";
 import { PerformanceCard } from "@/components/Dashboard/PerformanceCard";
 import { AIInsightsCard } from "@/components/Dashboard/AIInsightsCard";
-import { BarChart, Target, AlertCircle } from "lucide-react";
+import { Target, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -152,24 +150,16 @@ const Index = () => {
   };
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <div className="flex-1">
-          <Header title="Dashboard" />
-          <main className="p-6">
-            <div className="mb-6">
-              <h1 className="text-3xl font-bold">Campaign Dashboard</h1>
-              <p className="text-muted-foreground mt-1">
-                Track performance metrics and get AI-powered insights for your campaigns
-              </p>
-            </div>
-
-            {renderContent()}
-          </main>
-        </div>
+    <PageLayout title="Dashboard">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">Campaign Dashboard</h1>
+        <p className="text-muted-foreground mt-1">
+          Track performance metrics and get AI-powered insights for your campaigns
+        </p>
       </div>
-    </SidebarProvider>
+
+      {renderContent()}
+    </PageLayout>
   );
 };
 

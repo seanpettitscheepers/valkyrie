@@ -1,22 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/Layout/Sidebar";
-import { Header } from "@/components/Layout/Header";
+import { PageLayout } from "@/components/Layout/PageLayout";
 import { AIInsightsCard } from "@/components/Dashboard/AIInsightsCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CampaignFilter } from "@/components/Audience/CampaignFilter";
 import { MetricsExplanation } from "@/components/Performance/MetricsExplanation";
 import { PerformanceMetricsGrid } from "@/components/Performance/PerformanceMetricsGrid";
 import { usePerformanceMetrics } from "@/components/Performance/usePerformanceMetrics";
-
-type InsightType = {
-  type: "success" | "info" | "warning";
-  message: string;
-  metric: string;
-  recommendation: string;
-};
 
 const Performance = () => {
   const [selectedCampaign, setSelectedCampaign] = useState("all");
@@ -35,10 +26,10 @@ const Performance = () => {
 
   const performanceMetrics = usePerformanceMetrics(campaigns, selectedCampaign);
 
-  const generateInsights = (): InsightType[] => {
+  const generateInsights = () => {
     if (!performanceMetrics) return [];
 
-    const insights: InsightType[] = [
+    const insights = [
       {
         type: "success",
         message: "Campaign Performance Overview",
@@ -105,29 +96,21 @@ const Performance = () => {
   };
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
-        <div className="flex-1">
-          <Header title="Performance Analysis" />
-          <main className="p-6">
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <h1 className="text-3xl font-bold">Campaign Performance Analysis</h1>
-                <p className="text-muted-foreground mt-1">
-                  Comprehensive analysis of campaign performance metrics and insights
-                </p>
-              </div>
-              <CampaignFilter
-                selectedCampaign={selectedCampaign}
-                onCampaignChange={setSelectedCampaign}
-              />
-            </div>
-            {renderContent()}
-          </main>
+    <PageLayout title="Performance Analysis">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-bold">Campaign Performance Analysis</h1>
+          <p className="text-muted-foreground mt-1">
+            Comprehensive analysis of campaign performance metrics and insights
+          </p>
         </div>
+        <CampaignFilter
+          selectedCampaign={selectedCampaign}
+          onCampaignChange={setSelectedCampaign}
+        />
       </div>
-    </SidebarProvider>
+      {renderContent()}
+    </PageLayout>
   );
 };
 
