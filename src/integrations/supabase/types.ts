@@ -560,6 +560,7 @@ export type Database = {
           id: string
           phone_number: string | null
           postal_code: string | null
+          role: string
           state: string | null
           subscription_tier:
             | Database["public"]["Enums"]["subscription_tier"]
@@ -578,6 +579,7 @@ export type Database = {
           id: string
           phone_number?: string | null
           postal_code?: string | null
+          role?: string
           state?: string | null
           subscription_tier?:
             | Database["public"]["Enums"]["subscription_tier"]
@@ -596,6 +598,7 @@ export type Database = {
           id?: string
           phone_number?: string | null
           postal_code?: string | null
+          role?: string
           state?: string | null
           subscription_tier?:
             | Database["public"]["Enums"]["subscription_tier"]
