@@ -12,7 +12,8 @@ export function WebsitePerformanceOverview() {
       const { data, error } = await supabase
         .from("analytics_integrations")
         .select("*")
-        .eq("platform_type", "google_analytics_4");
+        .eq("platform_type", "google_analytics_4")
+        .limit(1);
 
       if (error) throw error;
       
