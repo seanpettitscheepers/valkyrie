@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 import { NamingPatternList } from "@/components/Naming/NamingPatternList";
 import { CreatePatternSheet } from "@/components/Naming/CreatePatternSheet";
 import { NameGenerator } from "@/components/Naming/NameGenerator";
+import { UTMGenerator } from "@/components/Naming/UTMGenerator";
 import { Separator } from "@/components/ui/separator";
 
 export default function Naming() {
@@ -61,6 +62,12 @@ export default function Naming() {
         <div>
           <h2 className="text-2xl font-semibold mb-4">Generate Campaign Names</h2>
           <NameGenerator />
+        </div>
+
+        {/* UTM Generator Section */}
+        <div>
+          <h2 className="text-2xl font-semibold mb-4">Generate UTM URLs</h2>
+          <UTMGenerator />
         </div>
 
         {/* Patterns Management Section */}
