@@ -38,9 +38,20 @@ export function ReportMetricsSelector({
   ];
 
   const audienceMetrics = [
-    { id: "demographics", label: "Demographics" },
-    { id: "interests", label: "Interests" },
-    { id: "engagement", label: "Engagement" },
+    { id: "age_18_24", label: "Age: 18-24" },
+    { id: "age_25_34", label: "Age: 25-34" },
+    { id: "age_35_44", label: "Age: 35-44" },
+    { id: "age_45_plus", label: "Age: 45+" },
+    { id: "gender_male", label: "Gender: Male" },
+    { id: "gender_female", label: "Gender: Female" },
+    { id: "education_highschool", label: "Education: High School" },
+    { id: "education_bachelors", label: "Education: Bachelor's" },
+    { id: "education_masters", label: "Education: Master's" },
+    { id: "occupation_professional", label: "Occupation: Professional" },
+    { id: "occupation_student", label: "Occupation: Student" },
+    { id: "occupation_other", label: "Occupation: Other" },
+    { id: "marital_single", label: "Marital Status: Single" },
+    { id: "marital_married", label: "Marital Status: Married" },
   ];
 
   const sentimentMetrics = [
