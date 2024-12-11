@@ -6,29 +6,30 @@ import { SentimentFilters } from "@/components/Sentiment/SentimentFilters";
 import { SentimentContent } from "@/components/Sentiment/SentimentContent";
 
 const Sentiment = () => {
-  const [selectedCampaign, setSelectedCampaign] = useState("all");
-  const [selectedPlatform, setSelectedPlatform] = useState("all");
-  const [selectedDateRange, setSelectedDateRange] = useState<DateRange>();
+  const [selectedChannel, setSelectedChannel] = useState("all");
+  const [selectedBrand, setSelectedBrand] = useState("all");
+  const [dateRange, setDateRange] = useState<DateRange>();
 
   const handleDateRangeChange = (range: DateRange | undefined) => {
-    setSelectedDateRange(range);
+    setDateRange(range);
   };
 
   return (
     <PageLayout title="Brand Sentiment">
       <SentimentHeader />
       <SentimentFilters
-        selectedCampaign={selectedCampaign}
-        onCampaignChange={setSelectedCampaign}
-        selectedPlatform={selectedPlatform}
-        onPlatformChange={setSelectedPlatform}
-        selectedDateRange={selectedDateRange}
+        selectedChannel={selectedChannel}
+        onChannelChange={setSelectedChannel}
+        selectedBrand={selectedBrand}
+        onBrandChange={setSelectedBrand}
+        dateRange={dateRange}
         onDateRangeChange={handleDateRangeChange}
       />
       <SentimentContent
-        campaignId={selectedCampaign}
-        platform={selectedPlatform}
-        dateRange={selectedDateRange}
+        isLoading={false}
+        sentimentData={[]}
+        selectedChannel={selectedChannel}
+        dateRange={dateRange}
       />
     </PageLayout>
   );
