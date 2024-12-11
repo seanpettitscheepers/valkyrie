@@ -18,7 +18,7 @@ export default function Naming() {
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <div className="flex-1">
-          <Header />
+          <Header title="Campaign Naming" />
           <main className="p-8 max-w-7xl mx-auto">
             <div className="space-y-8">
               {/* Introduction Section */}

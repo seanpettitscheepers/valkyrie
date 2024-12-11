@@ -156,7 +156,7 @@ const Index = () => {
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <div className="flex-1">
-          <Header />
+          <Header title="Dashboard" />
           <main className="p-6">
             <div className="mb-6">
               <h1 className="text-3xl font-bold">Campaign Dashboard</h1>

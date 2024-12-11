@@ -42,7 +42,7 @@ const Sentiment = () => {
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <div className="flex-1">
-          <Header />
+          <Header title="Brand Sentiment" />
           <main className="p-6">
             <SentimentHeader />
             <SentimentFilters

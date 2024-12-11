@@ -109,7 +109,7 @@ const Performance = () => {
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <div className="flex-1">
-          <Header />
+          <Header title="Performance Analysis" />
           <main className="p-6">
             <div className="flex justify-between items-center mb-6">
               <div>
