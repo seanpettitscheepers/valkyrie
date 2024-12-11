@@ -11,6 +11,13 @@ import { MetricsExplanation } from "@/components/Performance/MetricsExplanation"
 import { PerformanceMetricsGrid } from "@/components/Performance/PerformanceMetricsGrid";
 import { usePerformanceMetrics } from "@/components/Performance/usePerformanceMetrics";
 
+type InsightType = {
+  type: "success" | "info" | "warning";
+  message: string;
+  metric: string;
+  recommendation: string;
+};
+
 const Performance = () => {
   const [selectedCampaign, setSelectedCampaign] = useState("all");
 
@@ -28,10 +35,10 @@ const Performance = () => {
 
   const performanceMetrics = usePerformanceMetrics(campaigns, selectedCampaign);
 
-  const generateInsights = () => {
+  const generateInsights = (): InsightType[] => {
     if (!performanceMetrics) return [];
 
-    const insights = [
+    const insights: InsightType[] = [
       {
         type: "success",
         message: "Campaign Performance Overview",
