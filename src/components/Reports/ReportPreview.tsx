@@ -22,8 +22,16 @@ export function ReportPreview({ data, selectedMetrics }: ReportPreviewProps) {
   const { performanceData, audienceData, sentimentData } = data;
   
   // Use the hook to transform the raw performance data into the expected format
+  // Now including all required Campaign type properties
   const performanceMetrics = usePerformanceMetrics(
-    [{ id: "report", campaign_metrics: performanceData }], 
+    [{
+      id: "report",
+      name: "Report Campaign",
+      type: "report",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      campaign_metrics: performanceData
+    }],
     "report"
   );
 
