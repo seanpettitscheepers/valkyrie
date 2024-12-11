@@ -3,6 +3,7 @@ import { WebsitePerformanceOverview } from "@/components/WebsitePerformance/Webs
 import { CustomerJourneyAnalysis } from "@/components/WebsitePerformance/CustomerJourneyAnalysis";
 import { WebsitePerformanceMetrics } from "@/components/WebsitePerformance/WebsitePerformanceMetrics";
 import { WebsitePerformanceInsights } from "@/components/WebsitePerformance/WebsitePerformanceInsights";
+import { TrafficSourceAnalysis } from "@/components/WebsitePerformance/TrafficSourceAnalysis";
 import { DateRangePicker } from "@/components/Reports/DateRangePicker";
 
 export default function WebsitePerformance() {
@@ -19,7 +20,10 @@ export default function WebsitePerformance() {
           <DateRangePicker />
         </div>
         <WebsitePerformanceOverview />
-        <CustomerJourneyAnalysis />
+        <div className="grid gap-6 md:grid-cols-2">
+          <CustomerJourneyAnalysis />
+          <TrafficSourceAnalysis />
+        </div>
         <WebsitePerformanceMetrics />
         <WebsitePerformanceInsights />
       </div>
