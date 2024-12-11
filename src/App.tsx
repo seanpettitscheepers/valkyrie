@@ -16,6 +16,7 @@ import Account from "./pages/Account";
 import Connections from "./pages/Connections";
 import Help from "./pages/Help";
 import Campaigns from "./pages/Campaigns";
+import WebsitePerformance from "./pages/WebsitePerformance";
 import { ProtectedRoute } from "./components/Auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/audience" element={<ProtectedRoute><Audience /></ProtectedRoute>} />
           <Route path="/sentiment" element={<ProtectedRoute><Sentiment /></ProtectedRoute>} />
           <Route path="/performance" element={<ProtectedRoute><Performance /></ProtectedRoute>} />
+          <Route path="/website-performance" element={<ProtectedRoute><WebsitePerformance /></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
           <Route path="/planning" element={<ProtectedRoute><Planning /></ProtectedRoute>} />
           <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
