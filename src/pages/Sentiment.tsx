@@ -1,23 +1,42 @@
+import { useState } from "react";
+import { DateRange } from "react-day-picker";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/Layout/Sidebar";
 import { Header } from "@/components/Layout/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Signal, AlertCircle, MessageSquare } from "lucide-react";
+import { Signal } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { SentimentOverviewCard } from "@/components/Sentiment/SentimentOverviewCard";
+import { SentimentFilters } from "@/components/Sentiment/SentimentFilters";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function Sentiment() {
+  const [selectedChannel, setSelectedChannel] = useState("all");
+  const [selectedBrand, setSelectedBrand] = useState("all");
+  const [dateRange, setDateRange] = useState<DateRange>();
+
   const { data: sentimentData, isLoading } = useQuery({
-    queryKey: ['brand-sentiment'],
+    queryKey: ['brand-sentiment', selectedChannel, selectedBrand, dateRange],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('brand_sentiment')
         .select('*')
-        .order('analysis_timestamp', { ascending: false })
-        .limit(10);
+        .order('analysis_timestamp', { ascending: false });
       
+      if (selectedChannel !== 'all') {
+        query = query.eq('platform', selectedChannel);
+      }
+      
+      if (dateRange?.from) {
+        query = query.gte('analysis_timestamp', dateRange.from.toISOString());
+      }
+      
+      if (dateRange?.to) {
+        query = query.lte('analysis_timestamp', dateRange.to.toISOString());
+      }
+      
+      const { data, error } = await query;
       if (error) throw error;
       return data;
     }
@@ -59,6 +78,15 @@ export default function Sentiment() {
                   Monitor and analyze brand sentiment across platforms in real-time
                 </p>
               </div>
+
+              <SentimentFilters
+                selectedChannel={selectedChannel}
+                selectedBrand={selectedBrand}
+                dateRange={dateRange}
+                onChannelChange={setSelectedChannel}
+                onBrandChange={setSelectedBrand}
+                onDateRangeChange={setDateRange}
+              />
 
               {/* Overview Cards */}
               <div className="grid gap-4 md:grid-cols-3">
