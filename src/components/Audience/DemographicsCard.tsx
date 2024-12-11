@@ -1,7 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, GraduationCap, Briefcase, Heart, Users2, Globe } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -35,14 +33,14 @@ export function DemographicsCard({ demographics }: DemographicsCardProps) {
         </div>
         <div className="space-y-3">
           {Object.entries(data).map(([key, value]) => (
-            <div key={key} className="space-y-1">
+            <div key={key} className="space-y-1.5">
               <div className="flex justify-between text-sm">
                 <span className="capitalize text-muted-foreground">{key}</span>
                 <span className="font-medium">{value}%</span>
               </div>
-              <div className="h-2 bg-secondary/20 rounded-full overflow-hidden">
+              <div className="relative h-2.5 bg-gradient-subtle rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-primary rounded-full transition-all"
+                  className="absolute inset-y-0 left-0 bg-gradient-brand transition-all duration-500 rounded-full"
                   style={{ width: `${(value / maxValue) * 100}%` }}
                 />
               </div>
@@ -54,11 +52,11 @@ export function DemographicsCard({ demographics }: DemographicsCardProps) {
   };
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="overflow-hidden">
+      <CardHeader className="border-b bg-gradient-subtle border-border/5">
         <CardTitle>User Demographics</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-8">
+      <CardContent className="space-y-8 p-6">
         {renderMetric(demographics.age, "Age Distribution", <Users className="h-4 w-4 text-primary" />)}
         {renderMetric(demographics.gender, "Gender Distribution", <Users2 className="h-4 w-4 text-primary" />)}
         {renderMetric(demographics.education, "Education", <GraduationCap className="h-4 w-4 text-primary" />)}

@@ -10,26 +10,31 @@ interface InterestsCardProps {
 
 export function InterestsCard({ interests }: InterestsCardProps) {
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>User Interests</CardTitle>
-        <Button variant="ghost" size="sm">
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
+    <Card className="overflow-hidden">
+      <CardHeader className="border-b bg-gradient-subtle border-border/5">
+        <CardTitle className="flex items-center justify-between">
+          User Interests
+          <Button variant="ghost" size="sm">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6">
         <div className="grid grid-cols-2 gap-3">
           {Object.entries(interests).map(([interest, value]) => (
-            <Button
+            <div
               key={interest}
-              variant="outline"
-              className="justify-between h-auto py-3"
+              className="relative overflow-hidden rounded-lg border bg-gradient-subtle p-4 transition-all hover:shadow-md"
             >
-              <span className="capitalize text-sm">{interest}</span>
-              <span className="ml-2 text-sm font-medium text-muted-foreground">
-                {value}%
-              </span>
-            </Button>
+              <div className="relative z-10">
+                <p className="capitalize font-medium mb-1">{interest}</p>
+                <span className="text-sm text-muted-foreground">{value}% Engagement</span>
+              </div>
+              <div 
+                className="absolute bottom-0 left-0 h-1 bg-gradient-brand transition-all"
+                style={{ width: `${value}%` }}
+              />
+            </div>
           ))}
         </div>
       </CardContent>

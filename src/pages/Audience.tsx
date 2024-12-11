@@ -35,34 +35,34 @@ const Audience = () => {
 
   return (
     <PageLayout title="Audience Insights">
-      <div className="space-y-8">
+      <div className="space-y-8 animate-fade-in">
         <div>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-2xl font-semibold">User Analysis</h1>
-              <p className="text-muted-foreground mt-1">
-                Unlock valuable insights into user behavior and preferences through our comprehensive user analysis, empowering your decision-making with data-driven strategies.
+          <div className="flex items-center justify-between mb-6">
+            <div className="space-y-1">
+              <h1 className="text-3xl font-semibold tracking-tight">User Analysis</h1>
+              <p className="text-muted-foreground">
+                Unlock valuable insights into user behavior and preferences through our comprehensive user analysis.
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="text-muted-foreground hover:text-foreground">
                 <Filter className="h-4 w-4 mr-2" />
                 Filter
               </Button>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="text-muted-foreground hover:text-foreground">
                 <Share2 className="h-4 w-4 mr-2" />
                 Share
               </Button>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="text-muted-foreground hover:text-foreground">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
-              <Button size="sm">
+              <Button size="sm" className="bg-gradient-brand hover:opacity-90">
                 <Plus className="h-4 w-4 mr-2" />
                 Add
               </Button>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 bg-gradient-subtle p-4 rounded-lg border animate-fade-in">
             <CampaignFilter
               selectedCampaign={selectedCampaign}
               onCampaignChange={setSelectedCampaign}
@@ -74,7 +74,7 @@ const Audience = () => {
           </div>
         </div>
 
-        <Separator />
+        <Separator className="bg-border/5" />
 
         <div className="grid gap-6">
           <div className="grid gap-6 md:grid-cols-2">
