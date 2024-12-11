@@ -4,6 +4,75 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+  }
+
+  /* Modern Card Styles */
+  .card {
+    @apply bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-xl border border-border/5;
+  }
+
+  /* Modern Button Styles */
+  .button-gradient {
+    @apply bg-gradient-brand text-white hover:opacity-90 transition-opacity;
+  }
+
+  /* Modern Input Styles */
+  .input-modern {
+    @apply bg-background border-border/10 focus:border-primary/50 focus:ring-primary/30;
+  }
+
+  /* Modern Table Styles */
+  .table-modern {
+    @apply bg-white rounded-lg shadow-sm;
+  }
+
+  .table-modern th {
+    @apply bg-muted/50 text-muted-foreground font-medium px-4 py-3;
+  }
+
+  .table-modern td {
+    @apply px-4 py-3 border-t border-border/5;
+  }
+
+  /* Modern Navigation Styles */
+  .nav-link {
+    @apply text-muted-foreground hover:text-primary transition-colors duration-200;
+  }
+
+  .nav-link.active {
+    @apply text-primary font-medium;
+  }
+
+  /* Modern Section Styles */
+  .section-header {
+    @apply space-y-1 mb-6;
+  }
+
+  .section-title {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+
+  .section-description {
+    @apply text-muted-foreground;
+  }
+
+  /* Modern Stats Card */
+  .stats-card {
+    @apply p-6 rounded-xl border border-border/5 bg-gradient-subtle hover:shadow-lg transition-all duration-300;
+  }
+
+  /* Modern Chart Styles */
+  .recharts-default-tooltip {
+    @apply !bg-background/90 !border-border/10 !backdrop-blur-sm !rounded-lg !shadow-lg !px-4 !py-2;
+  }
+
+  /* Animations */
+  .animate-fade-in {
+    @apply animate-fadeIn;
+  }
+
+  .animate-slide-in {
+    @apply animate-slideIn;
   }
 }
