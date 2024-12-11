@@ -9,6 +9,47 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      audience_insights: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          demographics: Json
+          engagement_metrics: Json
+          id: string
+          interests: Json
+          platform: string
+          updated_at: string
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          demographics?: Json
+          engagement_metrics?: Json
+          id?: string
+          interests?: Json
+          platform: string
+          updated_at?: string
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          demographics?: Json
+          engagement_metrics?: Json
+          id?: string
+          interests?: Json
+          platform?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audience_insights_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaign_metrics: {
         Row: {
           campaign_id: string
