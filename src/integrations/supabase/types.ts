@@ -174,6 +174,66 @@ export type Database = {
         }
         Relationships: []
       }
+      campaign_plans: {
+        Row: {
+          audience_insights_id: string | null
+          budget_allocation: Json
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          objective: Database["public"]["Enums"]["campaign_objective"]
+          platforms: Json
+          previous_campaign_id: string | null
+          status: string
+          total_budget: number
+          updated_at: string
+        }
+        Insert: {
+          audience_insights_id?: string | null
+          budget_allocation?: Json
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          objective: Database["public"]["Enums"]["campaign_objective"]
+          platforms?: Json
+          previous_campaign_id?: string | null
+          status?: string
+          total_budget?: number
+          updated_at?: string
+        }
+        Update: {
+          audience_insights_id?: string | null
+          budget_allocation?: Json
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          objective?: Database["public"]["Enums"]["campaign_objective"]
+          platforms?: Json
+          previous_campaign_id?: string | null
+          status?: string
+          total_budget?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_plans_audience_insights_id_fkey"
+            columns: ["audience_insights_id"]
+            isOneToOne: false
+            referencedRelation: "audience_insights"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_plans_previous_campaign_id_fkey"
+            columns: ["previous_campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaigns: {
         Row: {
           created_at: string
@@ -427,6 +487,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      campaign_objective: "awareness" | "consideration" | "conversion"
       industry_type:
         | "e_commerce"
         | "b2b_saas"
