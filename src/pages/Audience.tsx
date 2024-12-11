@@ -11,7 +11,7 @@ import { InterestsCard } from "@/components/Audience/InterestsCard";
 import { AIRecommendationsCard } from "@/components/Audience/AIRecommendationsCard";
 import { AddInsightForm } from "@/components/Audience/AddInsightForm";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Users } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +19,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface AudienceInsight {
   id: string;
@@ -117,9 +118,45 @@ const Audience = () => {
 
   const aggregatedData = aggregateData(insights);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            <Skeleton className="h-[400px] w-full" />
+            <Skeleton className="h-[400px] w-full" />
+          </div>
+          <Skeleton className="h-[200px] w-full" />
+        </div>
+      );
+    }
+
+    if (!insights || insights.length === 0) {
+      return (
+        <div className="text-center py-12">
+          <Users className="mx-auto h-12 w-12 text-muted-foreground" />
+          <h3 className="mt-4 text-lg font-semibold">No audience insights yet</h3>
+          <p className="text-muted-foreground mt-2">
+            Add your first audience insight to start analyzing your audience demographics and interests.
+          </p>
+          <Button onClick={() => setIsFormOpen(true)} className="mt-4">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Add New Insight
+          </Button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-6">
+        <div className="grid gap-6 md:grid-cols-2">
+          <DemographicsCard demographics={aggregatedData?.demographics || {}} />
+          <InterestsCard interests={aggregatedData?.interests || {}} />
+        </div>
+        <AIRecommendationsCard audienceData={aggregatedData} />
+      </div>
+    );
+  };
 
   return (
     <SidebarProvider>
@@ -129,7 +166,12 @@ const Audience = () => {
           <Header />
           <main className="p-6">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-3xl font-bold">Audience Insights</h1>
+              <div>
+                <h1 className="text-3xl font-bold">Audience Insights</h1>
+                <p className="text-muted-foreground mt-1">
+                  Analyze and understand your audience demographics, interests, and behaviors
+                </p>
+              </div>
               <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
                 <DialogTrigger asChild>
                   <Button>
@@ -146,7 +188,7 @@ const Audience = () => {
               </Dialog>
             </div>
             
-            <div className="flex gap-4 mb-6">
+            <div className="flex gap-4 mb-6 flex-wrap">
               <PlatformFilter
                 selectedPlatform={selectedPlatform}
                 onPlatformChange={setSelectedPlatform}
@@ -157,15 +199,7 @@ const Audience = () => {
               />
             </div>
 
-            {aggregatedData && (
-              <div className="space-y-6">
-                <div className="grid gap-6 md:grid-cols-2">
-                  <DemographicsCard demographics={aggregatedData.demographics} />
-                  <InterestsCard interests={aggregatedData.interests} />
-                </div>
-                <AIRecommendationsCard audienceData={aggregatedData} />
-              </div>
-            )}
+            {renderContent()}
           </main>
         </div>
       </div>
