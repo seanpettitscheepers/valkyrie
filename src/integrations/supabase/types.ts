@@ -50,6 +50,56 @@ export type Database = {
           },
         ]
       }
+      brand_sentiment: {
+        Row: {
+          analysis_timestamp: string | null
+          campaign_id: string | null
+          created_at: string | null
+          id: string
+          key_mentions: Json | null
+          platform: string
+          risk_factors: Json | null
+          risk_level: string
+          sentiment_score: number
+          updated_at: string | null
+          volume: number
+        }
+        Insert: {
+          analysis_timestamp?: string | null
+          campaign_id?: string | null
+          created_at?: string | null
+          id?: string
+          key_mentions?: Json | null
+          platform: string
+          risk_factors?: Json | null
+          risk_level: string
+          sentiment_score: number
+          updated_at?: string | null
+          volume: number
+        }
+        Update: {
+          analysis_timestamp?: string | null
+          campaign_id?: string | null
+          created_at?: string | null
+          id?: string
+          key_mentions?: Json | null
+          platform?: string
+          risk_factors?: Json | null
+          risk_level?: string
+          sentiment_score?: number
+          updated_at?: string | null
+          volume?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brand_sentiment_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaign_metrics: {
         Row: {
           campaign_id: string
