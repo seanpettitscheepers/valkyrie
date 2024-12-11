@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Navigation } from "@/components/Landing/Navigation";
 import { Hero } from "@/components/Landing/Hero";
@@ -58,10 +58,12 @@ export default function Landing() {
       <PricingSection />
       
       {/* Auth Section */}
-      <section id="auth-section" className="py-16 bg-muted/50">
+      <section id="auth-section" className="py-16 bg-gradient-subtle">
         <div className="container mx-auto px-4 max-w-md">
-          <h2 className="text-3xl font-bold text-center mb-8">Get Started</h2>
-          <Card>
+          <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-brand bg-clip-text text-transparent">
+            Get Started
+          </h2>
+          <Card className="border-border/5 bg-background/60 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <CardContent className="pt-6">
               <Auth
                 supabaseClient={supabase}
@@ -84,7 +86,7 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 border-t">
+      <footer className="py-8 border-t border-border/5">
         <div className="container mx-auto px-4 text-center text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} AdConnective Hub. All rights reserved.</p>
         </div>
