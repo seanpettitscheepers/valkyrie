@@ -29,8 +29,17 @@ export function PricingSection() {
     },
   });
 
-  const handleSubscribe = async (priceId: string) => {
+  const handleSubscribe = async (priceId: string | null) => {
     try {
+      if (!priceId) {
+        toast({
+          title: "Error",
+          description: "Invalid price ID. Please contact support.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       if (!session) {
         document.getElementById("auth-section")?.scrollIntoView({ behavior: "smooth" });
         return;
