@@ -245,7 +245,7 @@ const Performance = () => {
         </div>
 
         <AIInsightsCard
-          type="awareness"
+          campaignType="awareness"
           insights={[
             {
               type: "success",
