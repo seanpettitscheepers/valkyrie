@@ -1,50 +1,61 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
-import { Progress } from "@/components/ui/progress";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Filter, Share2, MoreHorizontal, Plus } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
+import { CampaignFilter } from "./CampaignFilter";
+import { KPIProgressCard } from "./KPIProgressCard";
 
 export function CampaignDashboard() {
+  const [selectedCampaign, setSelectedCampaign] = useState("all");
+
   // Fetch performance metrics
   const { data: performanceData } = useQuery({
-    queryKey: ["campaign-metrics"],
+    queryKey: ["campaign-metrics", selectedCampaign],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("campaign_metrics")
-        .select("*")
-        .order("date", { ascending: true });
+      let query = supabase.from("campaign_metrics").select("*");
+      
+      if (selectedCampaign !== "all") {
+        query = query.eq("campaign_id", selectedCampaign);
+      }
+      
+      const { data, error } = await query.order("date", { ascending: true });
       if (error) throw error;
       return data;
     },
   });
 
-  // Fetch audience data
-  const { data: audienceData } = useQuery({
-    queryKey: ["audience-insights"],
+  // Fetch custom KPIs
+  const { data: customKPIs } = useQuery({
+    queryKey: ["custom-kpis"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("audience_insights")
-        .select("*");
-      if (error) throw error;
-      return data?.[0];
-    },
-  });
-
-  // Fetch sentiment data
-  const { data: sentimentData } = useQuery({
-    queryKey: ["brand-sentiment"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("brand_sentiment")
+        .from("custom_kpis")
         .select("*")
-        .order("analysis_timestamp", { ascending: true });
+        .eq("is_active", true);
+      
       if (error) throw error;
       return data;
     },
   });
+
+  // Calculate KPI progress
+  const kpiProgress = {
+    signups: {
+      completed: performanceData?.reduce((sum, d) => sum + (d.impressions || 0), 0) || 0,
+      target: customKPIs?.find(k => k.metric_name === "signups")?.target_value || 10000,
+    },
+    purchases: {
+      completed: performanceData?.reduce((sum, d) => sum + (d.conversions || 0), 0) || 0,
+      target: customKPIs?.find(k => k.metric_name === "purchases")?.target_value || 1000,
+    },
+    revenue: {
+      completed: performanceData?.reduce((sum, d) => sum + (d.spend || 0), 0) || 0,
+      target: customKPIs?.find(k => k.metric_name === "revenue")?.target_value || 20000,
+    },
+  };
 
   // Process engagement data for the chart
   const engagementData = performanceData?.map(d => ({
@@ -53,28 +64,6 @@ export function CampaignDashboard() {
     buy_product: d.conversions,
     revenue: d.spend,
   })) || [];
-
-  // Calculate KPI progress
-  const kpiProgress = {
-    signups: {
-      completed: performanceData?.reduce((sum, d) => sum + (d.impressions || 0), 0) || 0,
-      target: 10000,
-    },
-    purchases: {
-      completed: performanceData?.reduce((sum, d) => sum + (d.conversions || 0), 0) || 0,
-      target: 10000,
-    },
-    revenue: {
-      completed: performanceData?.reduce((sum, d) => sum + (d.spend || 0), 0) || 0,
-      target: 20000,
-    },
-  };
-
-  // Calculate conversion rates
-  const conversionData = {
-    signIn: 100,
-    purchase: (kpiProgress.purchases.completed / kpiProgress.signups.completed) * 100 || 0,
-  };
 
   return (
     <div className="space-y-8 p-6">
@@ -89,22 +78,28 @@ export function CampaignDashboard() {
               business
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </Button>
-            <Button variant="outline" size="sm">
-              <Share2 className="h-4 w-4 mr-2" />
-              Share
-            </Button>
-            <Button variant="outline" size="sm">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-            <Button size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              Add
-            </Button>
+          <div className="flex items-center gap-4">
+            <CampaignFilter
+              selectedCampaign={selectedCampaign}
+              onCampaignChange={setSelectedCampaign}
+            />
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm">
+                <Filter className="h-4 w-4 mr-2" />
+                Filter
+              </Button>
+              <Button variant="outline" size="sm">
+                <Share2 className="h-4 w-4 mr-2" />
+                Share
+              </Button>
+              <Button variant="outline" size="sm">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+              <Button size="sm">
+                <Plus className="h-4 w-4 mr-2" />
+                Add
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -135,23 +130,12 @@ export function CampaignDashboard() {
       {/* KPI Progress */}
       <div className="grid gap-4 md:grid-cols-3">
         {Object.entries(kpiProgress).map(([key, value]) => (
-          <Card key={key}>
-            <CardHeader>
-              <CardTitle className="capitalize">{key}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <Progress value={(value.completed / value.target) * 100} />
-                <div className="flex justify-between text-sm">
-                  <span>Completed: {value.completed.toLocaleString()}</span>
-                  <span>Target: {value.target.toLocaleString()}</span>
-                </div>
-                <div className="text-lg font-semibold">
-                  {Math.round((value.completed / value.target) * 100)}%
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <KPIProgressCard
+            key={key}
+            title={key}
+            completed={value.completed}
+            target={value.target}
+          />
         ))}
       </div>
 
@@ -164,8 +148,8 @@ export function CampaignDashboard() {
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={[
-                { name: "Sign In", value: conversionData.signIn },
-                { name: "Purchase", value: conversionData.purchase },
+                { name: "Sign In", value: 100 },
+                { name: "Purchase", value: (kpiProgress.purchases.completed / kpiProgress.signups.completed) * 100 || 0 },
               ]}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
@@ -173,29 +157,6 @@ export function CampaignDashboard() {
                 <Tooltip />
                 <Bar dataKey="value" fill="#8884d8" name="Conversion Rate %" />
               </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Retention Chart */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Retention</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={sentimentData?.map(d => ({
-                date: new Date(d.analysis_timestamp).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
-                retention: d.sentiment_score * 100,
-              })) || []}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="retention" stroke="#8884d8" name="Retention %" />
-              </LineChart>
             </ResponsiveContainer>
           </div>
         </CardContent>
