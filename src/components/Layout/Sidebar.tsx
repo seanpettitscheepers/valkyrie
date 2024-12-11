@@ -1,4 +1,4 @@
-import { Home, BarChart, Target, Users, Settings, Signal, LineChart } from "lucide-react";
+import { Home, BarChart, Target, Users, Settings, Signal, LineChart, FileText } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -18,6 +18,7 @@ const menuItems = [
   { icon: Target, label: "Naming Rules", path: "/naming" },
   { icon: Users, label: "Audience", path: "/audience" },
   { icon: Signal, label: "Brand Sentiment", path: "/sentiment" },
+  { icon: FileText, label: "Reports", path: "/reports" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
