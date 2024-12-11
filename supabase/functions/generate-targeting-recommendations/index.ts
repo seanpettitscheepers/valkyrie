@@ -1,5 +1,6 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
+import { Configuration, OpenAIApi } from "https://esm.sh/openai@3.3.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -9,97 +10,106 @@ const corsHeaders = {
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
-  
-  if (!openAIApiKey) {
-    console.error('OPENAI_API_KEY is not set');
-    return new Response(
-      JSON.stringify({ error: 'OpenAI API key not configured' }), 
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
     const { audienceData } = await req.json();
-    
+
     if (!audienceData) {
-      console.error('No audience data provided');
       return new Response(
-        JSON.stringify({ error: 'No audience data provided' }), 
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'No audience data provided' }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
       );
     }
 
-    console.log('Processing audience data:', JSON.stringify(audienceData, null, 2));
-
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          { 
-            role: 'system', 
-            content: 'You are a marketing expert AI that provides targeting recommendations based on audience data. Always respond with valid JSON.' 
-          },
-          { 
-            role: 'user', 
-            content: `Analyze this audience data and provide 3 specific targeting recommendations:
-              ${JSON.stringify(audienceData, null, 2)}
-              
-              Format your response as a JSON array with exactly 3 objects, each containing:
-              - type: "demographic" | "behavioral" | "interest"
-              - recommendation: string (the actual recommendation)
-              - reasoning: string (why this would be effective)
-              - potentialImpact: "high" | "medium" | "low"
-              
-              Make sure to return valid JSON that can be parsed.`
-          }
-        ],
-        temperature: 0.7,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('OpenAI API error:', errorText);
-      throw new Error(`OpenAI API error: ${response.status} ${errorText}`);
+    // Initialize OpenAI
+    const openAiKey = Deno.env.get('OPENAI_API_KEY');
+    if (!openAiKey) {
+      return new Response(
+        JSON.stringify({ error: 'OpenAI API key not configured' }),
+        { 
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
 
-    const data = await response.json();
-    console.log('OpenAI response:', JSON.stringify(data, null, 2));
+    const configuration = new Configuration({ apiKey: openAiKey });
+    const openai = new OpenAIApi(configuration);
 
-    if (!data.choices?.[0]?.message?.content) {
-      throw new Error('Invalid response format from OpenAI');
+    // Prepare the prompt
+    const prompt = `Based on the following audience data, provide 3 targeting recommendations:
+    ${JSON.stringify(audienceData, null, 2)}
+    
+    Format your response as a JSON array with exactly 3 objects, each containing:
+    - type: either "demographic", "behavioral", or "interest"
+    - recommendation: a clear, actionable targeting suggestion
+    - reasoning: explanation for the recommendation
+    - potentialImpact: either "high", "medium", or "low"
+    
+    Focus on actionable insights that can improve campaign performance.`;
+
+    // Call OpenAI API
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: "You are a marketing analytics expert who provides targeting recommendations based on audience data."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 1000,
+    });
+
+    // Parse and validate the response
+    const responseText = completion.data.choices[0]?.message?.content;
+    if (!responseText) {
+      throw new Error('No response from OpenAI');
     }
 
     let recommendations;
     try {
-      recommendations = JSON.parse(data.choices[0].message.content);
-      
+      recommendations = JSON.parse(responseText);
       if (!Array.isArray(recommendations) || recommendations.length !== 3) {
-        throw new Error('Invalid recommendations format');
+        throw new Error('Invalid response format');
       }
-    } catch (parseError) {
-      console.error('Failed to parse OpenAI response:', parseError);
-      throw new Error('Failed to parse recommendations from OpenAI response');
+    } catch (error) {
+      console.error('Error parsing OpenAI response:', error);
+      return new Response(
+        JSON.stringify({ error: 'Failed to generate valid recommendations' }),
+        { 
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
 
+    // Return the recommendations
     return new Response(
-      JSON.stringify({ recommendations }), 
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ recommendations }),
+      { 
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
     );
+
   } catch (error) {
-    console.error('Error generating recommendations:', error);
+    console.error('Error:', error);
     return new Response(
-      JSON.stringify({ error: error.message }), 
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ error: error.message }),
+      { 
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
     );
   }
 });
