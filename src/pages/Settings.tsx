@@ -7,12 +7,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const Settings = () => {
   return (
     <PageLayout title="Settings">
-      <Tabs defaultValue="reports" className="space-y-6">
+      <Tabs defaultValue="integrations" className="space-y-6">
         <TabsList>
-          <TabsTrigger value="reports">Report Builder</TabsTrigger>
           <TabsTrigger value="integrations">Platform Integrations</TabsTrigger>
+          <TabsTrigger value="reports">Report Builder</TabsTrigger>
           <TabsTrigger value="benchmarks">Benchmarks</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="integrations">
+          <PlatformIntegrations />
+        </TabsContent>
 
         <TabsContent value="reports" className="space-y-6">
           <div className="flex justify-between items-center">
@@ -24,10 +28,6 @@ const Settings = () => {
             </div>
           </div>
           <ReportBuilder />
-        </TabsContent>
-
-        <TabsContent value="integrations">
-          <PlatformIntegrations />
         </TabsContent>
 
         <TabsContent value="benchmarks">
