@@ -12,11 +12,25 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
 
 const Index = () => {
-  const { data: campaigns, isLoading } = useQuery({
+  // Fetch campaigns and their metrics
+  const { data: campaigns, isLoading: campaignsLoading } = useQuery({
     queryKey: ["campaigns"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("campaigns")
+        .select("*, campaign_metrics(*)");
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Fetch sentiment data
+  const { data: sentimentData, isLoading: sentimentLoading } = useQuery({
+    queryKey: ["sentiment"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("brand_sentiment")
         .select("*")
         .order("created_at", { ascending: false });
       
@@ -25,14 +39,50 @@ const Index = () => {
     },
   });
 
+  // Calculate performance metrics
+  const calculatePerformanceMetrics = () => {
+    if (!campaigns?.length) return null;
+
+    const metrics = campaigns.flatMap(campaign => campaign.campaign_metrics || []);
+    if (!metrics.length) return null;
+
+    const totalImpressions = metrics.reduce((sum, m) => sum + (m.impressions || 0), 0);
+    const totalEngagements = metrics.reduce((sum, m) => sum + (m.engagements || 0), 0);
+    const engagementRate = totalImpressions ? (totalEngagements / totalImpressions) * 100 : 0;
+
+    return {
+      rate: engagementRate.toFixed(2),
+      trend: engagementRate > 2 ? "up" : "down",
+      change: Math.abs(engagementRate - 2).toFixed(1)
+    };
+  };
+
+  // Calculate sentiment metrics
+  const calculateSentimentMetrics = () => {
+    if (!sentimentData?.length) return null;
+
+    const avgSentiment = sentimentData.reduce((sum, item) => sum + item.sentiment_score, 0) / sentimentData.length;
+    const previousAvg = 0.65; // This could be calculated from historical data
+
+    return {
+      score: avgSentiment.toFixed(2),
+      trend: avgSentiment > previousAvg ? "up" : "down",
+      change: Math.abs(avgSentiment - previousAvg).toFixed(1)
+    };
+  };
+
+  const performanceMetrics = calculatePerformanceMetrics();
+  const sentimentMetrics = calculateSentimentMetrics();
+
   const renderContent = () => {
-    if (isLoading) {
+    if (campaignsLoading || sentimentLoading) {
       return (
         <div className="space-y-6">
           <Skeleton className="h-[200px] w-full" />
-          <div className="grid gap-6 md:grid-cols-2">
-            <Skeleton className="h-[300px] w-full" />
-            <Skeleton className="h-[300px] w-full" />
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <Skeleton className="h-[160px] w-full" />
+            <Skeleton className="h-[160px] w-full" />
+            <Skeleton className="h-[160px] w-full" />
           </div>
         </div>
       );
@@ -63,27 +113,36 @@ const Index = () => {
             You have {campaigns.length} active campaign{campaigns.length === 1 ? "" : "s"}
           </AlertDescription>
         </Alert>
-        <div className="grid gap-6 md:grid-cols-2">
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <PerformanceCard
             title="Campaign Performance"
-            value="85%"
-            change={12}
-            trend="up"
+            value={performanceMetrics?.rate + "%" || "0%"}
+            change={Number(performanceMetrics?.change || 0)}
+            trend={performanceMetrics?.trend || "up"}
           />
+          
+          <PerformanceCard
+            title="Brand Sentiment"
+            value={sentimentMetrics?.score || "0.00"}
+            change={Number(sentimentMetrics?.change || 0)}
+            trend={sentimentMetrics?.trend || "up"}
+          />
+
           <AIInsightsCard
             campaignType="awareness"
             insights={[
               {
                 type: "success",
                 message: "Campaign performance is above average",
-                metric: "Engagement rate: 4.2%",
+                metric: `Engagement rate: ${performanceMetrics?.rate || 0}%`,
                 recommendation: "Consider increasing budget allocation"
               },
               {
                 type: "info",
-                message: "New audience segment identified",
-                metric: "18-24 age group showing high engagement",
-                recommendation: "Optimize content for younger audience"
+                message: "Brand sentiment is positive",
+                metric: `Sentiment score: ${sentimentMetrics?.score || 0}`,
+                recommendation: "Maintain current content strategy"
               }
             ]}
           />
