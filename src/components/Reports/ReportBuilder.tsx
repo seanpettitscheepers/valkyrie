@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { ReportMetricsSelector } from "./ReportMetricsSelector";
 import { ReportFilters } from "./ReportFilters";
@@ -8,9 +8,14 @@ import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DateRange } from "react-day-picker";
+import { Button } from "@/components/ui/button";
+import { FileDown } from "lucide-react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 export function ReportBuilder() {
   const { toast } = useToast();
+  const reportRef = useRef<HTMLDivElement>(null);
   const [selectedCampaign, setSelectedCampaign] = useState<string>("all");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedMetrics, setSelectedMetrics] = useState<{
@@ -70,30 +75,88 @@ export function ReportBuilder() {
     return data;
   };
 
+  const exportToPDF = async () => {
+    if (!reportRef.current) return;
+
+    try {
+      toast({
+        title: "Generating PDF...",
+        description: "Please wait while we prepare your report.",
+      });
+
+      const canvas = await html2canvas(reportRef.current, {
+        scale: 2,
+        logging: false,
+        useCORS: true,
+      });
+
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      const pdf = new jsPDF({
+        orientation: imgHeight > imgWidth ? "portrait" : "landscape",
+        unit: "mm",
+      });
+
+      pdf.addImage(
+        canvas.toDataURL("image/png"),
+        "PNG",
+        0,
+        0,
+        imgWidth,
+        imgHeight
+      );
+
+      pdf.save("campaign-report.pdf");
+
+      toast({
+        title: "PDF Generated",
+        description: "Your report has been downloaded successfully.",
+      });
+    } catch (error) {
+      console.error("PDF generation error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to generate PDF. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <Card className="p-6">
-        <ReportFilters
-          selectedCampaign={selectedCampaign}
-          onCampaignChange={setSelectedCampaign}
-          dateRange={dateRange}
-          onDateRangeChange={setDateRange}
-        />
-        <ReportMetricsSelector
-          selectedMetrics={selectedMetrics}
-          onMetricsChange={setSelectedMetrics}
-        />
-      </Card>
+      <div className="flex items-center justify-between">
+        <Card className="p-6 w-full">
+          <ReportFilters
+            selectedCampaign={selectedCampaign}
+            onCampaignChange={setSelectedCampaign}
+            dateRange={dateRange}
+            onDateRangeChange={setDateRange}
+          />
+          <ReportMetricsSelector
+            selectedMetrics={selectedMetrics}
+            onMetricsChange={setSelectedMetrics}
+          />
+        </Card>
+      </div>
 
       {isLoading ? (
         <div>Loading report data...</div>
       ) : reportData ? (
         <>
-          <ReportPreview
-            data={reportData}
-            selectedMetrics={selectedMetrics}
-          />
-          <ReportInsights data={reportData} />
+          <div className="flex justify-end">
+            <Button onClick={exportToPDF} className="gap-2">
+              <FileDown className="h-4 w-4" />
+              Export PDF
+            </Button>
+          </div>
+          <div ref={reportRef}>
+            <ReportPreview
+              data={reportData}
+              selectedMetrics={selectedMetrics}
+            />
+            <ReportInsights data={reportData} />
+          </div>
         </>
       ) : null}
     </div>
