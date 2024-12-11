@@ -3,6 +3,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Signal } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SentimentMetrics } from "./SentimentMetrics";
+import { SentimentTrendChart } from "./SentimentTrendChart";
 import { DateRange } from "react-day-picker";
 import { Tables } from "@/integrations/supabase/types";
 
@@ -13,7 +14,12 @@ interface SentimentContentProps {
   dateRange?: DateRange;
 }
 
-export function SentimentContent({ isLoading, sentimentData, selectedChannel, dateRange }: SentimentContentProps) {
+export function SentimentContent({ 
+  isLoading, 
+  sentimentData, 
+  selectedChannel, 
+  dateRange 
+}: SentimentContentProps) {
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -48,6 +54,10 @@ export function SentimentContent({ isLoading, sentimentData, selectedChannel, da
         </AlertDescription>
       </Alert>
       <SentimentMetrics sentimentData={sentimentData} />
+      <div className="mt-8">
+        <h3 className="text-lg font-semibold mb-4">Sentiment Trends</h3>
+        <SentimentTrendChart sentimentData={sentimentData} />
+      </div>
     </div>
   );
 }
