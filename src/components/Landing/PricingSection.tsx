@@ -71,35 +71,70 @@ export function PricingSection() {
     );
   }
 
+  const planTitles = {
+    free: "Free Tier",
+    starter: "Starter Plan",
+    growth: "Growth Plan",
+    enterprise: "Enterprise Plan"
+  };
+
+  const planDescriptions = {
+    free: "Perfect for testing the waters",
+    starter: "For businesses starting to scale",
+    growth: "For businesses scaling up",
+    enterprise: "For growing businesses and agencies"
+  };
+
+  const planCTAs = {
+    free: "Start Your Free Trial",
+    starter: "Get Started Now",
+    growth: "Level Up Your Advertising",
+    enterprise: "Request a Demo"
+  };
+
   return (
     <section id="pricing-section" className="py-24">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-12">Pricing Plans</h2>
-        <div className="grid md:grid-cols-3 gap-8">
+        <h2 className="text-3xl font-bold text-center mb-4 bg-gradient-brand bg-clip-text text-transparent">
+          Simple Plans for Every Business
+        </h2>
+        <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+          Choose the plan that best fits your needs. All plans include a 14-day free trial of premium features.
+        </p>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {plans?.map((plan) => (
-            <Card key={plan.id} className="relative overflow-hidden">
+            <Card key={plan.id} className="relative overflow-hidden animate-fade-in">
               {plan.tier === 'growth' && (
                 <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-3 py-1 text-sm">
                   Popular
                 </div>
               )}
               <CardHeader>
-                <CardTitle>{plan.name}</CardTitle>
+                <CardTitle>{planTitles[plan.tier as keyof typeof planTitles]}</CardTitle>
                 <CardDescription>
-                  ${plan.price}/month
-                  {plan.annual_price && (
-                    <span className="block text-sm">
-                      or ${plan.annual_price}/year
-                    </span>
+                  {plan.price === 0 ? (
+                    "Free"
+                  ) : (
+                    <>
+                      ${plan.price}/month
+                      {plan.annual_price && (
+                        <span className="block text-sm">
+                          or ${plan.annual_price}/year
+                        </span>
+                      )}
+                    </>
                   )}
                 </CardDescription>
+                <p className="text-sm text-muted-foreground mt-2">
+                  {planDescriptions[plan.tier as keyof typeof planDescriptions]}
+                </p>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 mb-6">
                   {(plan.features as string[]).map((feature, index) => (
                     <li key={index} className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span>{feature}</span>
+                      <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -108,7 +143,7 @@ export function PricingSection() {
                   variant={plan.tier === 'growth' ? 'default' : 'outline'}
                   onClick={() => handleSubscribe(plan.price_id)}
                 >
-                  {session ? 'Subscribe Now' : 'Sign Up'}
+                  {planCTAs[plan.tier as keyof typeof planCTAs]}
                 </Button>
               </CardContent>
             </Card>
