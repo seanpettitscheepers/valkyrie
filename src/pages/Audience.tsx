@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Target, ChartPie } from "lucide-react";
+import { Users, Target, ChartPie, MapPin, GraduationCap, Briefcase, Heart, Users2 } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/Layout/Sidebar";
 import { Header } from "@/components/Layout/Header";
@@ -14,6 +14,11 @@ interface AudienceInsight {
     age?: { [key: string]: number };
     gender?: { [key: string]: number };
     location?: { [key: string]: number };
+    income?: { [key: string]: number };
+    education?: { [key: string]: number };
+    occupation?: { [key: string]: number };
+    marital_status?: { [key: string]: number };
+    family_size?: { [key: string]: number };
   };
   interests: {
     categories?: string[];
@@ -38,35 +43,48 @@ const Audience = () => {
     },
   });
 
-  const renderDemographics = (demographics: AudienceInsight["demographics"]) => {
+  const renderMetricCard = (title: string, value: string, icon: React.ReactNode) => (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        {icon}
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+      </CardContent>
+    </Card>
+  );
+
+  const renderDemographicSection = (
+    title: string,
+    data: { [key: string]: number } | undefined,
+    icon: React.ReactNode
+  ) => {
+    if (!data) return null;
     return (
       <div className="space-y-4">
-        {demographics.age && (
-          <div>
-            <h4 className="font-medium mb-2">Age Distribution</h4>
-            <div className="grid grid-cols-2 gap-2">
-              {Object.entries(demographics.age).map(([range, percentage]) => (
-                <div key={range} className="flex justify-between">
-                  <span>{range}</span>
-                  <span>{percentage}%</span>
+        <div className="flex items-center gap-2">
+          {icon}
+          <h4 className="font-medium">{title}</h4>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {Object.entries(data).map(([key, value]) => (
+            <div key={key} className="flex justify-between items-center">
+              <span className="capitalize">{key}</span>
+              <div className="flex items-center gap-2">
+                <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary rounded-full"
+                    style={{ width: `${value}%` }}
+                  />
                 </div>
-              ))}
+                <span className="text-sm text-muted-foreground w-12 text-right">
+                  {value}%
+                </span>
+              </div>
             </div>
-          </div>
-        )}
-        {demographics.gender && (
-          <div>
-            <h4 className="font-medium mb-2">Gender Distribution</h4>
-            <div className="grid grid-cols-2 gap-2">
-              {Object.entries(demographics.gender).map(([gender, percentage]) => (
-                <div key={gender} className="flex justify-between">
-                  <span className="capitalize">{gender}</span>
-                  <span>{percentage}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+          ))}
+        </div>
       </div>
     );
   };
@@ -81,9 +99,24 @@ const Audience = () => {
               {interests.categories.map((category) => (
                 <span
                   key={category}
-                  className="px-2 py-1 bg-primary/10 rounded-full text-sm"
+                  className="px-3 py-1 bg-primary/10 rounded-full text-sm"
                 >
                   {category}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+        {interests.topics && (
+          <div className="mt-4">
+            <h4 className="font-medium mb-2">Topics</h4>
+            <div className="flex flex-wrap gap-2">
+              {interests.topics.map((topic) => (
+                <span
+                  key={topic}
+                  className="px-3 py-1 bg-secondary/10 rounded-full text-sm"
+                >
+                  {topic}
                 </span>
               ))}
             </div>
@@ -97,6 +130,8 @@ const Audience = () => {
     return <div>Loading...</div>;
   }
 
+  const insight = insights?.[0];
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
@@ -106,59 +141,74 @@ const Audience = () => {
           <main className="p-6">
             <h1 className="text-3xl font-bold mb-6">Audience Insights</h1>
             
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-6">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Audience</CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">1.2M</div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Engagement Rate</CardTitle>
-                  <Target className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">3.8%</div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Interest Categories</CardTitle>
-                  <ChartPie className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">12</div>
-                </CardContent>
-              </Card>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6">
+              {renderMetricCard(
+                "Total Audience",
+                "1.2M",
+                <Users className="h-4 w-4 text-muted-foreground" />
+              )}
+              {renderMetricCard(
+                "Engagement Rate",
+                "3.8%",
+                <Target className="h-4 w-4 text-muted-foreground" />
+              )}
+              {renderMetricCard(
+                "Interest Categories",
+                insight?.interests.categories?.length.toString() || "0",
+                <ChartPie className="h-4 w-4 text-muted-foreground" />
+              )}
+              {renderMetricCard(
+                "Locations",
+                Object.keys(insight?.demographics.location || {}).length.toString(),
+                <MapPin className="h-4 w-4 text-muted-foreground" />
+              )}
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
-              {insights?.map((insight) => (
-                <Card key={insight.id} className="p-6">
+            {insight && (
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card className="p-6">
                   <CardHeader>
-                    <CardTitle className="text-xl">
-                      Platform: {insight.platform}
-                    </CardTitle>
+                    <CardTitle>Demographics</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-semibold mb-4">Demographics</h3>
-                      {renderDemographics(insight.demographics)}
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold mb-4">Interests</h3>
-                      {renderInterests(insight.interests)}
-                    </div>
+                  <CardContent className="space-y-8">
+                    {renderDemographicSection(
+                      "Age Distribution",
+                      insight.demographics.age,
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                    )}
+                    {renderDemographicSection(
+                      "Gender Distribution",
+                      insight.demographics.gender,
+                      <Users2 className="h-4 w-4 text-muted-foreground" />
+                    )}
+                    {renderDemographicSection(
+                      "Education",
+                      insight.demographics.education,
+                      <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                    )}
+                    {renderDemographicSection(
+                      "Occupation",
+                      insight.demographics.occupation,
+                      <Briefcase className="h-4 w-4 text-muted-foreground" />
+                    )}
+                    {renderDemographicSection(
+                      "Marital Status",
+                      insight.demographics.marital_status,
+                      <Heart className="h-4 w-4 text-muted-foreground" />
+                    )}
                   </CardContent>
                 </Card>
-              ))}
-            </div>
+
+                <Card className="p-6">
+                  <CardHeader>
+                    <CardTitle>Interests & Topics</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {renderInterests(insight.interests)}
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </main>
         </div>
       </div>
