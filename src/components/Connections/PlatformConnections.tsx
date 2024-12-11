@@ -43,6 +43,7 @@ export const PlatformConnections = () => {
     search_display: { label: "Search & Display", className: "bg-green-100 text-green-800" },
     ecommerce: { label: "E-commerce", className: "bg-purple-100 text-purple-800" },
     audio: { label: "Audio", className: "bg-orange-100 text-orange-800" },
+    analytics: { label: "Analytics", className: "bg-indigo-100 text-indigo-800" },
   };
 
   if (isLoading || isLoadingAnalytics) {
@@ -77,6 +78,49 @@ export const PlatformConnections = () => {
       </Alert>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {/* Analytics Platforms */}
+        {analyticsIntegrations?.map((integration) => (
+          <Card key={integration.id} className={integration.is_active ? "border-primary" : ""}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {integration.platform_type === 'google_analytics_4' ? 'Google Analytics 4' : 'Universal Analytics'}
+              </CardTitle>
+              <Badge variant="secondary" className={platformTypes.analytics.className}>
+                Analytics
+              </Badge>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Link2 className="h-4 w-4" />
+                    <span className={integration.is_active ? "text-green-600" : "text-gray-500"}>
+                      {integration.is_active ? "Connected" : "Not Connected"}
+                    </span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedPlatform(integration as any)}
+                  >
+                    <Settings2 className="h-4 w-4" />
+                  </Button>
+                </div>
+                {integration.last_sync_at && (
+                  <p className="text-xs text-muted-foreground">
+                    Last synced: {new Date(integration.last_sync_at).toLocaleString()}
+                  </p>
+                )}
+                {integration.property_id && (
+                  <p className="text-xs text-muted-foreground">
+                    Property ID: {integration.property_id}
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+
         {/* Advertising Platforms */}
         {platforms?.map((platform) => (
           <Card key={platform.id} className={platform.is_active ? "border-primary" : ""}>
@@ -111,44 +155,6 @@ export const PlatformConnections = () => {
                 {platform.last_sync_at && (
                   <p className="text-xs text-muted-foreground">
                     Last synced: {new Date(platform.last_sync_at).toLocaleString()}
-                  </p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-
-        {/* Analytics Platforms */}
-        {analyticsIntegrations?.map((integration) => (
-          <Card key={integration.id} className={integration.is_active ? "border-primary" : ""}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {integration.platform_type === 'google_analytics_4' ? 'Google Analytics 4' : 'Universal Analytics'}
-              </CardTitle>
-              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                Analytics
-              </Badge>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Link2 className="h-4 w-4" />
-                    <span className={integration.is_active ? "text-green-600" : "text-gray-500"}>
-                      {integration.is_active ? "Connected" : "Not Connected"}
-                    </span>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedPlatform(integration as any)}
-                  >
-                    <Settings2 className="h-4 w-4" />
-                  </Button>
-                </div>
-                {integration.last_sync_at && (
-                  <p className="text-xs text-muted-foreground">
-                    Last synced: {new Date(integration.last_sync_at).toLocaleString()}
                   </p>
                 )}
               </div>
