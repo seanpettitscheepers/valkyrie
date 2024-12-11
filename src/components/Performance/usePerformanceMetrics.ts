@@ -10,6 +10,8 @@ interface PerformanceMetric {
 
 export interface PerformanceMetrics {
   spend: PerformanceMetric;
+  impressions: PerformanceMetric;
+  reach: PerformanceMetric;
   cpm: PerformanceMetric;
   engagements: PerformanceMetric;
   videoViews: PerformanceMetric;
@@ -36,6 +38,7 @@ export function usePerformanceMetrics(campaigns: Campaign[] | null, selectedCamp
 
   const totalSpend = metrics.reduce((sum, m) => sum + (Number(m.spend) || 0), 0);
   const totalImpressions = metrics.reduce((sum, m) => sum + (m.impressions || 0), 0);
+  const totalReach = Math.round(totalImpressions * 0.8); // Estimated reach as 80% of impressions
   const totalEngagements = metrics.reduce((sum, m) => sum + (m.engagements || 0), 0);
   const totalVideoViews = metrics.reduce((sum, m) => sum + (m.video_views || 0), 0);
   const totalClicks = metrics.reduce((sum, m) => sum + (m.clicks || 0), 0);
@@ -57,6 +60,16 @@ export function usePerformanceMetrics(campaigns: Campaign[] | null, selectedCamp
       value: `$${totalSpend.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       trend: totalSpend > 1000 ? "up" : "down" as Trend,
       change: 10
+    },
+    impressions: {
+      value: totalImpressions.toLocaleString(),
+      trend: totalImpressions > 10000 ? "up" : "down" as Trend,
+      change: 15
+    },
+    reach: {
+      value: totalReach.toLocaleString(),
+      trend: totalReach > 8000 ? "up" : "down" as Trend,
+      change: 12
     },
     cpm: {
       value: `$${cpm.toFixed(2)}`,

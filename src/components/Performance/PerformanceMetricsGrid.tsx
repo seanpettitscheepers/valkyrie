@@ -18,6 +18,20 @@ export function PerformanceMetricsGrid({ metrics }: PerformanceMetricsGridProps)
       />
       
       <PerformanceCard
+        title="Impressions"
+        value={metrics.impressions.value}
+        change={Number(metrics.impressions.change)}
+        trend={metrics.impressions.trend}
+      />
+
+      <PerformanceCard
+        title="Reach"
+        value={metrics.reach.value}
+        change={Number(metrics.reach.change)}
+        trend={metrics.reach.trend}
+      />
+
+      <PerformanceCard
         title="CPM"
         value={metrics.cpm.value}
         change={Number(metrics.cpm.change)}

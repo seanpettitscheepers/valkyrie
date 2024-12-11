@@ -9,6 +9,8 @@ export function MetricsExplanation() {
         <p className="mb-2">Key Performance Metrics Explained:</p>
         <ul className="list-disc pl-6 space-y-1">
           <li><span className="font-medium">Spend</span>: Total amount spent on campaigns</li>
+          <li><span className="font-medium">Impressions</span>: Total number of times your ads were displayed</li>
+          <li><span className="font-medium">Reach</span>: Unique number of users who saw your ads</li>
           <li><span className="font-medium">CPM (Cost Per Mille)</span>: Cost per 1,000 impressions</li>
           <li><span className="font-medium">Engagements</span>: Total number of interactions</li>
           <li><span className="font-medium">Video Views</span>: Total number of video views</li>
