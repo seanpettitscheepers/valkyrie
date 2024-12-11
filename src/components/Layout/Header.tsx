@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut } from "lucide-react";
+import { LogOut, Home } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface HeaderProps {
@@ -35,15 +35,26 @@ export const Header = ({ title }: HeaderProps) => {
         <h1 className="text-lg font-semibold bg-gradient-brand bg-clip-text text-transparent">
           {title}
         </h1>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={handleLogout}
-          className="hover:bg-primary/10 hover:text-primary"
-        >
-          <LogOut className="h-4 w-4 mr-2" />
-          Logout
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate("/")}
+            className="hover:bg-primary/10 hover:text-primary"
+          >
+            <Home className="h-4 w-4 mr-2" />
+            Home
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={handleLogout}
+            className="hover:bg-primary/10 hover:text-primary"
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Logout
+          </Button>
+        </div>
       </div>
     </header>
   );

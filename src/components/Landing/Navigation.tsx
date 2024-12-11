@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { LogIn, LogOut } from "lucide-react";
+import { LogIn, LogOut, Home } from "lucide-react";
 import { Session } from "@supabase/supabase-js";
+import { Link } from "react-router-dom";
 
 interface NavigationProps {
   session: Session | null;
@@ -24,25 +25,38 @@ export function Navigation({ session, isLoading, onLogin, onLogout }: Navigation
           <a href="#pricing" className="text-foreground/60 hover:text-primary transition-colors">Pricing</a>
           <a href="#about" className="text-foreground/60 hover:text-primary transition-colors">About</a>
         </div>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={session ? onLogout : onLogin}
-          disabled={isLoading}
-          className="hover:bg-primary/10 hover:text-primary"
-        >
-          {session ? (
-            <>
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </>
-          ) : (
-            <>
-              <LogIn className="h-4 w-4 mr-2" />
-              Login
-            </>
-          )}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            asChild
+            className="hover:bg-primary/10 hover:text-primary"
+          >
+            <Link to="/">
+              <Home className="h-4 w-4 mr-2" />
+              Home
+            </Link>
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={session ? onLogout : onLogin}
+            disabled={isLoading}
+            className="hover:bg-primary/10 hover:text-primary"
+          >
+            {session ? (
+              <>
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </>
+            ) : (
+              <>
+                <LogIn className="h-4 w-4 mr-2" />
+                Login
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </nav>
   );
