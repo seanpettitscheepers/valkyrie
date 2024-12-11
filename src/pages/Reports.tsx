@@ -1,10 +1,10 @@
 import { PageLayout } from "@/components/Layout/PageLayout";
-import { InsightsReport } from "@/components/Reports/InsightsReport";
+import { ReportBuilder } from "@/components/Reports/ReportBuilder";
 
 export default function Reports() {
   return (
     <PageLayout title="Reports">
-      <InsightsReport />
+      <ReportBuilder />
     </PageLayout>
   );
 }

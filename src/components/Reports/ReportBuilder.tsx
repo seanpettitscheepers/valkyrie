@@ -6,9 +6,11 @@ import { ReportPreview } from "./ReportPreview";
 import { ReportInsights } from "./ReportInsights";
 import { ReportExportButton } from "./ReportExportButton";
 import { ReportLoadingState } from "./ReportLoadingState";
+import { InsightsReport } from "./InsightsReport";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DateRange } from "react-day-picker";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function ReportBuilder() {
   const reportRef = useRef<HTMLDivElement>(null);
@@ -23,6 +25,7 @@ export function ReportBuilder() {
     audience: [],
     sentiment: [],
   });
+  const [analysisType, setAnalysisType] = useState<"event" | "funnel" | "flow">("event");
 
   const { data: reportData, isLoading } = useQuery({
     queryKey: ["report-data", selectedCampaign, dateRange],
@@ -88,22 +91,35 @@ export function ReportBuilder() {
         </Card>
       </div>
 
-      {isLoading ? (
-        <ReportLoadingState />
-      ) : reportData ? (
-        <>
-          <div className="flex justify-end">
-            <ReportExportButton reportRef={reportRef} />
-          </div>
-          <div ref={reportRef}>
-            <ReportPreview
-              data={reportData}
-              selectedMetrics={selectedMetrics}
-            />
-            <ReportInsights data={reportData} />
-          </div>
-        </>
-      ) : null}
+      <Tabs defaultValue="insights" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="insights">Insights Report</TabsTrigger>
+          <TabsTrigger value="custom">Custom Report</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="insights">
+          <InsightsReport />
+        </TabsContent>
+
+        <TabsContent value="custom">
+          {isLoading ? (
+            <ReportLoadingState />
+          ) : reportData ? (
+            <>
+              <div className="flex justify-end">
+                <ReportExportButton reportRef={reportRef} />
+              </div>
+              <div ref={reportRef}>
+                <ReportPreview
+                  data={reportData}
+                  selectedMetrics={selectedMetrics}
+                />
+                <ReportInsights data={reportData} />
+              </div>
+            </>
+          ) : null}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
