@@ -14,6 +14,7 @@ export interface Profile {
   trial_ends_at: string | null;
   created_at: string;
   updated_at: string;
+  avatar_url: string | null;
 }
 
 export type ProfileUpdate = Partial<Profile>;

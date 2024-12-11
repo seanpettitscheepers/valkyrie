@@ -2,8 +2,12 @@ import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Calendar, Globe, User2 } from "lucide-react";
+import { MapPin, Calendar, Globe, User2, Upload } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
 import type { Profile, ProfileUpdate } from "@/types/profile";
+import { useState } from "react";
 
 interface BusinessInfoFormProps {
   profile: Profile | null;
@@ -11,11 +15,77 @@ interface BusinessInfoFormProps {
 }
 
 export function BusinessInfoForm({ profile, onUpdate }: BusinessInfoFormProps) {
+  const { toast } = useToast();
+  const [uploading, setUploading] = useState(false);
+
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      setUploading(true);
+      
+      if (!event.target.files || event.target.files.length === 0) {
+        throw new Error('You must select an image to upload.');
+      }
+
+      const file = event.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${profile?.id}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      await onUpdate({ avatar_url: publicUrl });
+
+      toast({
+        title: "Avatar updated",
+        description: "Your profile picture has been updated successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error uploading avatar",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="mb-8 flex items-center gap-4">
-        <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center">
-          <User2 className="h-12 w-12 text-primary" />
+      <div className="mb-8 flex items-center gap-6">
+        <div className="relative group">
+          <Avatar className="h-24 w-24">
+            <AvatarImage src={profile?.avatar_url} />
+            <AvatarFallback>
+              <User2 className="h-12 w-12 text-muted-foreground" />
+            </AvatarFallback>
+          </Avatar>
+          <label 
+            htmlFor="avatar-upload" 
+            className="absolute inset-0 flex items-center justify-center bg-black/50 text-white opacity-0 group-hover:opacity-100 rounded-full cursor-pointer transition-opacity"
+          >
+            <Upload className="h-6 w-6" />
+            <input
+              id="avatar-upload"
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarUpload}
+              disabled={uploading}
+              className="hidden"
+            />
+          </label>
+          {uploading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
+              <div className="animate-spin h-6 w-6 border-2 border-white border-t-transparent rounded-full" />
+            </div>
+          )}
         </div>
         <div>
           <h1 className="text-2xl font-bold">{profile?.business_name || "Business Profile"}</h1>
