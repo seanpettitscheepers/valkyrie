@@ -1,7 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Edit, Trash } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -15,6 +13,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import { CreatePatternSheet } from "./CreatePatternSheet";
+import { PatternCard } from "./PatternCard";
 
 interface Pattern {
   id: string;
@@ -75,34 +74,12 @@ export function NamingPatternList() {
     <>
       <div className="space-y-4">
         {patterns?.map((pattern) => (
-          <div
+          <PatternCard
             key={pattern.id}
-            className="flex items-center justify-between p-4 border rounded-lg"
-          >
-            <div>
-              <h3 className="font-medium">{pattern.name}</h3>
-              <p className="text-sm text-gray-500">{pattern.pattern}</p>
-              {pattern.description && (
-                <p className="text-sm text-gray-500 mt-1">{pattern.description}</p>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleEdit(pattern)}
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPatternToDelete(pattern.id)}
-              >
-                <Trash className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+            pattern={pattern}
+            onEdit={handleEdit}
+            onDelete={(id) => setPatternToDelete(id)}
+          />
         ))}
       </div>
 
