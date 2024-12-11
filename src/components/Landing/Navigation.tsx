@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { LogIn, LogOut, Home } from "lucide-react";
+import { LogIn, LogOut, LayoutDashboard } from "lucide-react";
 import { Session } from "@supabase/supabase-js";
 import { Link } from "react-router-dom";
 
@@ -32,9 +32,9 @@ export function Navigation({ session, isLoading, onLogin, onLogout }: Navigation
             asChild
             className="hover:bg-primary/10 hover:text-primary"
           >
-            <Link to="/">
-              <Home className="h-4 w-4 mr-2" />
-              Home
+            <Link to="/campaigns">
+              <LayoutDashboard className="h-4 w-4 mr-2" />
+              Dashboard
             </Link>
           </Button>
           <Button 
