@@ -1,24 +1,12 @@
-import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-
-interface BusinessProfile {
-  business_name: string | null;
-  phone_number: string | null;
-  address_line1: string | null;
-  address_line2: string | null;
-  city: string | null;
-  state: string | null;
-  postal_code: string | null;
-  country: string | null;
-}
+import type { Profile, ProfileUpdate } from "@/types/profile";
 
 interface BusinessInfoFormProps {
-  profile: BusinessProfile | null;
-  onUpdate: (formData: Partial<BusinessProfile>) => Promise<void>;
+  profile: Profile | null;
+  onUpdate: (formData: ProfileUpdate) => Promise<void>;
 }
 
 export function BusinessInfoForm({ profile, onUpdate }: BusinessInfoFormProps) {

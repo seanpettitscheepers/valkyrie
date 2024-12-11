@@ -1,4 +1,6 @@
-export interface BusinessProfile {
+import { Json } from "@/integrations/supabase/types";
+
+export interface Profile {
   id: string;
   business_name: string | null;
   phone_number: string | null;
@@ -11,3 +13,5 @@ export interface BusinessProfile {
   created_at: string;
   updated_at: string;
 }
+
+export type ProfileUpdate = Partial<Profile>;

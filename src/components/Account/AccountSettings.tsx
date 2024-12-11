@@ -5,9 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { BusinessInfoForm } from "./BusinessInfoForm";
 import { SecurityForm } from "./SecurityForm";
-import type { Database } from "@/integrations/supabase/types";
-
-type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+import type { Profile, ProfileUpdate } from "@/types/profile";
 
 export function AccountSettings() {
   const { toast } = useToast();
@@ -28,12 +26,12 @@ export function AccountSettings() {
 
       const { data, error } = await supabase
         .from("profiles")
-        .select()
+        .select("*")
         .eq("id", user.id)
         .single();
 
       if (error) throw error;
-      setProfile(data);
+      setProfile(data as Profile);
     } catch (error) {
       console.error("Error loading user data:", error);
       toast({
@@ -46,7 +44,7 @@ export function AccountSettings() {
     }
   }
 
-  async function updateProfile(formData: Partial<Profile>) {
+  async function updateProfile(formData: ProfileUpdate) {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
