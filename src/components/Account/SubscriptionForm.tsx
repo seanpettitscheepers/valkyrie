@@ -134,7 +134,7 @@ export function SubscriptionForm() {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm">
-                  {plan.features.map((feature: string, index: number) => (
+                  {(plan.features as string[]).map((feature, index) => (
                     <li key={index} className="flex items-center">
                       <span className="mr-2">•</span>
                       {feature}

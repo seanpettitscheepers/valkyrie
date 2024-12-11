@@ -1,7 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @import './styles/theme.css';
 @import './styles/sidebar.css';
 @import './styles/base.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
