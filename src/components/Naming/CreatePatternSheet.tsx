@@ -39,7 +39,14 @@ export function CreatePatternSheet({ open, onOpenChange }: CreatePatternSheetPro
   const onSubmit = async (values: FormValues) => {
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from("naming_patterns").insert([values]);
+      const { error } = await supabase
+        .from("naming_patterns")
+        .insert({
+          name: values.name,
+          pattern: values.pattern,
+          description: values.description || null,
+        });
+
       if (error) throw error;
 
       toast.success("Pattern created successfully");
