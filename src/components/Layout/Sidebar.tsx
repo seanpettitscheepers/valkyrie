@@ -1,4 +1,4 @@
-import { Home, BarChart, Target, Users, Settings, Signal, LineChart, FileText, CalendarRange, UserCircle, Link } from "lucide-react";
+import { Home, BarChart, Target, Users, Settings, Signal, LineChart, FileText, CalendarRange, UserCircle, Link, HelpCircle } from "lucide-react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -21,6 +21,7 @@ const menuItems = [
   { icon: CalendarRange, label: "Planning", path: "/planning" },
   { icon: FileText, label: "Reports", path: "/reports" },
   { icon: Link, label: "Connections", path: "/connections" },
+  { icon: HelpCircle, label: "Help", path: "/help" },
   { icon: Settings, label: "Settings", path: "/settings" },
   { icon: UserCircle, label: "Account", path: "/account" },
 ];
