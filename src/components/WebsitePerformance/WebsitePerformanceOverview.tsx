@@ -12,12 +12,15 @@ export function WebsitePerformanceOverview() {
         .from("analytics_integrations")
         .select("*")
         .eq("platform_type", "google_analytics_4")
-        .maybeSingle(); // This handles the case of no rows or multiple rows gracefully
+        .limit(1)
+        .single();
 
-      if (error) throw error;
-      
-      if (!data) {
-        return null;
+      if (error) {
+        if (error.code === 'PGRST116') {
+          // No data found, return null to show default metrics
+          return null;
+        }
+        throw error;
       }
 
       // Fetch data from GA4 via Edge Function
