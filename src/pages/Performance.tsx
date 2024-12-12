@@ -8,6 +8,7 @@ import { CampaignFilter } from "@/components/Audience/CampaignFilter";
 import { MetricsExplanation } from "@/components/Performance/MetricsExplanation";
 import { PerformanceMetricsGrid } from "@/components/Performance/PerformanceMetricsGrid";
 import { usePerformanceMetrics } from "@/components/Performance/usePerformanceMetrics";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Performance = () => {
   const [selectedCampaign, setSelectedCampaign] = useState("all");
@@ -26,13 +27,13 @@ const Performance = () => {
 
   const performanceMetrics = usePerformanceMetrics(campaigns, selectedCampaign);
 
-  const generateInsights = () => {
+  const generateInsights = (objective: "awareness" | "consideration" | "conversion") => {
     if (!performanceMetrics) return [];
 
     const insights = [
       {
         type: "success" as const,
-        message: "Campaign Performance Overview",
+        message: `${objective.charAt(0).toUpperCase() + objective.slice(1)} Campaign Performance`,
         metric: `Total Spend: ${performanceMetrics.spend.value}`,
         recommendation: performanceMetrics.spend.trend === "up" 
           ? "Spending levels are healthy and driving good results"
@@ -73,7 +74,7 @@ const Performance = () => {
         <div>
           <h1 className="text-3xl font-bold">Campaign Performance Analysis</h1>
           <p className="text-muted-foreground mt-1">
-            Comprehensive analysis of campaign performance metrics and insights
+            Comprehensive analysis of campaign performance metrics and insights across all objectives
           </p>
         </div>
         <CampaignFilter
@@ -83,12 +84,43 @@ const Performance = () => {
       </div>
       
       <div className="space-y-6">
-        <PerformanceMetricsGrid metrics={performanceMetrics} />
-        
-        <AIInsightsCard
-          campaignType="awareness"
-          insights={generateInsights()}
-        />
+        <Tabs defaultValue="awareness" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="awareness">Awareness</TabsTrigger>
+            <TabsTrigger value="consideration">Consideration</TabsTrigger>
+            <TabsTrigger value="conversion">Conversion</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="awareness">
+            <div className="space-y-6">
+              <PerformanceMetricsGrid metrics={performanceMetrics} />
+              <AIInsightsCard
+                campaignType="awareness"
+                insights={generateInsights("awareness")}
+              />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="consideration">
+            <div className="space-y-6">
+              <PerformanceMetricsGrid metrics={performanceMetrics} />
+              <AIInsightsCard
+                campaignType="consideration"
+                insights={generateInsights("consideration")}
+              />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="conversion">
+            <div className="space-y-6">
+              <PerformanceMetricsGrid metrics={performanceMetrics} />
+              <AIInsightsCard
+                campaignType="conversion"
+                insights={generateInsights("conversion")}
+              />
+            </div>
+          </TabsContent>
+        </Tabs>
 
         <MetricsExplanation />
       </div>
