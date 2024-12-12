@@ -1,4 +1,4 @@
-import { BarChart, Target, Users, Settings, Signal, LineChart, FileText, CalendarRange, UserCircle, Link, HelpCircle, Globe, MessageSquare } from "lucide-react";
+import { BarChart, Target, Users, Settings, Signal, LineChart, FileText, CalendarRange, UserCircle, Link, HelpCircle, Globe, MessageSquare, Building2 } from "lucide-react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -23,6 +23,7 @@ const menuItems = [
   { icon: Link, label: "Connections", path: "/connections" },
   { icon: HelpCircle, label: "Help", path: "/help" },
   { icon: UserCircle, label: "Account", path: "/account" },
+  { icon: Building2, label: "Brands", path: "/brands" },
   { icon: MessageSquare, label: "Contact Us", path: "/contact" },
 ];
 
