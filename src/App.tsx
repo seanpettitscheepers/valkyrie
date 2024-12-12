@@ -17,6 +17,7 @@ import Connections from "./pages/Connections";
 import Help from "./pages/Help";
 import Contact from "./pages/Contact";
 import Campaigns from "./pages/Campaigns";
+import Brands from "./pages/Brands";
 import WebsitePerformance from "./pages/WebsitePerformance";
 import { ProtectedRoute } from "./components/Auth/ProtectedRoute";
 
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Index /></ProtectedRoute>} />
           <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+          <Route path="/brands" element={<ProtectedRoute><Brands /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

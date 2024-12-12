@@ -89,6 +89,45 @@ export type Database = {
           },
         ]
       }
+      brand_connections: {
+        Row: {
+          brand_id: string
+          created_at: string
+          id: string
+          platform_integration_id: string
+          updated_at: string
+        }
+        Insert: {
+          brand_id: string
+          created_at?: string
+          id?: string
+          platform_integration_id: string
+          updated_at?: string
+        }
+        Update: {
+          brand_id?: string
+          created_at?: string
+          id?: string
+          platform_integration_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brand_connections_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "brand_connections_platform_integration_id_fkey"
+            columns: ["platform_integration_id"]
+            isOneToOne: false
+            referencedRelation: "platform_integrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       brand_sentiment: {
         Row: {
           analysis_timestamp: string | null
@@ -138,6 +177,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      brands: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       campaign_metrics: {
         Row: {
