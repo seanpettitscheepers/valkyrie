@@ -26,6 +26,13 @@ export function CreateBrandDialog({ open, onOpenChange }: CreateBrandDialogProps
     setIsLoading(true);
 
     try {
+      // Get the current user's ID
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("No authenticated user found");
+      }
+
       let logoUrl = null;
 
       if (logo) {
@@ -51,6 +58,7 @@ export function CreateBrandDialog({ open, onOpenChange }: CreateBrandDialogProps
           name,
           description,
           logo_url: logoUrl,
+          user_id: user.id
         });
 
       if (error) throw error;
