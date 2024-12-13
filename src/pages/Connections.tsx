@@ -9,6 +9,7 @@ import { TikTokAdsIntegration } from "@/components/Integrations/TikTok/TikTokAds
 import { PinterestAdsIntegration } from "@/components/Integrations/Pinterest/PinterestAdsIntegration";
 import { SnapchatAdsIntegration } from "@/components/Integrations/Snapchat/SnapchatAdsIntegration";
 import { GoogleAdsConnection } from "@/components/Integrations/GoogleAds/GoogleAdsConnection";
+import { LinkedInAdsIntegration } from "@/components/Integrations/LinkedIn/LinkedInAdsIntegration";
 
 export default function Connections() {
   const { data: connectedPlatforms } = useQuery({
@@ -20,14 +21,16 @@ export default function Connections() {
         { data: tiktok },
         { data: pinterest },
         { data: snapchat },
-        { data: googleAds }
+        { data: googleAds },
+        { data: linkedin }
       ] = await Promise.all([
         supabase.from("facebook_ad_accounts").select("id").limit(1),
         supabase.from("dv360_accounts").select("id").limit(1),
         supabase.from("tiktok_ad_accounts").select("id").limit(1),
         supabase.from("pinterest_ad_accounts").select("id").limit(1),
         supabase.from("snapchat_ad_accounts").select("id").limit(1),
-        supabase.from("google_ads_accounts").select("id").limit(1)
+        supabase.from("google_ads_accounts").select("id").limit(1),
+        supabase.from("linkedin_ad_accounts").select("id").limit(1)
       ]);
 
       return {
@@ -36,7 +39,8 @@ export default function Connections() {
         tiktok: tiktok && tiktok.length > 0,
         pinterest: pinterest && pinterest.length > 0,
         snapchat: snapchat && snapchat.length > 0,
-        googleAds: googleAds && googleAds.length > 0
+        googleAds: googleAds && googleAds.length > 0,
+        linkedin: linkedin && linkedin.length > 0
       };
     },
   });
@@ -112,6 +116,18 @@ export default function Connections() {
               title="Snapchat Ads"
               description="Connect your Snapchat Ads account to sync campaign data and performance metrics"
               onConnect={() => window.location.href = `https://accounts.snapchat.com/login/oauth2/authorize?client_id=${import.meta.env.VITE_SNAPCHAT_CLIENT_ID}&redirect_uri=${encodeURIComponent(import.meta.env.VITE_SNAPCHAT_REDIRECT_URI)}&response_type=code&scope=snapchat-marketing-api`}
+            />
+          )}
+        </div>
+
+        <div className="h-full">
+          {connectedPlatforms?.linkedin ? (
+            <LinkedInAdsIntegration />
+          ) : (
+            <UnconnectedState
+              title="LinkedIn Ads"
+              description="Connect your LinkedIn Ads account to sync campaign data and performance metrics"
+              onConnect={() => window.location.href = `https://www.linkedin.com/oauth/v2/authorization?client_id=${import.meta.env.VITE_LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(import.meta.env.VITE_LINKEDIN_REDIRECT_URI)}&scope=r_liteprofile%20r_ads%20rw_ads&response_type=code`}
             />
           )}
         </div>

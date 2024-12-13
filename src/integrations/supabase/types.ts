@@ -1041,6 +1041,125 @@ export type Database = {
         }
         Relationships: []
       }
+      linkedin_ad_accounts: {
+        Row: {
+          access_token: string
+          account_id: string
+          account_name: string | null
+          created_at: string
+          error_message: string | null
+          id: string
+          last_sync_at: string | null
+          refresh_token: string
+          status: string | null
+          token_expires_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          account_id: string
+          account_name?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_sync_at?: string | null
+          refresh_token: string
+          status?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          account_id?: string
+          account_name?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_sync_at?: string | null
+          refresh_token?: string
+          status?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      linkedin_campaigns: {
+        Row: {
+          account_id: string
+          audience_insights: Json | null
+          campaign_id: string
+          campaign_name: string
+          created_at: string
+          creative_metrics: Json | null
+          daily_budget: number | null
+          end_date: string | null
+          id: string
+          last_sync_at: string | null
+          objective:
+            | Database["public"]["Enums"]["linkedin_campaign_objective"]
+            | null
+          performance_metrics: Json | null
+          start_date: string | null
+          status: string | null
+          targeting_settings: Json | null
+          total_budget: number | null
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          audience_insights?: Json | null
+          campaign_id: string
+          campaign_name: string
+          created_at?: string
+          creative_metrics?: Json | null
+          daily_budget?: number | null
+          end_date?: string | null
+          id?: string
+          last_sync_at?: string | null
+          objective?:
+            | Database["public"]["Enums"]["linkedin_campaign_objective"]
+            | null
+          performance_metrics?: Json | null
+          start_date?: string | null
+          status?: string | null
+          targeting_settings?: Json | null
+          total_budget?: number | null
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          audience_insights?: Json | null
+          campaign_id?: string
+          campaign_name?: string
+          created_at?: string
+          creative_metrics?: Json | null
+          daily_budget?: number | null
+          end_date?: string | null
+          id?: string
+          last_sync_at?: string | null
+          objective?:
+            | Database["public"]["Enums"]["linkedin_campaign_objective"]
+            | null
+          performance_metrics?: Json | null
+          start_date?: string | null
+          status?: string | null
+          targeting_settings?: Json | null
+          total_budget?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "linkedin_campaigns_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "linkedin_ad_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       naming_components: {
         Row: {
           created_at: string
@@ -1662,6 +1781,7 @@ export type Database = {
         | "technology"
         | "other"
       integration_status: "pending" | "active" | "error" | "disconnected"
+      linkedin_campaign_objective: "awareness" | "engagement" | "conversion"
       platform_type:
         | "social_media"
         | "video"
