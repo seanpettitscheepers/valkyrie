@@ -1,8 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
-import { corsHeaders } from '../_shared/cors';
-
-const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
+import { corsHeaders } from '../_shared/cors.ts';
 
 interface FacebookCampaign {
   id: string;
@@ -14,10 +11,12 @@ interface FacebookCampaign {
   start_time: string;
   stop_time?: string;
   insights?: {
-    spend: string;
-    impressions: string;
-    clicks: string;
-    conversions: string;
+    data: [{
+      spend: string;
+      impressions: string;
+      clicks: string;
+      conversions: string;
+    }];
   };
 }
 
@@ -27,7 +26,10 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
     const { account_id, access_token } = await req.json();
 
     console.log(`Syncing campaigns for account ${account_id}`);
