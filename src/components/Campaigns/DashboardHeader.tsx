@@ -21,21 +21,19 @@ export function DashboardHeader({ selectedCampaign, onCampaignChange, dashboardR
             business
           </p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center space-x-3">
           <CampaignFilter
             selectedCampaign={selectedCampaign}
             onCampaignChange={onCampaignChange}
           />
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </Button>
-            <ShareDialog contentRef={dashboardRef} pageTitle="Campaign Dashboard" />
-            <Button variant="outline" size="sm">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </div>
+          <Button variant="outline" size="sm">
+            <Filter className="h-4 w-4 mr-2" />
+            Filter
+          </Button>
+          <ShareDialog contentRef={dashboardRef} pageTitle="Campaign Dashboard" />
+          <Button variant="outline" size="sm">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </div>

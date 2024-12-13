@@ -70,7 +70,7 @@ export function CampaignDashboard() {
 
   return (
     <div className="space-y-8 p-6" ref={dashboardRef}>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <DashboardHeader
           selectedCampaign={selectedCampaign}
           onCampaignChange={setSelectedCampaign}
