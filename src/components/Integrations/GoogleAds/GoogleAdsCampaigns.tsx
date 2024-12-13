@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { RefreshCw, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
+import { GoogleAdsCampaign } from "@/types/googleAds";
 
 export function GoogleAdsCampaigns({ accountId }: { accountId: string }) {
   const { data: campaigns, isLoading, refetch } = useQuery({
@@ -18,7 +19,7 @@ export function GoogleAdsCampaigns({ accountId }: { accountId: string }) {
         .order("campaign_name");
       
       if (error) throw error;
-      return data;
+      return data as GoogleAdsCampaign[];
     },
   });
 
