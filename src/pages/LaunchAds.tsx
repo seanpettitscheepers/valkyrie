@@ -5,6 +5,7 @@ import { LaunchAdsCreatives } from "@/components/LaunchAds/LaunchAdsCreatives";
 import { LaunchAdsTargeting } from "@/components/LaunchAds/LaunchAdsTargeting";
 import { LaunchAdsPlatforms } from "@/components/LaunchAds/LaunchAdsPlatforms";
 import { LaunchAdsBudget } from "@/components/LaunchAds/LaunchAdsBudget";
+import { LaunchAdsAIRecommendations } from "@/components/LaunchAds/LaunchAdsAIRecommendations";
 
 export default function LaunchAds() {
   return (
@@ -43,6 +44,8 @@ export default function LaunchAds() {
             </TabsContent>
           </Tabs>
         </Card>
+
+        <LaunchAdsAIRecommendations />
       </div>
     </PageLayout>
   );
