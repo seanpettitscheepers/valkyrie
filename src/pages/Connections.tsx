@@ -12,6 +12,7 @@ import { GoogleAdsConnection } from "@/components/Integrations/GoogleAds/GoogleA
 import { LinkedInAdsIntegration } from "@/components/Integrations/LinkedIn/LinkedInAdsIntegration";
 import { GoogleAnalyticsConnection } from "@/components/Integrations/GoogleAnalytics/GoogleAnalyticsConnection";
 import { AmazonDSPIntegration } from "@/components/Integrations/AmazonDSP/AmazonDSPIntegration";
+import { TwitterAdsIntegration } from "@/components/Integrations/Twitter/TwitterAdsIntegration";
 
 export default function Connections() {
   const { data: connectedPlatforms } = useQuery({
@@ -28,7 +29,8 @@ export default function Connections() {
         { data: linkedin },
         { data: analytics },
         { data: amazonDsp },
-        { data: ttd }
+        { data: ttd },
+        { data: twitter }
       ] = await Promise.all([
         supabase.from("facebook_ad_accounts").select("id").limit(1),
         supabase.from("facebook_pages").select("id").limit(1),
@@ -43,7 +45,8 @@ export default function Connections() {
           .eq("platform_type", "google_analytics_4")
           .limit(1),
         supabase.from("amazon_dsp_accounts").select("id").limit(1),
-        supabase.from("ttd_accounts").select("id").limit(1)
+        supabase.from("ttd_accounts").select("id").limit(1),
+        supabase.from("twitter_ad_accounts").select("id").limit(1)
       ]);
 
       return {
@@ -57,7 +60,8 @@ export default function Connections() {
         linkedin: linkedin && linkedin.length > 0,
         analytics: analytics && analytics.length > 0,
         amazonDsp: amazonDsp && amazonDsp.length > 0,
-        ttd: ttd && ttd.length > 0
+        ttd: ttd && ttd.length > 0,
+        twitter: twitter && twitter.length > 0
       };
     },
   });
@@ -157,6 +161,18 @@ export default function Connections() {
               title="LinkedIn Ads"
               description="Connect your LinkedIn Ads account to sync campaign data and performance metrics"
               onConnect={() => window.location.href = `https://www.linkedin.com/oauth/v2/authorization?client_id=${import.meta.env.VITE_LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(import.meta.env.VITE_LINKEDIN_REDIRECT_URI)}&scope=r_liteprofile%20r_ads%20rw_ads&response_type=code`}
+            />
+          )}
+        </div>
+
+        <div className="h-full">
+          {connectedPlatforms?.twitter ? (
+            <TwitterAdsIntegration />
+          ) : (
+            <UnconnectedState
+              title="Twitter Ads"
+              description="Connect your Twitter Ads account to sync campaign data and performance metrics"
+              onConnect={() => window.location.href = `https://twitter.com/i/oauth2/authorize?client_id=${import.meta.env.VITE_TWITTER_CLIENT_ID}&redirect_uri=${encodeURIComponent(import.meta.env.VITE_TWITTER_REDIRECT_URI)}&scope=tweet.read%20users.read%20offline.access`}
             />
           )}
         </div>

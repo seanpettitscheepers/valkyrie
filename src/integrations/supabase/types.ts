@@ -1949,6 +1949,125 @@ export type Database = {
           },
         ]
       }
+      twitter_ad_accounts: {
+        Row: {
+          access_token: string
+          account_id: string
+          account_name: string | null
+          created_at: string
+          error_message: string | null
+          id: string
+          last_sync_at: string | null
+          refresh_token: string
+          status: string | null
+          token_expires_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          account_id: string
+          account_name?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_sync_at?: string | null
+          refresh_token: string
+          status?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          account_id?: string
+          account_name?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_sync_at?: string | null
+          refresh_token?: string
+          status?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      twitter_campaigns: {
+        Row: {
+          account_id: string
+          audience_insights: Json | null
+          campaign_id: string
+          campaign_name: string
+          created_at: string
+          creative_metrics: Json | null
+          daily_budget: number | null
+          end_time: string | null
+          id: string
+          last_sync_at: string | null
+          objective:
+            | Database["public"]["Enums"]["twitter_campaign_objective"]
+            | null
+          performance_metrics: Json | null
+          start_time: string | null
+          status: string | null
+          targeting_settings: Json | null
+          total_budget: number | null
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          audience_insights?: Json | null
+          campaign_id: string
+          campaign_name: string
+          created_at?: string
+          creative_metrics?: Json | null
+          daily_budget?: number | null
+          end_time?: string | null
+          id?: string
+          last_sync_at?: string | null
+          objective?:
+            | Database["public"]["Enums"]["twitter_campaign_objective"]
+            | null
+          performance_metrics?: Json | null
+          start_time?: string | null
+          status?: string | null
+          targeting_settings?: Json | null
+          total_budget?: number | null
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          audience_insights?: Json | null
+          campaign_id?: string
+          campaign_name?: string
+          created_at?: string
+          creative_metrics?: Json | null
+          daily_budget?: number | null
+          end_time?: string | null
+          id?: string
+          last_sync_at?: string | null
+          objective?:
+            | Database["public"]["Enums"]["twitter_campaign_objective"]
+            | null
+          performance_metrics?: Json | null
+          start_time?: string | null
+          status?: string | null
+          targeting_settings?: Json | null
+          total_budget?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "twitter_campaigns_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "twitter_ad_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_subscriptions: {
         Row: {
           cancel_at_period_end: boolean | null
@@ -2023,6 +2142,7 @@ export type Database = {
         | "audio"
       subscription_tier: "free" | "starter" | "growth" | "enterprise"
       ttd_campaign_objective: "awareness" | "consideration" | "conversion"
+      twitter_campaign_objective: "awareness" | "consideration" | "conversion"
     }
     CompositeTypes: {
       [_ in never]: never
