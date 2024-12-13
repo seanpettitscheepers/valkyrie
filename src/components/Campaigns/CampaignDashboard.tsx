@@ -79,8 +79,6 @@ export function CampaignDashboard() {
         <CreateCampaignDialog />
       </div>
 
-      <EngagementChart data={engagementData} />
-
       <div className="grid gap-4 md:grid-cols-4">
         {Object.entries(kpiProgress).map(([key, value]) => (
           <KPIProgressCard
@@ -95,6 +93,8 @@ export function CampaignDashboard() {
           kpis={kpiProgress}
         />
       </div>
+
+      <EngagementChart data={engagementData} />
 
       <ConversionChart
         signupsCompleted={kpiProgress.signups.completed}
