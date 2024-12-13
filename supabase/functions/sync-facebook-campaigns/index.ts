@@ -77,11 +77,13 @@ Deno.serve(async (req) => {
       };
 
       if (existingCampaign) {
+        console.log(`Updating campaign ${campaign.id}`);
         await supabase
           .from('facebook_campaigns')
           .update(campaignData)
           .eq('campaign_id', campaign.id);
       } else {
+        console.log(`Creating new campaign ${campaign.id}`);
         await supabase
           .from('facebook_campaigns')
           .insert(campaignData);
