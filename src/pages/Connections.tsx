@@ -11,8 +11,6 @@ import { SnapchatAdsIntegration } from "@/components/Integrations/Snapchat/Snapc
 import { GoogleAdsConnection } from "@/components/Integrations/GoogleAds/GoogleAdsConnection";
 import { LinkedInAdsIntegration } from "@/components/Integrations/LinkedIn/LinkedInAdsIntegration";
 import { GoogleAnalyticsConnection } from "@/components/Integrations/GoogleAnalytics/GoogleAnalyticsConnection";
-
-// Add the import for AmazonDSPIntegration
 import { AmazonDSPIntegration } from "@/components/Integrations/AmazonDSP/AmazonDSPIntegration";
 
 export default function Connections() {
@@ -21,6 +19,7 @@ export default function Connections() {
     queryFn: async () => {
       const [
         { data: facebook },
+        { data: facebookPages },
         { data: dv360 },
         { data: tiktok },
         { data: pinterest },
@@ -28,9 +27,10 @@ export default function Connections() {
         { data: googleAds },
         { data: linkedin },
         { data: analytics },
-        { data: amazonDsp }  // Add Amazon DSP check
+        { data: amazonDsp }
       ] = await Promise.all([
         supabase.from("facebook_ad_accounts").select("id").limit(1),
+        supabase.from("facebook_pages").select("id").limit(1),
         supabase.from("dv360_accounts").select("id").limit(1),
         supabase.from("tiktok_ad_accounts").select("id").limit(1),
         supabase.from("pinterest_ad_accounts").select("id").limit(1),
@@ -41,11 +41,12 @@ export default function Connections() {
           .select("id")
           .eq("platform_type", "google_analytics_4")
           .limit(1),
-        supabase.from("amazon_dsp_accounts").select("id").limit(1)  // Add Amazon DSP query
+        supabase.from("amazon_dsp_accounts").select("id").limit(1)
       ]);
 
       return {
         facebook: facebook && facebook.length > 0,
+        facebookPages: facebookPages && facebookPages.length > 0,
         dv360: dv360 && dv360.length > 0,
         tiktok: tiktok && tiktok.length > 0,
         pinterest: pinterest && pinterest.length > 0,
@@ -53,7 +54,7 @@ export default function Connections() {
         googleAds: googleAds && googleAds.length > 0,
         linkedin: linkedin && linkedin.length > 0,
         analytics: analytics && analytics.length > 0,
-        amazonDsp: amazonDsp && amazonDsp.length > 0  // Add Amazon DSP status
+        amazonDsp: amazonDsp && amazonDsp.length > 0
       };
     },
   });
@@ -61,25 +62,6 @@ export default function Connections() {
   return (
     <PageLayout title="Platform Connections">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        {/* Add Amazon DSP integration */}
-        <div className="h-full">
-          {connectedPlatforms?.amazonDsp ? (
-            <AmazonDSPIntegration />
-          ) : (
-            <UnconnectedState
-              title="Amazon DSP"
-              description="Connect your Amazon DSP account to sync campaign data and performance metrics"
-              onConnect={() => {
-                window.location.href = `https://api.amazon.com/auth/o2/authorize?client_id=${
-                  import.meta.env.VITE_AMAZON_CLIENT_ID
-                }&response_type=code&redirect_uri=${encodeURIComponent(
-                  import.meta.env.VITE_AMAZON_REDIRECT_URI
-                )}&scope=advertising::campaign_management advertising::reporting`;
-              }}
-            />
-          )}
-        </div>
-
         <div className="h-full">
           {connectedPlatforms?.facebook ? (
             <FacebookAdsIntegration />
@@ -91,7 +73,19 @@ export default function Connections() {
             />
           )}
         </div>
-        
+
+        <div className="h-full">
+          {connectedPlatforms?.facebookPages ? (
+            <FacebookPagesIntegration />
+          ) : (
+            <UnconnectedState
+              title="Facebook Pages"
+              description="Connect your Facebook Pages to manage posts and view insights"
+              onConnect={() => window.location.href = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${import.meta.env.VITE_FACEBOOK_CLIENT_ID}&redirect_uri=${encodeURIComponent(import.meta.env.VITE_FACEBOOK_PAGES_REDIRECT_URI)}&scope=pages_show_list,pages_read_engagement,pages_manage_posts`}
+            />
+          )}
+        </div>
+
         <div className="h-full">
           {connectedPlatforms?.googleAds ? (
             <GoogleAdsConnection />
