@@ -4,6 +4,7 @@ import { FacebookAdsIntegration } from "@/components/Integrations/FacebookAdsInt
 import { FacebookPagesIntegration } from "@/components/Integrations/Facebook/FacebookPagesIntegration";
 import { DV360Integration } from "@/components/Integrations/DV360/DV360Integration";
 import { TikTokAdsIntegration } from "@/components/Integrations/TikTok/TikTokAdsIntegration";
+import { PinterestAdsIntegration } from "@/components/Integrations/Pinterest/PinterestAdsIntegration";
 
 export default function Connections() {
   return (
@@ -13,6 +14,7 @@ export default function Connections() {
         <FacebookPagesIntegration />
         <DV360Integration />
         <TikTokAdsIntegration />
+        <PinterestAdsIntegration />
         <PlatformConnections />
       </div>
     </PageLayout>
