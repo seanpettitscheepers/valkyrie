@@ -13,9 +13,13 @@ export interface CampaignMetric {
 
 export interface Campaign {
   id: string;
-  name: string;
-  type: string;
-  created_at: string;
-  updated_at: string;
+  name?: string;
+  type?: string;
+  created_at?: string;
+  updated_at?: string;
   campaign_metrics?: CampaignMetric[];
+  platform_id?: string;
+  ad_account_id?: string;
+  analytics_property_id?: string;
+  user_id?: string;
 }

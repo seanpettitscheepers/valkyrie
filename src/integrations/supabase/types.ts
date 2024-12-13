@@ -208,6 +208,44 @@ export type Database = {
         }
         Relationships: []
       }
+      campaign_kpis: {
+        Row: {
+          campaign_id: string | null
+          created_at: string
+          current_value: number
+          id: string
+          kpi_type: string
+          target_value: number
+          updated_at: string
+        }
+        Insert: {
+          campaign_id?: string | null
+          created_at?: string
+          current_value?: number
+          id?: string
+          kpi_type: string
+          target_value?: number
+          updated_at?: string
+        }
+        Update: {
+          campaign_id?: string | null
+          created_at?: string
+          current_value?: number
+          id?: string
+          kpi_type?: string
+          target_value?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_kpis_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaign_metrics: {
         Row: {
           campaign_id: string
@@ -347,27 +385,54 @@ export type Database = {
       }
       campaigns: {
         Row: {
+          ad_account_id: string | null
+          analytics_property_id: string | null
           created_at: string
           id: string
           name: string
+          platform_id: string | null
           type: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
+          ad_account_id?: string | null
+          analytics_property_id?: string | null
           created_at?: string
           id?: string
           name: string
+          platform_id?: string | null
           type: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
+          ad_account_id?: string | null
+          analytics_property_id?: string | null
           created_at?: string
           id?: string
           name?: string
+          platform_id?: string | null
           type?: string
           updated_at?: string
+          user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "campaigns_analytics_property_id_fkey"
+            columns: ["analytics_property_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_integrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaigns_platform_id_fkey"
+            columns: ["platform_id"]
+            isOneToOne: false
+            referencedRelation: "platform_integrations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       custom_kpis: {
         Row: {

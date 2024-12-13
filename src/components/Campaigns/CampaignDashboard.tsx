@@ -5,6 +5,8 @@ import { DashboardHeader } from "./DashboardHeader";
 import { EngagementChart } from "./EngagementChart";
 import { ConversionChart } from "./ConversionChart";
 import { KPIProgressCard } from "./KPIProgressCard";
+import { ROICard } from "./ROICard";
+import { CreateCampaignDialog } from "./CreateCampaignDialog";
 
 export function CampaignDashboard() {
   const [selectedCampaign, setSelectedCampaign] = useState("all");
@@ -26,15 +28,17 @@ export function CampaignDashboard() {
     },
   });
 
-  // Fetch custom KPIs
-  const { data: customKPIs } = useQuery({
-    queryKey: ["custom-kpis"],
+  // Fetch campaign KPIs
+  const { data: campaignKPIs } = useQuery({
+    queryKey: ["campaign-kpis", selectedCampaign],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("custom_kpis")
-        .select("*")
-        .eq("is_active", true);
+      let query = supabase.from("campaign_kpis").select("*");
       
+      if (selectedCampaign !== "all") {
+        query = query.eq("campaign_id", selectedCampaign);
+      }
+      
+      const { data, error } = await query;
       if (error) throw error;
       return data;
     },
@@ -43,16 +47,16 @@ export function CampaignDashboard() {
   // Calculate KPI progress
   const kpiProgress = {
     signups: {
-      completed: performanceData?.reduce((sum, d) => sum + (d.impressions || 0), 0) || 0,
-      target: customKPIs?.find(k => k.metric_name === "signups")?.target_value || 10000,
+      completed: campaignKPIs?.find(k => k.kpi_type === "signups")?.current_value || 0,
+      target: campaignKPIs?.find(k => k.kpi_type === "signups")?.target_value || 10000,
     },
     purchases: {
-      completed: performanceData?.reduce((sum, d) => sum + (d.conversions || 0), 0) || 0,
-      target: customKPIs?.find(k => k.metric_name === "purchases")?.target_value || 1000,
+      completed: campaignKPIs?.find(k => k.kpi_type === "purchases")?.current_value || 0,
+      target: campaignKPIs?.find(k => k.kpi_type === "purchases")?.target_value || 1000,
     },
     revenue: {
-      completed: performanceData?.reduce((sum, d) => sum + (d.spend || 0), 0) || 0,
-      target: customKPIs?.find(k => k.metric_name === "revenue")?.target_value || 20000,
+      completed: campaignKPIs?.find(k => k.kpi_type === "revenue")?.current_value || 0,
+      target: campaignKPIs?.find(k => k.kpi_type === "revenue")?.target_value || 20000,
     },
   };
 
@@ -66,15 +70,18 @@ export function CampaignDashboard() {
 
   return (
     <div className="space-y-8 p-6" ref={dashboardRef}>
-      <DashboardHeader
-        selectedCampaign={selectedCampaign}
-        onCampaignChange={setSelectedCampaign}
-        dashboardRef={dashboardRef}
-      />
+      <div className="flex items-center justify-between">
+        <DashboardHeader
+          selectedCampaign={selectedCampaign}
+          onCampaignChange={setSelectedCampaign}
+          dashboardRef={dashboardRef}
+        />
+        <CreateCampaignDialog />
+      </div>
 
       <EngagementChart data={engagementData} />
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         {Object.entries(kpiProgress).map(([key, value]) => (
           <KPIProgressCard
             key={key}
@@ -83,6 +90,10 @@ export function CampaignDashboard() {
             target={value.target}
           />
         ))}
+        <ROICard
+          campaign={{ id: selectedCampaign, campaign_metrics: performanceData }}
+          kpis={kpiProgress}
+        />
       </div>
 
       <ConversionChart
