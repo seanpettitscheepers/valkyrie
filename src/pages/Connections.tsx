@@ -10,6 +10,7 @@ import { PinterestAdsIntegration } from "@/components/Integrations/Pinterest/Pin
 import { SnapchatAdsIntegration } from "@/components/Integrations/Snapchat/SnapchatAdsIntegration";
 import { GoogleAdsConnection } from "@/components/Integrations/GoogleAds/GoogleAdsConnection";
 import { LinkedInAdsIntegration } from "@/components/Integrations/LinkedIn/LinkedInAdsIntegration";
+import { GoogleAnalyticsConnection } from "@/components/Integrations/GoogleAnalytics/GoogleAnalyticsConnection";
 
 export default function Connections() {
   const { data: connectedPlatforms } = useQuery({
@@ -22,7 +23,8 @@ export default function Connections() {
         { data: pinterest },
         { data: snapchat },
         { data: googleAds },
-        { data: linkedin }
+        { data: linkedin },
+        { data: analytics }
       ] = await Promise.all([
         supabase.from("facebook_ad_accounts").select("id").limit(1),
         supabase.from("dv360_accounts").select("id").limit(1),
@@ -30,7 +32,11 @@ export default function Connections() {
         supabase.from("pinterest_ad_accounts").select("id").limit(1),
         supabase.from("snapchat_ad_accounts").select("id").limit(1),
         supabase.from("google_ads_accounts").select("id").limit(1),
-        supabase.from("linkedin_ad_accounts").select("id").limit(1)
+        supabase.from("linkedin_ad_accounts").select("id").limit(1),
+        supabase.from("analytics_integrations")
+          .select("id")
+          .eq("platform_type", "google_analytics_4")
+          .limit(1)
       ]);
 
       return {
@@ -40,7 +46,8 @@ export default function Connections() {
         pinterest: pinterest && pinterest.length > 0,
         snapchat: snapchat && snapchat.length > 0,
         googleAds: googleAds && googleAds.length > 0,
-        linkedin: linkedin && linkedin.length > 0
+        linkedin: linkedin && linkedin.length > 0,
+        analytics: analytics && analytics.length > 0
       };
     },
   });
@@ -128,6 +135,18 @@ export default function Connections() {
               title="LinkedIn Ads"
               description="Connect your LinkedIn Ads account to sync campaign data and performance metrics"
               onConnect={() => window.location.href = `https://www.linkedin.com/oauth/v2/authorization?client_id=${import.meta.env.VITE_LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(import.meta.env.VITE_LINKEDIN_REDIRECT_URI)}&scope=r_liteprofile%20r_ads%20rw_ads&response_type=code`}
+            />
+          )}
+        </div>
+
+        <div className="h-full">
+          {connectedPlatforms?.analytics ? (
+            <GoogleAnalyticsConnection />
+          ) : (
+            <UnconnectedState
+              title="Google Analytics"
+              description="Connect your Google Analytics 4 property to sync website performance data and audience insights"
+              onConnect={() => window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(import.meta.env.VITE_GA4_REDIRECT_URI)}&scope=https://www.googleapis.com/auth/analytics.readonly&response_type=code&access_type=offline`}
             />
           )}
         </div>
