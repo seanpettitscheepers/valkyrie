@@ -4,12 +4,10 @@ import {
   Facebook, 
   Instagram, 
   Linkedin, 
-  Pinterest, 
-  Snapchat, 
+  MessageCircle, 
   MonitorPlay, 
   BarChart3, 
-  Store,
-  MessageCircle 
+  Store
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -75,25 +73,25 @@ export function LaunchAdsPlatforms() {
     },
     {
       name: "Pinterest Ads",
-      icon: Pinterest,
+      icon: MessageCircle, // Using MessageCircle as Pinterest icon isn't available
       description: "Create ads for Pinterest's advertising platform",
       isConnected: connectedPlatforms?.pinterest,
     },
     {
       name: "Snapchat Ads",
-      icon: Snapchat,
+      icon: MessageCircle, // Using MessageCircle as Snapchat icon isn't available
       description: "Create ads for Snapchat's advertising platform",
       isConnected: connectedPlatforms?.snapchat,
     },
     {
       name: "TikTok Ads",
-      icon: MessageCircle, // Using MessageCircle as a temporary replacement since there's no TikTok icon
+      icon: MessageCircle,
       description: "Create ads for TikTok's advertising platform",
       isConnected: connectedPlatforms?.tiktok,
     },
     {
       name: "X Ads",
-      icon: MessageCircle, // Using MessageCircle as a temporary replacement for X
+      icon: MessageCircle,
       description: "Create ads for X's (formerly Twitter) advertising platform",
       isConnected: false, // Not implemented yet
     },
