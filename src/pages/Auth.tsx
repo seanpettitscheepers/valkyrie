@@ -10,32 +10,24 @@ export default function Auth() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if user is already logged in
     const checkUser = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          navigate("/dashboard");
-        }
-      } catch (error) {
-        console.error("Error checking session:", error);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate("/dashboard");
       }
     };
 
     checkUser();
 
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === "SIGNED_IN" && session) {
-          toast({
-            title: "Welcome!",
-            description: "You have successfully signed in.",
-          });
-          navigate("/dashboard");
-        }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        toast({
+          title: "Welcome!",
+          description: "You have successfully signed in.",
+        });
+        navigate("/dashboard");
       }
-    );
+    });
 
     return () => {
       subscription.unsubscribe();
