@@ -12,6 +12,7 @@ import Performance from "./pages/Performance";
 import Reports from "./pages/Reports";
 import Planning from "./pages/Planning";
 import Account from "./pages/Account";
+import Admin from "./pages/Admin";
 import Connections from "./pages/Connections";
 import Help from "./pages/Help";
 import Contact from "./pages/Contact";
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/settings" element={<Index />} />
           <Route path="/account" element={<Account />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="/brands" element={<Brands />} />
         </Routes>
       </BrowserRouter>
