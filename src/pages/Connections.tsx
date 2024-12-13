@@ -8,6 +8,7 @@ import { DV360Integration } from "@/components/Integrations/DV360/DV360Integrati
 import { TikTokAdsIntegration } from "@/components/Integrations/TikTok/TikTokAdsIntegration";
 import { PinterestAdsIntegration } from "@/components/Integrations/Pinterest/PinterestAdsIntegration";
 import { SnapchatAdsIntegration } from "@/components/Integrations/Snapchat/SnapchatAdsIntegration";
+import { GoogleAdsConnection } from "@/components/Integrations/GoogleAds/GoogleAdsConnection";
 
 export default function Connections() {
   const { data: connectedPlatforms } = useQuery({
@@ -18,13 +19,15 @@ export default function Connections() {
         { data: dv360 },
         { data: tiktok },
         { data: pinterest },
-        { data: snapchat }
+        { data: snapchat },
+        { data: googleAds }
       ] = await Promise.all([
         supabase.from("facebook_ad_accounts").select("id").limit(1),
         supabase.from("dv360_accounts").select("id").limit(1),
         supabase.from("tiktok_ad_accounts").select("id").limit(1),
         supabase.from("pinterest_ad_accounts").select("id").limit(1),
-        supabase.from("snapchat_ad_accounts").select("id").limit(1)
+        supabase.from("snapchat_ad_accounts").select("id").limit(1),
+        supabase.from("google_ads_accounts").select("id").limit(1)
       ]);
 
       return {
@@ -32,7 +35,8 @@ export default function Connections() {
         dv360: dv360 && dv360.length > 0,
         tiktok: tiktok && tiktok.length > 0,
         pinterest: pinterest && pinterest.length > 0,
-        snapchat: snapchat && snapchat.length > 0
+        snapchat: snapchat && snapchat.length > 0,
+        googleAds: googleAds && googleAds.length > 0
       };
     },
   });
@@ -52,6 +56,18 @@ export default function Connections() {
           )}
         </div>
         
+        <div className="h-full">
+          {connectedPlatforms?.googleAds ? (
+            <GoogleAdsConnection />
+          ) : (
+            <UnconnectedState
+              title="Google Ads"
+              description="Connect your Google Ads account to sync campaign data and performance metrics"
+              onConnect={() => window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(import.meta.env.VITE_GOOGLE_ADS_REDIRECT_URI)}&scope=https://www.googleapis.com/auth/adwords&response_type=code`}
+            />
+          )}
+        </div>
+
         <div className="h-full">
           {connectedPlatforms?.dv360 ? (
             <DV360Integration />
