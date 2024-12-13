@@ -7,12 +7,12 @@ import { ConversionChart } from "./ConversionChart";
 import { KPIProgressCard } from "./KPIProgressCard";
 import { ROICard } from "./ROICard";
 import { CreateCampaignDialog } from "./CreateCampaignDialog";
+import { CampaignTrendsChart } from "./CampaignTrendsChart";
 
 export function CampaignDashboard() {
   const [selectedCampaign, setSelectedCampaign] = useState("all");
   const dashboardRef = useRef<HTMLDivElement>(null);
 
-  // Fetch performance metrics
   const { data: performanceData } = useQuery({
     queryKey: ["campaign-metrics", selectedCampaign],
     queryFn: async () => {
@@ -60,7 +60,19 @@ export function CampaignDashboard() {
     },
   };
 
-  // Process engagement data for the chart
+  // Process trends data for the chart
+  const trendsData = performanceData?.map(d => {
+    const revenue = d.conversions * 100; // Assuming $100 per conversion
+    return {
+      date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
+      spend: d.spend,
+      signups: Math.round(d.impressions * 0.1),
+      purchases: d.conversions,
+      revenue: revenue,
+      profit: revenue - d.spend,
+    };
+  }) || [];
+
   const engagementData = performanceData?.map(d => ({
     date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
     sign_in: Math.round(d.impressions * 0.1),
@@ -93,6 +105,8 @@ export function CampaignDashboard() {
           kpis={kpiProgress}
         />
       </div>
+
+      <CampaignTrendsChart data={trendsData} />
 
       <EngagementChart data={engagementData} />
 
