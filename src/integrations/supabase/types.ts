@@ -9,6 +9,119 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      amazon_dsp_accounts: {
+        Row: {
+          access_token: string
+          account_id: string
+          account_name: string | null
+          created_at: string
+          error_message: string | null
+          id: string
+          last_sync_at: string | null
+          refresh_token: string
+          status: string | null
+          token_expires_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          account_id: string
+          account_name?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_sync_at?: string | null
+          refresh_token: string
+          status?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          account_id?: string
+          account_name?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_sync_at?: string | null
+          refresh_token?: string
+          status?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      amazon_dsp_campaigns: {
+        Row: {
+          account_id: string
+          audience_insights: Json | null
+          campaign_id: string
+          campaign_name: string
+          created_at: string
+          creative_metrics: Json | null
+          daily_budget: number | null
+          end_date: string | null
+          id: string
+          last_sync_at: string | null
+          lifetime_budget: number | null
+          objective: Database["public"]["Enums"]["amazon_dsp_objective"] | null
+          performance_metrics: Json | null
+          start_date: string | null
+          status: string | null
+          targeting_settings: Json | null
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          audience_insights?: Json | null
+          campaign_id: string
+          campaign_name: string
+          created_at?: string
+          creative_metrics?: Json | null
+          daily_budget?: number | null
+          end_date?: string | null
+          id?: string
+          last_sync_at?: string | null
+          lifetime_budget?: number | null
+          objective?: Database["public"]["Enums"]["amazon_dsp_objective"] | null
+          performance_metrics?: Json | null
+          start_date?: string | null
+          status?: string | null
+          targeting_settings?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          audience_insights?: Json | null
+          campaign_id?: string
+          campaign_name?: string
+          created_at?: string
+          creative_metrics?: Json | null
+          daily_budget?: number | null
+          end_date?: string | null
+          id?: string
+          last_sync_at?: string | null
+          lifetime_budget?: number | null
+          objective?: Database["public"]["Enums"]["amazon_dsp_objective"] | null
+          performance_metrics?: Json | null
+          start_date?: string | null
+          status?: string | null
+          targeting_settings?: Json | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "amazon_dsp_campaigns_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "amazon_dsp_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       analytics_integrations: {
         Row: {
           created_at: string
@@ -1769,6 +1882,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      amazon_dsp_objective: "awareness" | "consideration" | "conversion"
       analytics_platform_type: "google_analytics_4" | "universal_analytics"
       campaign_objective: "awareness" | "consideration" | "conversion"
       google_ads_status: "pending" | "active" | "error" | "disconnected"

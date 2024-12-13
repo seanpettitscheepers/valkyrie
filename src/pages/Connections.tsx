@@ -12,6 +12,9 @@ import { GoogleAdsConnection } from "@/components/Integrations/GoogleAds/GoogleA
 import { LinkedInAdsIntegration } from "@/components/Integrations/LinkedIn/LinkedInAdsIntegration";
 import { GoogleAnalyticsConnection } from "@/components/Integrations/GoogleAnalytics/GoogleAnalyticsConnection";
 
+// Add the import for AmazonDSPIntegration
+import { AmazonDSPIntegration } from "@/components/Integrations/AmazonDSP/AmazonDSPIntegration";
+
 export default function Connections() {
   const { data: connectedPlatforms } = useQuery({
     queryKey: ["connected-platforms"],
@@ -24,7 +27,8 @@ export default function Connections() {
         { data: snapchat },
         { data: googleAds },
         { data: linkedin },
-        { data: analytics }
+        { data: analytics },
+        { data: amazonDsp }  // Add Amazon DSP check
       ] = await Promise.all([
         supabase.from("facebook_ad_accounts").select("id").limit(1),
         supabase.from("dv360_accounts").select("id").limit(1),
@@ -36,7 +40,8 @@ export default function Connections() {
         supabase.from("analytics_integrations")
           .select("id")
           .eq("platform_type", "google_analytics_4")
-          .limit(1)
+          .limit(1),
+        supabase.from("amazon_dsp_accounts").select("id").limit(1)  // Add Amazon DSP query
       ]);
 
       return {
@@ -47,7 +52,8 @@ export default function Connections() {
         snapchat: snapchat && snapchat.length > 0,
         googleAds: googleAds && googleAds.length > 0,
         linkedin: linkedin && linkedin.length > 0,
-        analytics: analytics && analytics.length > 0
+        analytics: analytics && analytics.length > 0,
+        amazonDsp: amazonDsp && amazonDsp.length > 0  // Add Amazon DSP status
       };
     },
   });
@@ -55,6 +61,25 @@ export default function Connections() {
   return (
     <PageLayout title="Platform Connections">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        {/* Add Amazon DSP integration */}
+        <div className="h-full">
+          {connectedPlatforms?.amazonDsp ? (
+            <AmazonDSPIntegration />
+          ) : (
+            <UnconnectedState
+              title="Amazon DSP"
+              description="Connect your Amazon DSP account to sync campaign data and performance metrics"
+              onConnect={() => {
+                window.location.href = `https://api.amazon.com/auth/o2/authorize?client_id=${
+                  import.meta.env.VITE_AMAZON_CLIENT_ID
+                }&response_type=code&redirect_uri=${encodeURIComponent(
+                  import.meta.env.VITE_AMAZON_REDIRECT_URI
+                )}&scope=advertising::campaign_management advertising::reporting`;
+              }}
+            />
+          )}
+        </div>
+
         <div className="h-full">
           {connectedPlatforms?.facebook ? (
             <FacebookAdsIntegration />
