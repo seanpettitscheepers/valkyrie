@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Filter, MoreHorizontal, Plus } from "lucide-react";
+import { Filter } from "lucide-react";
 import { CampaignFilter } from "./CampaignFilter";
 import { ShareDialog } from "../Share/ShareDialog";
 import { CreateCampaignDialog } from "./CreateCampaignDialog";
@@ -23,6 +23,7 @@ export function DashboardHeader({ selectedCampaign, onCampaignChange, dashboardR
           </p>
         </div>
         <div className="flex items-center space-x-3">
+          <CreateCampaignDialog />
           <CampaignFilter
             selectedCampaign={selectedCampaign}
             onCampaignChange={onCampaignChange}
@@ -32,10 +33,6 @@ export function DashboardHeader({ selectedCampaign, onCampaignChange, dashboardR
             Filter
           </Button>
           <ShareDialog contentRef={dashboardRef} pageTitle="Campaign Dashboard" />
-          <CreateCampaignDialog />
-          <Button variant="outline" size="sm">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
         </div>
       </div>
     </div>
