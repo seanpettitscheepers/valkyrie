@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
-import { AlertCircle, Link2 } from "lucide-react";
+import { AlertCircle, Link2, RefreshCw } from "lucide-react";
 
 const GOOGLE_CLIENT_ID = "your-google-client-id";
 const REDIRECT_URI = `${process.env.SUPABASE_URL}/functions/v1/google-ads-auth-callback`;
@@ -13,6 +13,7 @@ const REDIRECT_URI = `${process.env.SUPABASE_URL}/functions/v1/google-ads-auth-c
 export function GoogleAdsIntegration() {
   const { toast } = useToast();
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isSyncing, setIsSyncing] = useState<string | null>(null);
 
   const { data: accounts, isLoading, error, refetch } = useQuery({
     queryKey: ["google-ads-accounts"],
@@ -62,6 +63,32 @@ export function GoogleAdsIntegration() {
     }
   };
 
+  const handleSync = async (accountId: string) => {
+    try {
+      setIsSyncing(accountId);
+      const { error } = await supabase.functions.invoke("sync-google-ads-campaigns", {
+        body: { accountId },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Sync Complete",
+        description: "Successfully synced Google Ads campaigns.",
+      });
+      refetch();
+    } catch (error) {
+      console.error("Error syncing Google Ads campaigns:", error);
+      toast({
+        title: "Sync Error",
+        description: "Failed to sync Google Ads campaigns. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSyncing(null);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
@@ -105,12 +132,30 @@ export function GoogleAdsIntegration() {
                       {account.status === "active" ? "Connected" : "Disconnected"}
                     </span>
                   </div>
+                  {account.last_sync_at && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Last synced: {new Date(account.last_sync_at).toLocaleString()}
+                    </p>
+                  )}
                 </div>
-                {account.last_sync_at && (
-                  <p className="text-sm text-muted-foreground">
-                    Last synced: {new Date(account.last_sync_at).toLocaleString()}
-                  </p>
-                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleSync(account.id)}
+                  disabled={isSyncing === account.id}
+                >
+                  {isSyncing === account.id ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      Syncing...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Sync Now
+                    </>
+                  )}
+                </Button>
               </div>
             ))}
           </div>
