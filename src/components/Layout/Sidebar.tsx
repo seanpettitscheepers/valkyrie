@@ -15,7 +15,7 @@ const menuItems = [
   { icon: BarChart, label: "Campaigns", path: "/campaigns" },
   { icon: Globe, label: "Website Performance", path: "/website-performance" },
   { icon: Megaphone, label: "Launch Ads", path: "/launch-ads" },
-  { icon: LineChart, label: "Performance", path: "/performance" },
+  { icon: LineChart, label: "Ad Performance", path: "/ad-performance" },
   { icon: Users, label: "Audience", path: "/audience" },
   { icon: Signal, label: "Brand Sentiment", path: "/sentiment" },
   { icon: CalendarRange, label: "Planning", path: "/planning" },
