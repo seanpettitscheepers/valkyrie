@@ -1,6 +1,16 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Facebook, Instagram, BrandLinkedin, BrandPinterest, BrandSnapchat, BrandTiktok, BrandX, MonitorPlay, BarChart3, Store } from "lucide-react";
+import { 
+  Facebook, 
+  Instagram, 
+  Linkedin, 
+  Pinterest, 
+  Snapchat, 
+  MonitorPlay, 
+  BarChart3, 
+  Store,
+  MessageCircle 
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -59,31 +69,31 @@ export function LaunchAdsPlatforms() {
     },
     {
       name: "LinkedIn Ads",
-      icon: BrandLinkedin,
+      icon: Linkedin,
       description: "Create ads for LinkedIn's advertising platform",
       isConnected: connectedPlatforms?.linkedin,
     },
     {
       name: "Pinterest Ads",
-      icon: BrandPinterest,
+      icon: Pinterest,
       description: "Create ads for Pinterest's advertising platform",
       isConnected: connectedPlatforms?.pinterest,
     },
     {
       name: "Snapchat Ads",
-      icon: BrandSnapchat,
+      icon: Snapchat,
       description: "Create ads for Snapchat's advertising platform",
       isConnected: connectedPlatforms?.snapchat,
     },
     {
       name: "TikTok Ads",
-      icon: BrandTiktok,
+      icon: MessageCircle, // Using MessageCircle as a temporary replacement since there's no TikTok icon
       description: "Create ads for TikTok's advertising platform",
       isConnected: connectedPlatforms?.tiktok,
     },
     {
       name: "X Ads",
-      icon: BrandX,
+      icon: MessageCircle, // Using MessageCircle as a temporary replacement for X
       description: "Create ads for X's (formerly Twitter) advertising platform",
       isConnected: false, // Not implemented yet
     },
