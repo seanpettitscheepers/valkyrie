@@ -13,18 +13,18 @@ import { Separator } from "@/components/ui/separator";
 
 const Audience = () => {
   const [selectedCampaign, setSelectedCampaign] = useState("all");
-  const [selectedPlatform, setSelectedPlatform] = useState("all");
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(["all"]);
 
   const { data: audienceData } = useQuery({
-    queryKey: ["audience-insights", selectedCampaign, selectedPlatform],
+    queryKey: ["audience-insights", selectedCampaign, selectedPlatforms],
     queryFn: async () => {
       let query = supabase.from("audience_insights").select("*");
       
       if (selectedCampaign !== "all") {
         query = query.eq("campaign_id", selectedCampaign);
       }
-      if (selectedPlatform !== "all") {
-        query = query.eq("platform", selectedPlatform);
+      if (!selectedPlatforms.includes("all")) {
+        query = query.in("platform", selectedPlatforms);
       }
       
       const { data, error } = await query;
@@ -68,8 +68,8 @@ const Audience = () => {
               onCampaignChange={setSelectedCampaign}
             />
             <PlatformFilter
-              selectedPlatform={selectedPlatform}
-              onPlatformChange={setSelectedPlatform}
+              selectedPlatforms={selectedPlatforms}
+              onPlatformChange={setSelectedPlatforms}
             />
           </div>
         </div>
