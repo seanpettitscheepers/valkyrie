@@ -43,7 +43,6 @@ export function TwitterAdsIntegration() {
       const authUrl = `https://twitter.com/i/oauth2/authorize?` +
         `client_id=${import.meta.env.VITE_TWITTER_CLIENT_ID}` +
         `&redirect_uri=${encodeURIComponent(import.meta.env.VITE_TWITTER_REDIRECT_URI)}` +
-        `&response_type=code` +
         `&scope=tweet.read%20users.read%20offline.access` +
         `&state=${state}`;
 
