@@ -1,7 +1,4 @@
 project_id = "qothiaalyhdfuesmvcvu"
 
-[facebook-pages-auth-callback]
+[auth-callback]
 verify_jwt = false
-
-[sync-facebook-pages]
-verify_jwt = true
