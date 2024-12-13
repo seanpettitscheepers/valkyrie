@@ -5,27 +5,39 @@ import { PageLayout } from "@/components/Layout/PageLayout";
 import { AIInsightsCard } from "@/components/Dashboard/AIInsightsCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CampaignFilter } from "@/components/Audience/CampaignFilter";
+import { PlatformFilter } from "@/components/Audience/PlatformFilter";
 import { MetricsExplanation } from "@/components/Performance/MetricsExplanation";
 import { PerformanceMetricsGrid } from "@/components/Performance/PerformanceMetricsGrid";
 import { usePerformanceMetrics } from "@/components/Performance/usePerformanceMetrics";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 
 const Performance = () => {
   const [selectedCampaign, setSelectedCampaign] = useState("all");
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(["all"]);
 
   const { data: campaigns, isLoading: campaignsLoading } = useQuery({
-    queryKey: ["campaigns"],
+    queryKey: ["campaigns", selectedPlatforms],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("campaigns")
         .select("*, campaign_metrics(*)");
       
+      if (!selectedPlatforms.includes("all")) {
+        query = query.in("platform", selectedPlatforms);
+      }
+      
+      const { data, error } = await query;
       if (error) throw error;
       return data;
     },
   });
 
   const performanceMetrics = usePerformanceMetrics(campaigns, selectedCampaign);
+
+  const handlePlatformChange = (platforms: string[]) => {
+    setSelectedPlatforms(platforms);
+  };
 
   const generateInsights = (objective: "awareness" | "consideration" | "conversion") => {
     if (!performanceMetrics) return [];
@@ -69,21 +81,35 @@ const Performance = () => {
   };
 
   return (
-    <PageLayout title="Performance Analysis">
+    <PageLayout title="Ad Performance Analysis">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold">Campaign Performance Analysis</h1>
+          <h1 className="text-3xl font-bold">Ad Performance Analysis</h1>
           <p className="text-muted-foreground mt-1">
-            Comprehensive analysis of campaign performance metrics and insights across all objectives
+            Comprehensive analysis of ad performance metrics and insights across all platforms
           </p>
         </div>
-        <CampaignFilter
-          selectedCampaign={selectedCampaign}
-          onCampaignChange={setSelectedCampaign}
-        />
+        <div className="flex gap-4">
+          <CampaignFilter
+            selectedCampaign={selectedCampaign}
+            onCampaignChange={setSelectedCampaign}
+          />
+          <PlatformFilter
+            selectedPlatforms={selectedPlatforms}
+            onPlatformChange={handlePlatformChange}
+          />
+        </div>
       </div>
       
       <div className="space-y-6">
+        <div className="flex gap-2 flex-wrap">
+          {selectedPlatforms.map(platform => (
+            <Badge key={platform} variant="secondary">
+              {platform === "all" ? "All Platforms" : platform}
+            </Badge>
+          ))}
+        </div>
+
         <Tabs defaultValue="awareness" className="space-y-6">
           <TabsList>
             <TabsTrigger value="awareness">Awareness</TabsTrigger>
