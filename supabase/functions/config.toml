@@ -1,4 +1,7 @@
 project_id = "qothiaalyhdfuesmvcvu"
 
-[functions.stripe-webhook]
+[facebook-pages-auth-callback]
 verify_jwt = false
+
+[sync-facebook-pages]
+verify_jwt = true

@@ -548,6 +548,133 @@ export type Database = {
           },
         ]
       }
+      facebook_page_insights: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          metrics: Json | null
+          page_id: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          metrics?: Json | null
+          page_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          metrics?: Json | null
+          page_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facebook_page_insights_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "facebook_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      facebook_page_posts: {
+        Row: {
+          created_at: string
+          engagement_metrics: Json | null
+          id: string
+          media_type: string | null
+          media_url: string | null
+          message: string | null
+          page_id: string
+          post_id: string
+          published_time: string | null
+          scheduled_time: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          engagement_metrics?: Json | null
+          id?: string
+          media_type?: string | null
+          media_url?: string | null
+          message?: string | null
+          page_id: string
+          post_id: string
+          published_time?: string | null
+          scheduled_time?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          engagement_metrics?: Json | null
+          id?: string
+          media_type?: string | null
+          media_url?: string | null
+          message?: string | null
+          page_id?: string
+          post_id?: string
+          published_time?: string | null
+          scheduled_time?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facebook_page_posts_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "facebook_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      facebook_pages: {
+        Row: {
+          access_token: string
+          category: string | null
+          created_at: string
+          followers_count: number | null
+          id: string
+          is_active: boolean | null
+          last_sync_at: string | null
+          page_id: string
+          page_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          category?: string | null
+          created_at?: string
+          followers_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          page_id: string
+          page_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          category?: string | null
+          created_at?: string
+          followers_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          page_id?: string
+          page_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       generated_names: {
         Row: {
           ad_name: string
