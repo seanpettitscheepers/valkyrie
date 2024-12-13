@@ -1,16 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 
-if (!import.meta.env.VITE_SUPABASE_URL) {
-  throw new Error('VITE_SUPABASE_URL environment variable is not set');
-}
-
-if (!import.meta.env.VITE_SUPABASE_ANON_KEY) {
-  throw new Error('VITE_SUPABASE_ANON_KEY environment variable is not set');
-}
+const SUPABASE_URL = 'https://qothiaalyhdfuesmvcvu.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvdGhpYWFseWhkZnVlc212Y3Z1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDg2MjQxNDAsImV4cCI6MjAyNDIwMDE0MH0.qDlvk_z2DhGX0Nc_z6AIIj7ZRGh_jOKVbUoXF9VzFYA';
 
 export const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY,
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY,
   {
     auth: {
       persistSession: true,
