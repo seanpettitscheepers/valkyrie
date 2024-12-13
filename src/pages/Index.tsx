@@ -1,5 +1,6 @@
 import { PageLayout } from "@/components/Layout/PageLayout";
 import { FacebookPagesManager } from "@/components/Integrations/Facebook/FacebookPagesManager";
+import { GoogleAdsIntegration } from "@/components/Integrations/GoogleAds/GoogleAdsIntegration";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Facebook } from "lucide-react";
 
@@ -21,6 +22,8 @@ export default function Index() {
             <FacebookPagesManager />
           </CardContent>
         </Card>
+
+        <GoogleAdsIntegration />
       </div>
     </PageLayout>
   );

@@ -717,6 +717,122 @@ export type Database = {
         }
         Relationships: []
       }
+      google_ads_accounts: {
+        Row: {
+          access_token: string
+          account_name: string | null
+          created_at: string
+          customer_id: string
+          developer_token: string | null
+          error_message: string | null
+          id: string
+          last_sync_at: string | null
+          login_customer_id: string | null
+          refresh_token: string
+          status: Database["public"]["Enums"]["google_ads_status"] | null
+          token_expires_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          account_name?: string | null
+          created_at?: string
+          customer_id: string
+          developer_token?: string | null
+          error_message?: string | null
+          id?: string
+          last_sync_at?: string | null
+          login_customer_id?: string | null
+          refresh_token: string
+          status?: Database["public"]["Enums"]["google_ads_status"] | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          account_name?: string | null
+          created_at?: string
+          customer_id?: string
+          developer_token?: string | null
+          error_message?: string | null
+          id?: string
+          last_sync_at?: string | null
+          login_customer_id?: string | null
+          refresh_token?: string
+          status?: Database["public"]["Enums"]["google_ads_status"] | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      google_ads_campaigns: {
+        Row: {
+          account_id: string
+          audience_insights: Json | null
+          budget_amount: number | null
+          budget_type: string | null
+          campaign_id: string
+          campaign_name: string
+          campaign_type: string
+          created_at: string
+          end_date: string | null
+          id: string
+          last_sync_at: string | null
+          performance_metrics: Json | null
+          start_date: string | null
+          status: string | null
+          targeting_settings: Json | null
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          audience_insights?: Json | null
+          budget_amount?: number | null
+          budget_type?: string | null
+          campaign_id: string
+          campaign_name: string
+          campaign_type: string
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          last_sync_at?: string | null
+          performance_metrics?: Json | null
+          start_date?: string | null
+          status?: string | null
+          targeting_settings?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          audience_insights?: Json | null
+          budget_amount?: number | null
+          budget_type?: string | null
+          campaign_id?: string
+          campaign_name?: string
+          campaign_type?: string
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          last_sync_at?: string | null
+          performance_metrics?: Json | null
+          start_date?: string | null
+          status?: string | null
+          targeting_settings?: Json | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "google_ads_campaigns_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "google_ads_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       industry_benchmarks: {
         Row: {
           baseline_value: number
@@ -1022,6 +1138,7 @@ export type Database = {
     Enums: {
       analytics_platform_type: "google_analytics_4" | "universal_analytics"
       campaign_objective: "awareness" | "consideration" | "conversion"
+      google_ads_status: "pending" | "active" | "error" | "disconnected"
       industry_type:
         | "e_commerce"
         | "b2b_saas"
