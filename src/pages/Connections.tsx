@@ -10,15 +10,27 @@ import { SnapchatAdsIntegration } from "@/components/Integrations/Snapchat/Snapc
 export default function Connections() {
   return (
     <PageLayout title="Platform Connections">
-      <div className="space-y-6">
-        <FacebookAdsIntegration />
-        <FacebookPagesIntegration />
-        <DV360Integration />
-        <TikTokAdsIntegration />
-        <PinterestAdsIntegration />
-        <SnapchatAdsIntegration />
-        <PlatformConnections />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        <div className="col-span-1">
+          <FacebookAdsIntegration />
+        </div>
+        <div className="col-span-1">
+          <FacebookPagesIntegration />
+        </div>
+        <div className="col-span-1">
+          <DV360Integration />
+        </div>
+        <div className="col-span-1">
+          <TikTokAdsIntegration />
+        </div>
+        <div className="col-span-1">
+          <PinterestAdsIntegration />
+        </div>
+        <div className="col-span-1">
+          <SnapchatAdsIntegration />
+        </div>
       </div>
+      <PlatformConnections />
     </PageLayout>
   );
 }
