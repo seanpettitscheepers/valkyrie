@@ -14,8 +14,23 @@ serve(async (req) => {
 
   try {
     // Parse the request body
-    const requestData = await req.json();
-    console.log('Received request data:', requestData);
+    let requestData;
+    try {
+      requestData = await req.json();
+      console.log('Received request data:', requestData);
+    } catch (error) {
+      console.error('Error parsing request JSON:', error);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid JSON in request body',
+          details: error.message 
+        }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
 
     const { audienceData } = requestData;
 
@@ -46,7 +61,7 @@ serve(async (req) => {
     const configuration = new Configuration({ apiKey: openAiKey });
     const openai = new OpenAIApi(configuration);
 
-    // Prepare the prompt with specific formatting instructions
+    // Prepare the prompt
     const prompt = `Based on the following audience data, provide 3 targeting recommendations:
     ${JSON.stringify(audienceData, null, 2)}
     
@@ -56,9 +71,7 @@ serve(async (req) => {
     - reasoning: explanation for the recommendation
     - potentialImpact: either "high", "medium", or "low"
     
-    Focus on actionable insights that can improve campaign performance.
-    
-    IMPORTANT: Ensure your response is valid JSON that can be parsed.`;
+    Focus on actionable insights that can improve campaign performance.`;
 
     console.log('Sending prompt to OpenAI:', prompt);
 
@@ -96,10 +109,25 @@ serve(async (req) => {
     // Parse and validate the response
     let recommendations;
     try {
-      recommendations = JSON.parse(responseText);
+      recommendations = JSON.parse(responseText.trim());
+      
       if (!Array.isArray(recommendations) || recommendations.length !== 3) {
-        throw new Error('Invalid response format');
+        throw new Error('Invalid response format - expected array of 3 recommendations');
       }
+
+      // Validate each recommendation object
+      recommendations.forEach((rec, index) => {
+        if (!rec.type || !rec.recommendation || !rec.reasoning || !rec.potentialImpact) {
+          throw new Error(`Missing required fields in recommendation ${index + 1}`);
+        }
+        if (!['demographic', 'behavioral', 'interest'].includes(rec.type)) {
+          throw new Error(`Invalid type in recommendation ${index + 1}`);
+        }
+        if (!['high', 'medium', 'low'].includes(rec.potentialImpact)) {
+          throw new Error(`Invalid potentialImpact in recommendation ${index + 1}`);
+        }
+      });
+
     } catch (error) {
       console.error('Error parsing OpenAI response:', error, 'Response text:', responseText);
       return new Response(
@@ -115,7 +143,7 @@ serve(async (req) => {
       );
     }
 
-    // Return the recommendations
+    // Return the validated recommendations
     return new Response(
       JSON.stringify({ recommendations }),
       { 
