@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Brain, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { fetchCampaignMetrics, getAIRecommendations } from "@/utils/aiRecommendations";
 
 export function LaunchAdsAIRecommendations() {
   const [objective, setObjective] = useState("");
@@ -17,41 +17,8 @@ export function LaunchAdsAIRecommendations() {
       if (!objective.trim()) return null;
 
       try {
-        // First fetch performance data with proper error handling
-        const { data: performanceData, error: dbError } = await supabase
-          .from('campaign_metrics')
-          .select('*')
-          .limit(100);
-
-        if (dbError) {
-          console.error('Error fetching performance data:', dbError);
-          throw dbError;
-        }
-
-        // Get the current session
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        // Call the edge function with authorization headers
-        const { data: response, error: fnError } = await supabase.functions.invoke(
-          'analyze-ad-objective',
-          {
-            body: {
-              objective,
-              historicalPerformance: performanceData || []
-            },
-            headers: {
-              Authorization: `Bearer ${session?.access_token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-
-        if (fnError) {
-          console.error('Edge function error:', fnError);
-          throw fnError;
-        }
-
-        return response;
+        const performanceData = await fetchCampaignMetrics();
+        return await getAIRecommendations(objective, performanceData || []);
       } catch (err) {
         console.error('Error getting recommendations:', err);
         toast({
