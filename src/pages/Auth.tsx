@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Auth as SupabaseAuth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ export default function Auth() {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        navigate("/");
+        navigate("/dashboard");
       }
     };
 
@@ -28,7 +28,7 @@ export default function Auth() {
             title: "Welcome!",
             description: "You have successfully signed in.",
           });
-          navigate("/");
+          navigate("/dashboard");
         }
       }
     );
