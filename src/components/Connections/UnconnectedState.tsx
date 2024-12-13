@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlugOff } from "lucide-react";
+import { Unplug } from "lucide-react";
 
 interface UnconnectedStateProps {
   title: string;
@@ -22,7 +22,7 @@ export function UnconnectedState({
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center justify-center py-6 space-y-4">
-        <PlugOff className="h-12 w-12 text-muted-foreground" />
+        <Unplug className="h-12 w-12 text-muted-foreground" />
         <Button
           onClick={onConnect}
           disabled={isConnecting}
