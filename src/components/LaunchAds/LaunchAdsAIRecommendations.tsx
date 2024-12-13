@@ -17,22 +17,37 @@ export function LaunchAdsAIRecommendations() {
       if (!objective.trim()) return null;
 
       try {
-        const { data: performanceData } = await supabase
+        // First fetch performance data with proper error handling
+        const { data: performanceData, error: dbError } = await supabase
           .from('campaign_metrics')
           .select('*')
           .limit(100);
 
-        const { data: response, error } = await supabase.functions.invoke(
+        if (dbError) {
+          console.error('Error fetching performance data:', dbError);
+          throw dbError;
+        }
+
+        // Call the edge function with authorization headers
+        const { data: response, error: fnError } = await supabase.functions.invoke(
           'analyze-ad-objective',
           {
             body: {
               objective,
-              historicalPerformance: performanceData
+              historicalPerformance: performanceData || []
+            },
+            headers: {
+              Authorization: `Bearer ${supabase.auth.getSession()?.access_token}`,
+              'Content-Type': 'application/json',
             },
           }
         );
 
-        if (error) throw error;
+        if (fnError) {
+          console.error('Edge function error:', fnError);
+          throw fnError;
+        }
+
         return response;
       } catch (err) {
         console.error('Error getting recommendations:', err);

@@ -1,6 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { Configuration, OpenAIApi } from "https://esm.sh/openai@3.3.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,6 +14,15 @@ serve(async (req) => {
   }
 
   try {
+    // Verify authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'No authorization header' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const { objective, historicalPerformance } = await req.json();
 
     const openAiKey = Deno.env.get('OPENAI_API_KEY');
@@ -38,7 +48,7 @@ Please provide recommendations in these three areas:
 Format your response as specific, actionable recommendations in these categories.`;
 
     const completion = await openai.createChatCompletion({
-      model: "gpt-4o",
+      model: "gpt-4",
       messages: [
         {
           role: "system",
