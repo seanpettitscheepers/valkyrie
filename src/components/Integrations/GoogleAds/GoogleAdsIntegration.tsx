@@ -9,7 +9,7 @@ import { AlertCircle, Link2, RefreshCw } from "lucide-react";
 import { GoogleAdsCampaigns } from "./GoogleAdsCampaigns";
 
 const GOOGLE_CLIENT_ID = "your-google-client-id";
-const REDIRECT_URI = `${process.env.SUPABASE_URL}/functions/v1/google-ads-auth-callback`;
+const REDIRECT_URI = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/google-ads-auth-callback`;
 
 export function GoogleAdsIntegration() {
   const { toast } = useToast();
