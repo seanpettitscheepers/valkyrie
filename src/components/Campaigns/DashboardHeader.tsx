@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { Filter, MoreHorizontal } from "lucide-react";
+import { Filter, MoreHorizontal, Plus } from "lucide-react";
 import { CampaignFilter } from "./CampaignFilter";
 import { ShareDialog } from "../Share/ShareDialog";
+import { CreateCampaignDialog } from "./CreateCampaignDialog";
 
 interface DashboardHeaderProps {
   selectedCampaign: string;
@@ -31,6 +32,7 @@ export function DashboardHeader({ selectedCampaign, onCampaignChange, dashboardR
             Filter
           </Button>
           <ShareDialog contentRef={dashboardRef} pageTitle="Campaign Dashboard" />
+          <CreateCampaignDialog />
           <Button variant="outline" size="sm">
             <MoreHorizontal className="h-4 w-4" />
           </Button>
