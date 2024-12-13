@@ -5,6 +5,18 @@ import { Badge } from "@/components/ui/badge";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
+interface DV360Campaign {
+  id: string;
+  campaign_name: string;
+  status: string;
+  budget_amount: number | null;
+  performance_metrics: {
+    impressions?: number;
+    clicks?: number;
+    ctr?: number;
+  } | null;
+}
+
 interface DV360CampaignsProps {
   accountId: string;
 }
@@ -20,7 +32,7 @@ export function DV360Campaigns({ accountId }: DV360CampaignsProps) {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as DV360Campaign[];
     },
   });
 
@@ -59,7 +71,7 @@ export function DV360Campaigns({ accountId }: DV360CampaignsProps) {
               <CardTitle className="text-sm font-medium">
                 {campaign.campaign_name}
               </CardTitle>
-              <Badge variant={campaign.status === "ACTIVE" ? "success" : "secondary"}>
+              <Badge variant={campaign.status === "ACTIVE" ? "secondary" : "outline"}>
                 {campaign.status}
               </Badge>
             </div>
