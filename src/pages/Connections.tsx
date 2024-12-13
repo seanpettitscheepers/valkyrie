@@ -27,7 +27,8 @@ export default function Connections() {
         { data: googleAds },
         { data: linkedin },
         { data: analytics },
-        { data: amazonDsp }
+        { data: amazonDsp },
+        { data: ttd }
       ] = await Promise.all([
         supabase.from("facebook_ad_accounts").select("id").limit(1),
         supabase.from("facebook_pages").select("id").limit(1),
@@ -41,7 +42,8 @@ export default function Connections() {
           .select("id")
           .eq("platform_type", "google_analytics_4")
           .limit(1),
-        supabase.from("amazon_dsp_accounts").select("id").limit(1)
+        supabase.from("amazon_dsp_accounts").select("id").limit(1),
+        supabase.from("ttd_accounts").select("id").limit(1)
       ]);
 
       return {
@@ -54,7 +56,8 @@ export default function Connections() {
         googleAds: googleAds && googleAds.length > 0,
         linkedin: linkedin && linkedin.length > 0,
         analytics: analytics && analytics.length > 0,
-        amazonDsp: amazonDsp && amazonDsp.length > 0
+        amazonDsp: amazonDsp && amazonDsp.length > 0,
+        ttd: ttd && ttd.length > 0
       };
     },
   });
@@ -166,6 +169,18 @@ export default function Connections() {
               title="Google Analytics"
               description="Connect your Google Analytics 4 property to sync website performance data and audience insights"
               onConnect={() => window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(import.meta.env.VITE_GA4_REDIRECT_URI)}&scope=https://www.googleapis.com/auth/analytics.readonly&response_type=code&access_type=offline`}
+            />
+          )}
+        </div>
+
+        <div className="h-full">
+          {connectedPlatforms?.ttd ? (
+            <TTDIntegration />
+          ) : (
+            <UnconnectedState
+              title="The Trade Desk"
+              description="Connect your TTD account to sync campaign data and performance metrics"
+              onConnect={() => window.location.href = `https://api.thetradedesk.com/v3/authentication/oauth/authorize?client_id=${import.meta.env.VITE_TTD_CLIENT_ID}&redirect_uri=${encodeURIComponent(import.meta.env.VITE_TTD_REDIRECT_URI)}&response_type=code&scope=campaign_read campaign_write audience_read`}
             />
           )}
         </div>
