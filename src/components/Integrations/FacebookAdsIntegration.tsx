@@ -109,8 +109,9 @@ export function FacebookAdsIntegration() {
                     ID: {account.account_id}
                   </p>
                 </div>
-                <Badge
-                  variant={account.status === "active" ? "success" : "secondary"}
+                <Badge 
+                  variant="secondary"
+                  className={account.status === "active" ? "bg-green-100 text-green-800" : ""}
                 >
                   {account.status}
                 </Badge>
