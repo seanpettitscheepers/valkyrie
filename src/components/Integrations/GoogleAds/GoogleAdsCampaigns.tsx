@@ -93,19 +93,19 @@ export function GoogleAdsCampaigns({ accountId }: { accountId: string }) {
                       <div className="text-xs">
                         <div className="font-medium">Impressions</div>
                         <div className="text-muted-foreground">
-                          {campaign.performance_metrics.impressions?.toLocaleString() || 0}
+                          {(campaign.performance_metrics as any)?.impressions?.toLocaleString() || 0}
                         </div>
                       </div>
                       <div className="text-xs">
                         <div className="font-medium">Clicks</div>
                         <div className="text-muted-foreground">
-                          {campaign.performance_metrics.clicks?.toLocaleString() || 0}
+                          {(campaign.performance_metrics as any)?.clicks?.toLocaleString() || 0}
                         </div>
                       </div>
                       <div className="text-xs">
                         <div className="font-medium">Cost</div>
                         <div className="text-muted-foreground">
-                          ${(campaign.performance_metrics.cost || 0).toFixed(2)}
+                          ${((campaign.performance_metrics as any)?.cost || 0).toFixed(2)}
                         </div>
                       </div>
                     </div>
