@@ -28,6 +28,9 @@ export function LaunchAdsAIRecommendations() {
           throw dbError;
         }
 
+        // Get the current session
+        const { data: { session } } = await supabase.auth.getSession();
+        
         // Call the edge function with authorization headers
         const { data: response, error: fnError } = await supabase.functions.invoke(
           'analyze-ad-objective',
@@ -37,7 +40,7 @@ export function LaunchAdsAIRecommendations() {
               historicalPerformance: performanceData || []
             },
             headers: {
-              Authorization: `Bearer ${supabase.auth.getSession()?.access_token}`,
+              Authorization: `Bearer ${session?.access_token}`,
               'Content-Type': 'application/json',
             },
           }
