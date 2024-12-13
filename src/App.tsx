@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import Index from "./pages/Index";
-import Auth from "./pages/Auth";
 import Audience from "./pages/Audience";
 import Naming from "./pages/Naming";
 import Sentiment from "./pages/Sentiment";
@@ -20,7 +19,6 @@ import Campaigns from "./pages/Campaigns";
 import Brands from "./pages/Brands";
 import WebsitePerformance from "./pages/WebsitePerformance";
 import LaunchAds from "./pages/LaunchAds";
-import { ProtectedRoute } from "./components/Auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -32,23 +30,22 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/dashboard" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-          <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
-          <Route path="/naming" element={<ProtectedRoute><Naming /></ProtectedRoute>} />
-          <Route path="/audience" element={<ProtectedRoute><Audience /></ProtectedRoute>} />
-          <Route path="/sentiment" element={<ProtectedRoute><Sentiment /></ProtectedRoute>} />
-          <Route path="/website-performance" element={<ProtectedRoute><WebsitePerformance /></ProtectedRoute>} />
-          <Route path="/launch-ads" element={<ProtectedRoute><LaunchAds /></ProtectedRoute>} />
-          <Route path="/ad-performance" element={<ProtectedRoute><Performance /></ProtectedRoute>} />
-          <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
-          <Route path="/planning" element={<ProtectedRoute><Planning /></ProtectedRoute>} />
-          <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
-          <Route path="/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
-          <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-          <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
-          <Route path="/brands" element={<ProtectedRoute><Brands /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<Index />} />
+          <Route path="/campaigns" element={<Campaigns />} />
+          <Route path="/naming" element={<Naming />} />
+          <Route path="/audience" element={<Audience />} />
+          <Route path="/sentiment" element={<Sentiment />} />
+          <Route path="/website-performance" element={<WebsitePerformance />} />
+          <Route path="/launch-ads" element={<LaunchAds />} />
+          <Route path="/ad-performance" element={<Performance />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/planning" element={<Planning />} />
+          <Route path="/connections" element={<Connections />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/settings" element={<Index />} />
+          <Route path="/account" element={<Account />} />
+          <Route path="/brands" element={<Brands />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
