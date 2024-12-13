@@ -16,12 +16,12 @@ export function UnconnectedState({
   isConnecting = false 
 }: UnconnectedStateProps) {
   return (
-    <Card>
+    <Card className="h-full flex flex-col">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col items-center justify-center py-6 space-y-4">
+      <CardContent className="flex-1 flex flex-col items-center justify-center py-6 space-y-4">
         <Unplug className="h-12 w-12 text-muted-foreground" />
         <Button
           onClick={onConnect}

@@ -40,7 +40,7 @@ export default function Connections() {
   return (
     <PageLayout title="Platform Connections">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        <div className="col-span-1">
+        <div className="h-full">
           {connectedPlatforms?.facebook ? (
             <FacebookAdsIntegration />
           ) : (
@@ -52,7 +52,7 @@ export default function Connections() {
           )}
         </div>
         
-        <div className="col-span-1">
+        <div className="h-full">
           {connectedPlatforms?.dv360 ? (
             <DV360Integration />
           ) : (
@@ -64,7 +64,7 @@ export default function Connections() {
           )}
         </div>
 
-        <div className="col-span-1">
+        <div className="h-full">
           {connectedPlatforms?.tiktok ? (
             <TikTokAdsIntegration />
           ) : (
@@ -76,7 +76,7 @@ export default function Connections() {
           )}
         </div>
 
-        <div className="col-span-1">
+        <div className="h-full">
           {connectedPlatforms?.pinterest ? (
             <PinterestAdsIntegration />
           ) : (
@@ -88,7 +88,7 @@ export default function Connections() {
           )}
         </div>
 
-        <div className="col-span-1">
+        <div className="h-full">
           {connectedPlatforms?.snapchat ? (
             <SnapchatAdsIntegration />
           ) : (
