@@ -2,11 +2,10 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Facebook, RefreshCw, AlertCircle, Users } from "lucide-react";
+import { Facebook, RefreshCw, Users, AlertCircle } from "lucide-react";
 
 const FACEBOOK_CLIENT_ID = "your_facebook_client_id";
 const REDIRECT_URI = "https://qothiaalyhdfuesmvcvu.functions.supabase.co/facebook-pages-auth-callback";
@@ -62,7 +61,7 @@ export function FacebookPagesManager() {
 
       const state = btoa(JSON.stringify({
         userId: user.id,
-        redirectUrl: window.location.origin + "/connections"
+        redirectUrl: window.location.origin + "/dashboard"
       }));
 
       const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?` +
@@ -87,62 +86,51 @@ export function FacebookPagesManager() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Facebook className="h-5 w-5" />
-          Facebook Pages
-        </CardTitle>
-        <CardDescription>
-          Connect and manage your Facebook Pages
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {error && (
-          <Alert variant="destructive" className="mb-4">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+    <div className="space-y-4">
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
 
-        {pages?.length > 0 ? (
-          <div className="space-y-4">
-            {pages.map((page) => (
-              <div key={page.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="space-y-1">
-                  <p className="font-medium">{page.page_name}</p>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Users className="h-4 w-4" />
-                    <span>{page.followers_count?.toLocaleString() || 0} followers</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge 
-                    variant="secondary"
-                    className={page.is_active ? "bg-green-100 text-green-800" : ""}
-                  >
-                    {page.is_active ? "Connected" : "Disconnected"}
-                  </Badge>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => syncMutation.mutate(page.id)}
-                    disabled={syncMutation.isPending}
-                  >
-                    <RefreshCw className={`h-4 w-4 mr-2 ${syncMutation.isPending ? 'animate-spin' : ''}`} />
-                    Sync
-                  </Button>
+      {pages?.length > 0 ? (
+        <div className="space-y-4">
+          {pages.map((page) => (
+            <div key={page.id} className="flex items-center justify-between p-4 border rounded-lg bg-card">
+              <div className="space-y-1">
+                <p className="font-medium">{page.page_name}</p>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Users className="h-4 w-4" />
+                  <span>{page.followers_count?.toLocaleString() || 0} followers</span>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <Button onClick={handleConnect} className="w-full">
-            <Facebook className="mr-2 h-4 w-4" />
-            Connect Facebook Pages
-          </Button>
-        )}
-      </CardContent>
-    </Card>
+              <div className="flex items-center gap-2">
+                <Badge 
+                  variant={page.is_active ? "default" : "secondary"}
+                  className={page.is_active ? "bg-green-100 text-green-800" : ""}
+                >
+                  {page.is_active ? "Connected" : "Disconnected"}
+                </Badge>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => syncMutation.mutate(page.id)}
+                  disabled={syncMutation.isPending}
+                >
+                  <RefreshCw className={`h-4 w-4 mr-2 ${syncMutation.isPending ? 'animate-spin' : ''}`} />
+                  Sync
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <Button onClick={handleConnect} className="w-full">
+          <Facebook className="mr-2 h-4 w-4" />
+          Connect Facebook Pages
+        </Button>
+      )}
+    </div>
   );
 }
