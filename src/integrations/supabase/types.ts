@@ -432,6 +432,122 @@ export type Database = {
         }
         Relationships: []
       }
+      facebook_ad_accounts: {
+        Row: {
+          access_token: string
+          account_id: string
+          account_name: string | null
+          created_at: string
+          error_message: string | null
+          id: string
+          last_sync_at: string | null
+          permissions: Json | null
+          refresh_token: string | null
+          status: Database["public"]["Enums"]["integration_status"] | null
+          token_expires_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          account_id: string
+          account_name?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_sync_at?: string | null
+          permissions?: Json | null
+          refresh_token?: string | null
+          status?: Database["public"]["Enums"]["integration_status"] | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          account_id?: string
+          account_name?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_sync_at?: string | null
+          permissions?: Json | null
+          refresh_token?: string | null
+          status?: Database["public"]["Enums"]["integration_status"] | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      facebook_campaigns: {
+        Row: {
+          account_id: string | null
+          budget_amount: number | null
+          budget_type: string | null
+          campaign_id: string
+          campaign_name: string
+          clicks: number | null
+          conversions: number | null
+          created_at: string
+          end_date: string | null
+          id: string
+          impressions: number | null
+          last_sync_at: string | null
+          objective: string | null
+          spend: number | null
+          start_date: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          account_id?: string | null
+          budget_amount?: number | null
+          budget_type?: string | null
+          campaign_id: string
+          campaign_name: string
+          clicks?: number | null
+          conversions?: number | null
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          impressions?: number | null
+          last_sync_at?: string | null
+          objective?: string | null
+          spend?: number | null
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string | null
+          budget_amount?: number | null
+          budget_type?: string | null
+          campaign_id?: string
+          campaign_name?: string
+          clicks?: number | null
+          conversions?: number | null
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          impressions?: number | null
+          last_sync_at?: string | null
+          objective?: string | null
+          spend?: number | null
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facebook_campaigns_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "facebook_ad_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       generated_names: {
         Row: {
           ad_name: string
@@ -787,6 +903,7 @@ export type Database = {
         | "retail"
         | "technology"
         | "other"
+      integration_status: "pending" | "active" | "error" | "disconnected"
       platform_type:
         | "social_media"
         | "video"
