@@ -1,9 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Navigation } from "@/components/Landing/Navigation";
 import { Hero } from "@/components/Landing/Hero";
@@ -13,38 +8,6 @@ import { MessageSquare, Star } from "lucide-react";
 
 export default function Landing() {
   const navigate = useNavigate();
-  const { toast } = useToast();
-
-  const { data: session, isLoading: isSessionLoading } = useQuery({
-    queryKey: ["session"],
-    queryFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        navigate("/dashboard");
-      }
-      return session;
-    },
-  });
-
-  const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      toast({
-        title: "Logged out successfully",
-        description: "You have been logged out of your account.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error logging out",
-        description: "Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleLogin = () => {
-    document.getElementById("auth-section")?.scrollIntoView({ behavior: "smooth" });
-  };
 
   const testimonials = [
     {
@@ -66,12 +29,7 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation 
-        session={session}
-        isLoading={isSessionLoading}
-        onLogin={handleLogin}
-        onLogout={handleLogout}
-      />
+      <Navigation />
       <Hero />
       <Features />
       
@@ -122,37 +80,6 @@ export default function Landing() {
               </Card>
             ))}
           </div>
-        </div>
-      </section>
-      
-      {/* Auth Section */}
-      <section id="auth-section" className="py-24">
-        <div className="container mx-auto px-4 max-w-md text-center">
-          <h2 className="text-3xl font-bold mb-4 bg-gradient-brand bg-clip-text text-transparent">
-            Are You Ready to Take Your Digital Advertising to the Next Level?
-          </h2>
-          <p className="text-muted-foreground mb-8">
-            Join hundreds of small businesses using Valkyrie to unify, optimize, and grow.
-          </p>
-          <Card className="border-border/5 bg-background/60 backdrop-blur">
-            <CardContent className="pt-6">
-              <Auth
-                supabaseClient={supabase}
-                appearance={{
-                  theme: ThemeSupa,
-                  variables: {
-                    default: {
-                      colors: {
-                        brand: 'hsl(var(--primary))',
-                        brandAccent: 'hsl(var(--primary))',
-                      },
-                    },
-                  },
-                }}
-                providers={[]}
-              />
-            </CardContent>
-          </Card>
         </div>
       </section>
 

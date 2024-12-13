@@ -1,16 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { LogIn, LogOut, LayoutDashboard } from "lucide-react";
-import { Session } from "@supabase/supabase-js";
+import { LayoutDashboard } from "lucide-react";
 import { Link } from "react-router-dom";
 
-interface NavigationProps {
-  session: Session | null;
-  isLoading: boolean;
-  onLogin: () => void;
-  onLogout: () => void;
-}
-
-export function Navigation({ session, isLoading, onLogin, onLogout }: NavigationProps) {
+export function Navigation() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border/5 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 h-14 flex items-center justify-between">
@@ -36,25 +28,6 @@ export function Navigation({ session, isLoading, onLogin, onLogout }: Navigation
               <LayoutDashboard className="h-4 w-4 mr-2" />
               Dashboard
             </Link>
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={session ? onLogout : onLogin}
-            disabled={isLoading}
-            className="hover:bg-primary/10 hover:text-primary"
-          >
-            {session ? (
-              <>
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </>
-            ) : (
-              <>
-                <LogIn className="h-4 w-4 mr-2" />
-                Login
-              </>
-            )}
           </Button>
         </div>
       </div>
