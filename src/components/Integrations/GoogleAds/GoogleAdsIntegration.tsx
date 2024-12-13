@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { AlertCircle, Link2, RefreshCw } from "lucide-react";
+import { GoogleAdsCampaigns } from "./GoogleAdsCampaigns";
 
 const GOOGLE_CLIENT_ID = "your-google-client-id";
 const REDIRECT_URI = `${process.env.SUPABASE_URL}/functions/v1/google-ads-auth-callback`;
@@ -116,46 +117,46 @@ export function GoogleAdsIntegration() {
         )}
 
         {accounts?.length ? (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {accounts.map((account) => (
-              <div
-                key={account.id}
-                className="flex items-center justify-between p-4 border rounded-lg"
-              >
-                <div>
-                  <p className="font-medium">
-                    {account.account_name || account.customer_id}
-                  </p>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Link2 className="h-4 w-4" />
-                    <span className={account.status === "active" ? "text-green-600" : "text-gray-500"}>
-                      {account.status === "active" ? "Connected" : "Disconnected"}
-                    </span>
-                  </div>
-                  {account.last_sync_at && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Last synced: {new Date(account.last_sync_at).toLocaleString()}
+              <div key={account.id} className="space-y-4">
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div>
+                    <p className="font-medium">
+                      {account.account_name || account.customer_id}
                     </p>
-                  )}
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Link2 className="h-4 w-4" />
+                      <span className={account.status === "active" ? "text-green-600" : "text-gray-500"}>
+                        {account.status === "active" ? "Connected" : "Disconnected"}
+                      </span>
+                    </div>
+                    {account.last_sync_at && (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Last synced: {new Date(account.last_sync_at).toLocaleString()}
+                      </p>
+                    )}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleSync(account.id)}
+                    disabled={isSyncing === account.id}
+                  >
+                    {isSyncing === account.id ? (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                        Syncing...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Sync Now
+                      </>
+                    )}
+                  </Button>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleSync(account.id)}
-                  disabled={isSyncing === account.id}
-                >
-                  {isSyncing === account.id ? (
-                    <>
-                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                      Syncing...
-                    </>
-                  ) : (
-                    <>
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Sync Now
-                    </>
-                  )}
-                </Button>
+                <GoogleAdsCampaigns accountId={account.id} />
               </div>
             ))}
           </div>
