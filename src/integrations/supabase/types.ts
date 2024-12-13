@@ -405,6 +405,116 @@ export type Database = {
         }
         Relationships: []
       }
+      dv360_accounts: {
+        Row: {
+          access_token: string
+          advertiser_id: string
+          advertiser_name: string | null
+          created_at: string
+          error_message: string | null
+          id: string
+          last_sync_at: string | null
+          refresh_token: string
+          status: string | null
+          token_expires_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          advertiser_id: string
+          advertiser_name?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_sync_at?: string | null
+          refresh_token: string
+          status?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          advertiser_id?: string
+          advertiser_name?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          last_sync_at?: string | null
+          refresh_token?: string
+          status?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      dv360_campaigns: {
+        Row: {
+          account_id: string
+          audience_insights: Json | null
+          budget_amount: number | null
+          budget_type: string | null
+          campaign_goal: string | null
+          campaign_id: string
+          campaign_name: string
+          created_at: string
+          end_date: string | null
+          id: string
+          last_sync_at: string | null
+          performance_metrics: Json | null
+          start_date: string | null
+          status: string | null
+          targeting_settings: Json | null
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          audience_insights?: Json | null
+          budget_amount?: number | null
+          budget_type?: string | null
+          campaign_goal?: string | null
+          campaign_id: string
+          campaign_name: string
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          last_sync_at?: string | null
+          performance_metrics?: Json | null
+          start_date?: string | null
+          status?: string | null
+          targeting_settings?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          audience_insights?: Json | null
+          budget_amount?: number | null
+          budget_type?: string | null
+          campaign_goal?: string | null
+          campaign_id?: string
+          campaign_name?: string
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          last_sync_at?: string | null
+          performance_metrics?: Json | null
+          start_date?: string | null
+          status?: string | null
+          targeting_settings?: Json | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dv360_campaigns_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "dv360_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_templates: {
         Row: {
           created_at: string
