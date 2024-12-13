@@ -11,7 +11,7 @@ export const supabase = createClient(
       persistSession: true,
       autoRefreshToken: true,
       storageKey: 'valkyrie_auth_token',
-      storage: localStorage,
+      storage: window.localStorage,
       detectSessionInUrl: true,
     },
   }
