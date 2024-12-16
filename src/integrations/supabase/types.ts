@@ -2140,7 +2140,7 @@ export type Database = {
         | "search_display"
         | "ecommerce"
         | "audio"
-      subscription_tier: "free" | "starter" | "growth" | "enterprise"
+      subscription_tier: "free" | "starter" | "growth" | "enterprise" | "freyja"
       ttd_campaign_objective: "awareness" | "consideration" | "conversion"
       twitter_campaign_objective: "awareness" | "consideration" | "conversion"
     }
