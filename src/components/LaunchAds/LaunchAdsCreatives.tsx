@@ -24,7 +24,7 @@ export function LaunchAdsCreatives() {
   });
 
   const [files, setFiles] = useState<FileList | null>(null);
-  const { data: connectedPlatforms } = useConnectedPlatforms();
+  const { data: platforms } = useConnectedPlatforms();
 
   const handleImport = (importedNames: {
     campaignName: string;
@@ -48,17 +48,19 @@ export function LaunchAdsCreatives() {
   defaultCTAs.forEach(cta => ctaOptions.add(cta));
 
   // Platform-specific CTAs
-  if (connectedPlatforms?.some(p => p.value === "facebook")) {
+  if (platforms?.find(p => p.value === "facebook")) {
     ["Book Now", "Watch More", "Send Message", "Get Offer", "Get Showtimes"].forEach(cta => ctaOptions.add(cta));
   }
 
-  if (connectedPlatforms?.some(p => p.value === "linkedin")) {
+  if (platforms?.find(p => p.value === "linkedin")) {
     ["Apply Now", "Register", "Request Demo", "Subscribe"].forEach(cta => ctaOptions.add(cta));
   }
 
-  if (connectedPlatforms?.some(p => p.value === "google_ads")) {
+  if (platforms?.find(p => p.value === "google_ads")) {
     ["Get Quote", "Call Now", "View Plans", "Find Location"].forEach(cta => ctaOptions.add(cta));
   }
+
+  // ... keep existing code (Campaign Names card)
 
   return (
     <div className="space-y-6">
