@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -61,25 +60,26 @@ export function UserTable({ users, onUpdateRole, onSubscriptionAction, updating 
           <TableRow key={user.id}>
             <TableCell>{user.business_name || "N/A"}</TableCell>
             <TableCell>{user.email || "N/A"}</TableCell>
-            <TableCell>{user.role}</TableCell>
+            <TableCell>
+              <Select
+                disabled={updating === user.id}
+                onValueChange={(value) => onUpdateRole(user.id, value)}
+                defaultValue={user.role}
+              >
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="super_admin">Super Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </TableCell>
             <TableCell>{user.subscription}</TableCell>
             <TableCell>{getStatusBadge(user.status || "unknown")}</TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
-                <Select
-                  disabled={updating === user.id}
-                  onValueChange={(value) => onUpdateRole(user.id, value)}
-                  defaultValue={user.role}
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="user">User</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="super_admin">Super Admin</SelectItem>
-                  </SelectContent>
-                </Select>
                 <Button
                   variant="outline"
                   size="icon"

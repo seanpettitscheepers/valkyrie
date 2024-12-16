@@ -5,17 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { AddUserDialog } from "./UserManagement/AddUserDialog";
 import { UserTable } from "./UserManagement/UserTable";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { FileDown } from "lucide-react";
 import * as XLSX from 'xlsx';
+import { UserFilters } from "./UserManagement/UserFilters";
 import type { Profile } from "@/types/profile";
 
 export function AdminSection() {
@@ -23,9 +16,9 @@ export function AdminSection() {
   const [updating, setUpdating] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     businessName: "",
-    role: "",
-    subscription: "",
-    status: "",
+    role: "all",
+    subscription: "all",
+    status: "all",
   });
 
   const { data: currentUser } = useQuery({
@@ -48,43 +41,39 @@ export function AdminSection() {
   const { data: users, refetch } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      // First get all profiles
-      const { data: profiles, error: profilesError } = await supabase
+      const { data: profiles, error } = await supabase
         .from("profiles")
-        .select("*")
+        .select(`
+          *,
+          user_subscriptions (
+            status,
+            subscription_plans (
+              tier
+            )
+          )
+        `)
         .order("created_at", { ascending: false });
 
-      if (profilesError) throw profilesError;
-
-      // Get all users to get their emails
-      const { data: { users: authUsers }, error: authError } = await supabase.auth.admin.listUsers();
-      if (authError) throw authError;
-
-      // Get active subscriptions
-      const { data: subscriptions, error: subsError } = await supabase
-        .from("user_subscriptions")
-        .select("user_id, subscription_plans(tier), status")
-        .eq("status", "active");
-
-      if (subsError) throw subsError;
-
-      // Combine the data
+      if (error) throw error;
       return profiles.map(profile => ({
         ...profile,
-        email: authUsers.find(u => u.id === profile.id)?.email || "",
-        subscription: subscriptions?.find(sub => sub.user_id === profile.id)?.subscription_plans?.tier || "free",
-        status: subscriptions?.find(sub => sub.user_id === profile.id)?.status || "active"
+        subscription: profile.user_subscriptions?.[0]?.subscription_plans?.tier || "free",
+        status: profile.user_subscriptions?.[0]?.status || "active"
       }));
     },
     enabled: currentUser?.role === "super_admin",
   });
 
+  const handleFilterChange = (key: string, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
   const filteredUsers = users?.filter(user => {
     return (
       (!filters.businessName || user.business_name?.toLowerCase().includes(filters.businessName.toLowerCase())) &&
-      (!filters.role || user.role === filters.role) &&
-      (!filters.subscription || user.subscription === filters.subscription) &&
-      (!filters.status || user.status === filters.status)
+      (filters.role === "all" || user.role === filters.role) &&
+      (filters.subscription === "all" || user.subscription === filters.subscription) &&
+      (filters.status === "all" || user.status === filters.status)
     );
   });
 
@@ -191,58 +180,10 @@ export function AdminSection() {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="mb-4 grid grid-cols-4 gap-4">
-          <div>
-            <Input
-              placeholder="Filter by business name..."
-              value={filters.businessName}
-              onChange={(e) => setFilters({ ...filters, businessName: e.target.value })}
-            />
-          </div>
-          <Select
-            value={filters.role}
-            onValueChange={(value) => setFilters({ ...filters, role: value })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by role" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">All roles</SelectItem>
-              <SelectItem value="user">User</SelectItem>
-              <SelectItem value="admin">Admin</SelectItem>
-              <SelectItem value="super_admin">Super Admin</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select
-            value={filters.subscription}
-            onValueChange={(value) => setFilters({ ...filters, subscription: value })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by subscription" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">All subscriptions</SelectItem>
-              <SelectItem value="free">Free</SelectItem>
-              <SelectItem value="growth">Growth</SelectItem>
-              <SelectItem value="pro">Pro</SelectItem>
-              <SelectItem value="enterprise">Enterprise</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select
-            value={filters.status}
-            onValueChange={(value) => setFilters({ ...filters, status: value })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">All statuses</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="paused">Paused</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <UserFilters 
+          filters={filters}
+          onFilterChange={handleFilterChange}
+        />
         <UserTable
           users={filteredUsers || []}
           onUpdateRole={updateUserRole}
