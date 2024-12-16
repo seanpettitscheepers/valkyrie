@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AdminSection } from "@/components/Account/AdminSection";
 import { AdminInbox } from "@/components/Admin/AdminInbox";
 import { BusinessAnalytics } from "@/components/Admin/BusinessAnalytics";
+import { TicketManagement } from "@/components/Admin/TicketManagement";
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -50,12 +51,17 @@ export default function Admin() {
         <Tabs defaultValue="users" className="w-full">
           <TabsList>
             <TabsTrigger value="users">User Management</TabsTrigger>
+            <TabsTrigger value="tickets">Support Tickets</TabsTrigger>
             <TabsTrigger value="inbox">Inbox</TabsTrigger>
             <TabsTrigger value="analytics">Business Analytics</TabsTrigger>
           </TabsList>
 
           <TabsContent value="users" className="space-y-4">
             <AdminSection />
+          </TabsContent>
+
+          <TabsContent value="tickets" className="space-y-4">
+            <TicketManagement />
           </TabsContent>
 
           <TabsContent value="inbox" className="space-y-4">
