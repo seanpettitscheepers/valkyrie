@@ -47,7 +47,9 @@ export function PricingSection() {
         <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
           Select the plan that best fits your mission. All paid plans include a 14-day free trial.
         </p>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+        {/* Pricing Cards */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
           {plans?.map((plan) => (
             <Card 
               key={plan.id} 
@@ -108,6 +110,11 @@ export function PricingSection() {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        {/* Sign Up Form Section */}
+        <div className="max-w-lg mx-auto bg-card p-6 rounded-lg shadow-lg border">
+          <SignUpForm selectedPlan="free" />
         </div>
       </div>
 
