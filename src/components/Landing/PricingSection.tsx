@@ -14,6 +14,7 @@ export function PricingSection() {
       const { data, error } = await supabase
         .from("subscription_plans")
         .select("*")
+        .neq('tier', 'freyja') // Filter out the Freyja plan
         .order("price");
       
       if (error) throw error;
