@@ -41,7 +41,15 @@ export function useUserData(currentUser: Profile | null) {
         `);
 
       if (error) throw error;
-      return data as UserSubscription[];
+      
+      // Transform the data to match the UserSubscription type
+      return data?.map(sub => ({
+        user_id: sub.user_id,
+        status: sub.status,
+        subscription_plans: {
+          tier: sub.subscription_plans[0]?.tier || 'free'
+        }
+      })) as UserSubscription[];
     },
     enabled: currentUser?.role === "super_admin",
   });
