@@ -13,7 +13,7 @@ interface DashboardHeaderProps {
 export function DashboardHeader({ selectedCampaign, onCampaignChange, dashboardRef }: DashboardHeaderProps) {
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col space-y-6">
         <div>
           <h1 className="text-2xl font-semibold">Your Campaign Command Center: Plan, Execute, and Conquer.</h1>
           <p className="text-muted-foreground mt-1">
