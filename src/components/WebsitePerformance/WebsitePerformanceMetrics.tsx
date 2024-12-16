@@ -44,11 +44,30 @@ export function WebsitePerformanceMetrics() {
         <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={performanceData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="value" fill="#4F46E5" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#C2B8B0" />
+              <XAxis 
+                dataKey="name" 
+                tick={{ fill: "#1F1E1B" }}
+                axisLine={{ stroke: "#858071" }}
+              />
+              <YAxis 
+                tick={{ fill: "#1F1E1B" }}
+                axisLine={{ stroke: "#858071" }}
+              />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: "#EBE5D5",
+                  border: "1px solid #C2B8B0",
+                  borderRadius: "0.5rem",
+                  color: "#1F1E1B"
+                }}
+              />
+              <Bar 
+                dataKey="value" 
+                fill="#496946"
+                radius={[4, 4, 0, 0]}
+                hover={{ fill: "#858071" }}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
