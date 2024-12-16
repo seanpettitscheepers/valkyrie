@@ -1,12 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { SubscriptionBadge } from "./SubscriptionBadge";
+import { SubscriptionPlanCard } from "./SubscriptionPlanCard";
+import { useToast } from "@/components/ui/use-toast";
 
 export function SubscriptionForm() {
+  const { toast } = useToast();
+
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
@@ -57,6 +61,57 @@ export function SubscriptionForm() {
     },
   });
 
+  const handleSubscribe = async (plan: any) => {
+    try {
+      if (!plan.price_id && plan.price_id !== null) {
+        toast({
+          title: "Error",
+          description: "Invalid price ID. Please contact support.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // For enterprise plan, redirect to contact
+      if (plan.price_id === null) {
+        window.location.href = "/contact";
+        return;
+      }
+
+      // For free plan, just update the profile
+      if (plan.tier === "free") {
+        const { error } = await supabase
+          .from("profiles")
+          .update({ subscription_tier: "free" })
+          .eq("id", profile?.id);
+
+        if (error) throw error;
+        
+        toast({
+          title: "Success",
+          description: "You've been subscribed to the free plan.",
+        });
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: { priceId: plan.price_id },
+      });
+
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start subscription process. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (profileLoading || subscriptionLoading || plansLoading) {
     return (
       <div className="flex items-center justify-center p-12">
@@ -75,21 +130,6 @@ export function SubscriptionForm() {
     return "Trial ended";
   };
 
-  const getBadgeColor = (tier: string) => {
-    switch (tier) {
-      case "free":
-        return "bg-gray-100 text-gray-800";
-      case "growth":
-        return "bg-blue-100 text-blue-800";
-      case "pro":
-        return "bg-purple-100 text-purple-800";
-      case "enterprise":
-        return "bg-green-100 text-green-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -103,9 +143,7 @@ export function SubscriptionForm() {
           <div>
             <h3 className="text-lg font-medium">Current Plan</h3>
             <div className="flex items-center gap-2 mt-1">
-              <Badge className={getBadgeColor(profile?.subscription_tier || "free")}>
-                {profile?.subscription_tier?.toUpperCase() || "FREE"}
-              </Badge>
+              <SubscriptionBadge tier={profile?.subscription_tier} />
               {getTrialStatus() && (
                 <Badge variant="outline">{getTrialStatus()}</Badge>
               )}
@@ -120,48 +158,13 @@ export function SubscriptionForm() {
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {plans?.map((plan) => (
-            <Card key={plan.id} className="relative">
-              <CardHeader>
-                <CardTitle>{plan.name}</CardTitle>
-                <CardDescription>
-                  {plan.price === null ? (
-                    "Custom pricing"
-                  ) : plan.price === 0 ? (
-                    "Free"
-                  ) : (
-                    <>
-                      ${plan.price}/month
-                      {plan.annual_price && (
-                        <span className="block text-sm text-muted-foreground">
-                          or ${plan.annual_price}/year
-                        </span>
-                      )}
-                    </>
-                  )}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm">
-                  {(plan.features as string[]).map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <span className="mr-2">•</span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <Button 
-                  className="w-full mt-4" 
-                  variant={plan.tier === profile?.subscription_tier ? "outline" : "default"}
-                >
-                  {plan.tier === profile?.subscription_tier ? "Current Plan" : "Upgrade"}
-                </Button>
-              </CardContent>
-              {plan.tier === profile?.subscription_tier && (
-                <div className="absolute -top-2 -right-2">
-                  <Badge>Current</Badge>
-                </div>
-              )}
-            </Card>
+            <SubscriptionPlanCard
+              key={plan.id}
+              plan={plan}
+              profile={profile}
+              isCurrentPlan={plan.tier === profile?.subscription_tier}
+              onSubscribe={() => handleSubscribe(plan)}
+            />
           ))}
         </div>
       </CardContent>
