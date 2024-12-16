@@ -29,12 +29,12 @@ export function TrafficSourceAnalysis() {
 
   // Sample data structure (will be replaced by actual GA4 data)
   const sampleData = [
-    { name: "Organic Search", value: 4000, color: "#4F46E5" },
-    { name: "Paid Search", value: 3000, color: "#6366F1" },
-    { name: "Social Media", value: 2000, color: "#818CF8" },
-    { name: "Direct", value: 2780, color: "#A5B4FC" },
-    { name: "Email", value: 1890, color: "#C7D2FE" },
-    { name: "Referral", value: 2390, color: "#E0E7FF" },
+    { name: "Organic Search", value: 4000, color: "#496946" },  // Primary
+    { name: "Paid Search", value: 3000, color: "#858071" },     // Secondary
+    { name: "Social Media", value: 2000, color: "#C2B8B0" },    // Accent
+    { name: "Direct", value: 2780, color: "#EBE5D5" },          // Background
+    { name: "Email", value: 1890, color: "#6A665A" },           // Secondary-600
+    { name: "Referral", value: 2390, color: "#2C402C" },        // Primary-700
   ];
 
   return (
@@ -59,8 +59,17 @@ export function TrafficSourceAnalysis() {
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip />
-              <Legend />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: "#EBE5D5",
+                  border: "1px solid #C2B8B0",
+                  borderRadius: "0.5rem"
+                }}
+                labelStyle={{ color: "#1F1E1B" }}
+              />
+              <Legend 
+                formatter={(value) => <span style={{ color: "#1F1E1B" }}>{value}</span>}
+              />
             </PieChart>
           </ResponsiveContainer>
         </div>
