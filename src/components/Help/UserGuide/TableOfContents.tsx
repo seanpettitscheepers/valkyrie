@@ -22,12 +22,12 @@ export function TableOfContents() {
         <nav className="space-y-2">
           {sections.map((section, index) => (
             <div key={section.href}>
-              <Link
-                to={section.href}
+              <a
+                href={section.href}
                 className="block text-muted-foreground hover:text-primary transition-colors"
               >
                 {index + 1}. {section.title}
-              </Link>
+              </a>
             </div>
           ))}
         </nav>
