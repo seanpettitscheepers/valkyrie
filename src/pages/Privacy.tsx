@@ -19,7 +19,10 @@ export default function Privacy() {
         </p>
 
         <p className="mb-8">
-          If you have any questions, please contact us at support@valkyriehub.com.
+          If you have any questions, please contact us at{" "}
+          <a href="mailto:support@valkyriehub.com" className="text-primary hover:underline">
+            support@valkyriehub.com
+          </a>.
         </p>
 
         <h2 className="text-2xl font-semibold mt-8">1. Data We Collect</h2>
@@ -68,8 +71,10 @@ export default function Privacy() {
         </ul>
 
         <p>
-          You can opt out of marketing communications at any time by clicking "unsubscribe" in our emails or contacting 
-          support@valkyriehub.com.
+          You can opt out of marketing communications at any time by clicking "unsubscribe" in our emails or contacting{" "}
+          <a href="mailto:support@valkyriehub.com" className="text-primary hover:underline">
+            support@valkyriehub.com
+          </a>.
         </p>
 
         <h3 className="text-xl font-semibold mt-4">2.3 For Analysis and Product Development</h3>
@@ -140,7 +145,11 @@ export default function Privacy() {
           <li>Request the deletion of your data.</li>
         </ul>
 
-        <p>To exercise these rights, contact us at support@valkyriehub.com.</p>
+        <p>To exercise these rights, contact us at{" "}
+          <a href="mailto:support@valkyriehub.com" className="text-primary hover:underline">
+            support@valkyriehub.com
+          </a>.
+        </p>
 
         <h3 className="text-xl font-semibold mt-4">5.2 Opt-Out Options</h3>
         <p>You can:</p>
@@ -183,7 +192,11 @@ export default function Privacy() {
 
         <h2 className="text-2xl font-semibold mt-8">11. Contact Us</h2>
         <p>If you have any questions or concerns about this Privacy Policy, please contact us:</p>
-        <p>Email: support@valkyriehub.com</p>
+        <p>Email:{" "}
+          <a href="mailto:support@valkyriehub.com" className="text-primary hover:underline">
+            support@valkyriehub.com
+          </a>
+        </p>
         <p>Website: www.valkyriehub.com</p>
       </div>
     </PageLayout>
