@@ -13,6 +13,9 @@ import { AuthFields } from "./AuthFields";
 import { LegalConsentFields } from "./LegalConsentFields";
 import { signUpSchema, type SignUpFormValues } from "./types";
 
+// Get the reCAPTCHA site key from environment variables
+const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+
 interface SignUpFormProps {
   selectedPlan?: string | null;
   onComplete?: () => void;
@@ -86,6 +89,16 @@ export function SignUpForm({ selectedPlan = 'free', onComplete }: SignUpFormProp
     }
   };
 
+  // If RECAPTCHA_SITE_KEY is not available, show an error message
+  if (!RECAPTCHA_SITE_KEY) {
+    console.error('ReCAPTCHA site key is not configured');
+    return (
+      <div className="text-center text-red-500">
+        Error: ReCAPTCHA is not properly configured. Please contact support.
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -105,7 +118,7 @@ export function SignUpForm({ selectedPlan = 'free', onComplete }: SignUpFormProp
 
           <div className="flex justify-center">
             <ReCAPTCHA
-              sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+              sitekey={RECAPTCHA_SITE_KEY}
               onChange={(token) => setCaptchaToken(token)}
             />
           </div>
