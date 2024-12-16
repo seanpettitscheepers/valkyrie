@@ -1,7 +1,4 @@
 project_id = "qothiaalyhdfuesmvcvu"
 
-[amazon-dsp-auth-callback]
-verify_jwt = false
-
-[sync-amazon-dsp-campaigns]
+[sync-platform-campaigns]
 verify_jwt = true
