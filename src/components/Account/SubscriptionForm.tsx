@@ -37,7 +37,7 @@ export function SubscriptionForm() {
           subscription_plans (*)
         `)
         .eq("user_id", user.id)
-        .maybeSingle(); // Changed from single() to maybeSingle()
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') throw error;
       return data;
@@ -79,9 +79,9 @@ export function SubscriptionForm() {
     switch (tier) {
       case "free":
         return "bg-gray-100 text-gray-800";
-      case "starter":
-        return "bg-blue-100 text-blue-800";
       case "growth":
+        return "bg-blue-100 text-blue-800";
+      case "pro":
         return "bg-purple-100 text-purple-800";
       case "enterprise":
         return "bg-green-100 text-green-800";
@@ -124,11 +124,19 @@ export function SubscriptionForm() {
               <CardHeader>
                 <CardTitle>{plan.name}</CardTitle>
                 <CardDescription>
-                  ${plan.price}/month
-                  {plan.annual_price && (
-                    <span className="block text-sm text-muted-foreground">
-                      or ${plan.annual_price}/year
-                    </span>
+                  {plan.price === null ? (
+                    "Custom pricing"
+                  ) : plan.price === 0 ? (
+                    "Free"
+                  ) : (
+                    <>
+                      ${plan.price}/month
+                      {plan.annual_price && (
+                        <span className="block text-sm text-muted-foreground">
+                          or ${plan.annual_price}/year
+                        </span>
+                      )}
+                    </>
                   )}
                 </CardDescription>
               </CardHeader>
@@ -141,7 +149,10 @@ export function SubscriptionForm() {
                     </li>
                   ))}
                 </ul>
-                <Button className="w-full mt-4" variant={plan.tier === profile?.subscription_tier ? "outline" : "default"}>
+                <Button 
+                  className="w-full mt-4" 
+                  variant={plan.tier === profile?.subscription_tier ? "outline" : "default"}
+                >
                   {plan.tier === profile?.subscription_tier ? "Current Plan" : "Upgrade"}
                 </Button>
               </CardContent>
