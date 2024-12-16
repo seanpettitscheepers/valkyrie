@@ -2114,7 +2114,21 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      super_admin_cache: {
+        Row: {
+          id: string | null
+          is_super_admin: boolean | null
+        }
+        Insert: {
+          id?: string | null
+          is_super_admin?: never
+        }
+        Update: {
+          id?: string | null
+          is_super_admin?: never
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
