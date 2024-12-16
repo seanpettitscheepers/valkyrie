@@ -42,7 +42,7 @@ export function BrandsList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="space-y-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Your Brand, Your Battlefield: Organize and Strategize</h2>
           <p className="text-muted-foreground">
