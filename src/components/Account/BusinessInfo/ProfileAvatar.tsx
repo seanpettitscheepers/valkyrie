@@ -4,11 +4,12 @@ import type { Profile } from "@/types/profile";
 
 interface ProfileAvatarProps {
   profile: Profile | null;
+  email: string | null;
   uploading: boolean;
   onAvatarUpload: (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
 }
 
-export function ProfileAvatar({ profile, uploading, onAvatarUpload }: ProfileAvatarProps) {
+export function ProfileAvatar({ profile, email, uploading, onAvatarUpload }: ProfileAvatarProps) {
   return (
     <div className="mb-8 flex items-center gap-6">
       <div className="relative group">
@@ -40,7 +41,7 @@ export function ProfileAvatar({ profile, uploading, onAvatarUpload }: ProfileAva
       </div>
       <div>
         <h1 className="text-2xl font-bold">{profile?.business_name || "Business Profile"}</h1>
-        <p className="text-muted-foreground">{profile?.email || "Add your email address"}</p>
+        <p className="text-muted-foreground">{email || "Add your email address"}</p>
       </div>
     </div>
   );

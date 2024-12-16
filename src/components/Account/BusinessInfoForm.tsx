@@ -80,6 +80,7 @@ export function BusinessInfoForm({ profile, email, onUpdate }: BusinessInfoFormP
     <div className="max-w-3xl mx-auto">
       <ProfileAvatar 
         profile={profile}
+        email={email}
         uploading={uploading}
         onAvatarUpload={handleAvatarUpload}
       />
