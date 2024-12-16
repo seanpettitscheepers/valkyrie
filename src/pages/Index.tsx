@@ -3,11 +3,14 @@ import { FacebookPagesManager } from "@/components/Integrations/Facebook/Faceboo
 import { GoogleAdsIntegration } from "@/components/Integrations/GoogleAds/GoogleAdsIntegration";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Facebook } from "lucide-react";
+import { SubscriptionLimits } from "@/components/Account/SubscriptionLimits";
 
 export default function Index() {
   return (
     <PageLayout title="Dashboard">
       <div className="space-y-6">
+        <SubscriptionLimits />
+        
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

@@ -14,7 +14,6 @@ export const DEFAULT_LIMITS: FeatureLimit = {
 
 export async function getSubscriptionLimits(): Promise<FeatureLimit> {
   try {
-    // Get user's subscription
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("No user found");
 
@@ -26,7 +25,6 @@ export async function getSubscriptionLimits(): Promise<FeatureLimit> {
 
     if (!profile?.subscription_tier) return DEFAULT_LIMITS;
 
-    // Get limits for the user's subscription tier
     const { data: plan } = await supabase
       .from("subscription_plans")
       .select("platform_limit, ai_recommendations_limit, planning_limit")
@@ -43,4 +41,22 @@ export async function getSubscriptionLimits(): Promise<FeatureLimit> {
 export async function checkFeatureAccess(feature: keyof FeatureLimit): Promise<boolean> {
   const limits = await getSubscriptionLimits();
   return limits[feature] > 0;
+}
+
+export async function getCurrentUsage(userId: string): Promise<Partial<FeatureLimit>> {
+  const { data: platformCount } = await supabase
+    .from('platform_integrations')
+    .select('id', { count: 'exact' })
+    .eq('is_active', true);
+
+  const { data: aiRecommendationsCount } = await supabase
+    .from('campaign_plans')
+    .select('id', { count: 'exact' })
+    .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+
+  return {
+    platform_limit: platformCount?.length || 0,
+    ai_recommendations_limit: aiRecommendationsCount?.length || 0,
+    planning_limit: 0, // This would need to be implemented based on your planning feature
+  };
 }
