@@ -13,6 +13,7 @@ import { LinkedInAdsIntegration } from "@/components/Integrations/LinkedIn/Linke
 import { GoogleAnalyticsConnection } from "@/components/Integrations/GoogleAnalytics/GoogleAnalyticsConnection";
 import { AmazonDSPIntegration } from "@/components/Integrations/AmazonDSP/AmazonDSPIntegration";
 import { TwitterAdsIntegration } from "@/components/Integrations/Twitter/TwitterAdsIntegration";
+import { TTDIntegration } from "@/components/Integrations/TTD/TTDIntegration";
 
 export default function Connections() {
   const { data: connectedPlatforms } = useQuery({
