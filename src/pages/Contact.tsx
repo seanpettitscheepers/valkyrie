@@ -81,9 +81,9 @@ export default function Contact() {
       <div className="max-w-2xl mx-auto">
         <Card>
           <CardHeader>
-            <CardTitle>Get in Touch</CardTitle>
+            <CardTitle>Your Allies Are Just a Click Away</CardTitle>
             <CardDescription>
-              Have a question or need help? We're here to assist you!
+              Need support or have questions? The Valkyrie team is here to guide you through the digital landscape. Let's tackle it together.
             </CardDescription>
           </CardHeader>
           <CardContent>
