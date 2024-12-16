@@ -1,93 +1,21 @@
-import { useEffect, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2 } from "lucide-react";
 import { BusinessInfoForm } from "./BusinessInfoForm";
 import { SecurityForm } from "./SecurityForm";
 import { SubscriptionForm } from "./SubscriptionForm";
-import type { Profile, ProfileUpdate } from "@/types/profile";
+import { AccountLoading } from "./AccountLoading";
+import { AccountHeader } from "./AccountHeader";
+import { useProfile } from "./hooks/useProfile";
 
 export function AccountSettings() {
-  const { toast } = useToast();
-  const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [email, setEmail] = useState<string | null>(null);
-
-  useEffect(() => {
-    getProfile();
-  }, []);
-
-  async function getProfile() {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No user found");
-
-      setEmail(user.email);
-
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      if (error) throw error;
-      setProfile(data as Profile);
-    } catch (error) {
-      console.error("Error loading user data:", error);
-      toast({
-        title: "Error loading profile",
-        description: "Please try again later.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function updateProfile(formData: ProfileUpdate) {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No user found");
-
-      const { error } = await supabase
-        .from("profiles")
-        .update(formData)
-        .eq("id", user.id);
-
-      if (error) throw error;
-
-      setProfile((prev) => prev ? { ...prev, ...formData } : null);
-      toast({
-        title: "Profile updated",
-        description: "Your profile has been updated successfully.",
-      });
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      toast({
-        title: "Error updating profile",
-        description: "Please try again later.",
-        variant: "destructive",
-      });
-    }
-  }
+  const { loading, profile, email, updateProfile } = useProfile();
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center p-12">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
+    return <AccountLoading />;
   }
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">Command Center Configurations: Stay in Control</h2>
-        <p className="text-muted-foreground">
-          Customize your experience, manage your account preferences, and keep your operations running smoothly—all in one place.
-        </p>
-      </div>
+      <AccountHeader />
 
       <Tabs defaultValue="business" className="w-full">
         <TabsList>
