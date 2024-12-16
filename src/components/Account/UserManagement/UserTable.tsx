@@ -21,6 +21,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ChangeEmailDialog } from "./ChangeEmailDialog";
 import type { Profile } from "@/types/profile";
 
 interface UserTableProps {
@@ -127,6 +128,18 @@ export function UserTable({ users, onUpdateRole, onSubscriptionAction, updating 
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>View user profile</p>
+                  </TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <ChangeEmailDialog 
+                      userId={user.id} 
+                      currentEmail={user.email || ""}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Change user email</p>
                   </TooltipContent>
                 </Tooltip>
               </div>

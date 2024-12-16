@@ -810,6 +810,39 @@ export type Database = {
           },
         ]
       }
+      email_change_requests: {
+        Row: {
+          created_at: string
+          id: string
+          new_email: string
+          old_email: string
+          requested_by: string
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          new_email: string
+          old_email: string
+          requested_by: string
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          new_email?: string
+          old_email?: string
+          requested_by?: string
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_templates: {
         Row: {
           created_at: string
