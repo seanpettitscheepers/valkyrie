@@ -16,22 +16,21 @@ export function useUserData(currentUser: Profile | null) {
   const { data: profiles } = useQuery({
     queryKey: ["profiles"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // First get all profiles
+      const { data: profilesData, error: profilesError } = await supabase
         .from("profiles")
-        .select(`
-          *,
-          users:id (
-            email
-          )
-        `)
+        .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (profilesError) throw profilesError;
 
-      // Transform the data to flatten the users object
-      return data?.map(profile => ({
+      // Then get the current user's email
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      // Return profiles with email if available
+      return profilesData?.map(profile => ({
         ...profile,
-        email: profile.users?.email
+        email: profile.id === user?.id ? user?.email : null
       }));
     },
     enabled: currentUser?.role === "super_admin",
