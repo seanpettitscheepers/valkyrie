@@ -15,7 +15,16 @@ export function Navigation() {
         </div>
         <div className="hidden md:flex items-center gap-6 text-sm">
           <a href="#features" className="text-foreground/60 hover:text-primary transition-colors">Features</a>
-          <a href="#pricing" className="text-foreground/60 hover:text-primary transition-colors">Pricing</a>
+          <a 
+            href="#pricing-section" 
+            className="text-foreground/60 hover:text-primary transition-colors"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById("pricing-section")?.scrollIntoView({ behavior: "smooth" });
+            }}
+          >
+            Pricing
+          </a>
           <a href="#about" className="text-foreground/60 hover:text-primary transition-colors">About</a>
         </div>
         <div className="flex items-center gap-2">
