@@ -9,6 +9,7 @@ import { OptimizationAI } from "./OptimizationAI";
 import { BrandSentiment } from "./BrandSentiment";
 import { AccountSettings } from "./AccountSettings";
 import { HelpSupport } from "./HelpSupport";
+import { APIGuides } from "../APIGuides";
 
 export function UserGuide() {
   return (
@@ -25,41 +26,7 @@ export function UserGuide() {
 
       <TableOfContents />
       <GettingStarted />
-      
-      <section id="connecting-platforms" className="space-y-6">
-        <h2 className="text-2xl font-semibold">2. Connecting Your Platforms</h2>
-        <Card>
-          <CardHeader>
-            <CardTitle>Why Connect Your Platforms?</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4">
-              Valkyrie works best when all your advertising accounts are connected. This allows the app to 
-              provide a comprehensive overview, insightful analytics, and actionable recommendations.
-            </p>
-            <h3 className="font-semibold mb-2">How to Connect a Platform</h3>
-            <ol className="list-decimal list-inside space-y-2 mb-6">
-              <li>Navigate to the Integrations tab in the menu</li>
-              <li>Click Connect next to the platform you want to add</li>
-              <li>Follow the on-screen instructions to authenticate and grant permissions</li>
-              <li>Once connected, Valkyrie will begin syncing data</li>
-            </ol>
-
-            <div className="space-y-4">
-              <h3 className="font-semibold">Platform-Specific Guides</h3>
-              <p>For detailed, step-by-step instructions for each platform, refer to the guides below:</p>
-              <ul className="list-disc list-inside space-y-2">
-                <li>Facebook Ads Manager Guide</li>
-                <li>Google Ads Manager Guide</li>
-                <li>TikTok Ads Manager Guide</li>
-                <li>Amazon DSP Guide</li>
-              </ul>
-              <p className="text-sm text-muted-foreground">(Additional guides are included in the appendix of this document.)</p>
-            </div>
-          </CardContent>
-        </Card>
-      </section>
-
+      <APIGuides />
       <UsingDashboard />
       <PlanningCampaigns />
       <CampaignManagement />
