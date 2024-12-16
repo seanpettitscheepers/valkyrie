@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export function Navigation() {
@@ -28,6 +28,17 @@ export function Navigation() {
           <a href="#about" className="text-foreground/60 hover:text-primary transition-colors">About</a>
         </div>
         <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            asChild
+            className="hover:bg-primary/10 hover:text-primary"
+          >
+            <Link to="/auth">
+              <LogIn className="h-4 w-4 mr-2" />
+              Login
+            </Link>
+          </Button>
           <Button
             variant="ghost"
             size="sm"
