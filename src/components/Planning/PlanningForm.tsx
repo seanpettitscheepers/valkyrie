@@ -90,15 +90,17 @@ export function PlanningForm() {
     },
   });
 
+  const onSubmit = async (data: PlanningFormValues) => {
+    createPlan.mutate(data);
+  };
+
   const handleImplementRecommendations = (recommendations: string) => {
-    // Parse recommendations and update form values
-    // This is a simple implementation - you might want to make this more sophisticated
     form.setValue('notes', recommendations);
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(createPlan.mutate)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <Card>
           <CardContent className="pt-6">
             <div className="space-y-6">
