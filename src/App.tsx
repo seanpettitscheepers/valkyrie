@@ -22,6 +22,7 @@ import WebsitePerformance from "./pages/WebsitePerformance";
 import LaunchAds from "./pages/LaunchAds";
 import Auth from "./pages/Auth";
 import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => (
           <Route path="/admin" element={<Admin />} />
           <Route path="/brands" element={<Brands />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

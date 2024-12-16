@@ -21,6 +21,9 @@ export default function Landing() {
               <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">
                 Terms of Use
               </Link>
+              <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
+                Privacy Policy
+              </Link>
             </div>
           </div>
         </div>
