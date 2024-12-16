@@ -5,7 +5,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { SavedCampaignSelector } from "./SavedCampaignSelector";
 import { useState } from "react";
-import { ImagePlus, Upload } from "lucide-react";
+import { ImagePlus } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useConnectedPlatforms } from "@/hooks/useConnectedPlatforms";
 
 export function LaunchAdsCreatives() {
   const [names, setNames] = useState({
@@ -22,6 +24,7 @@ export function LaunchAdsCreatives() {
   });
 
   const [files, setFiles] = useState<FileList | null>(null);
+  const { data: connectedPlatforms } = useConnectedPlatforms();
 
   const handleImport = (importedNames: {
     campaignName: string;
@@ -36,6 +39,26 @@ export function LaunchAdsCreatives() {
       setFiles(e.target.files);
     }
   };
+
+  // CTA options based on platforms
+  const ctaOptions = new Set<string>();
+  
+  // Default CTAs available across most platforms
+  const defaultCTAs = ["Learn More", "Sign Up", "Shop Now", "Contact Us", "Download"];
+  defaultCTAs.forEach(cta => ctaOptions.add(cta));
+
+  // Platform-specific CTAs
+  if (connectedPlatforms?.some(p => p.value === "facebook")) {
+    ["Book Now", "Watch More", "Send Message", "Get Offer", "Get Showtimes"].forEach(cta => ctaOptions.add(cta));
+  }
+
+  if (connectedPlatforms?.some(p => p.value === "linkedin")) {
+    ["Apply Now", "Register", "Request Demo", "Subscribe"].forEach(cta => ctaOptions.add(cta));
+  }
+
+  if (connectedPlatforms?.some(p => p.value === "google_ads")) {
+    ["Get Quote", "Call Now", "View Plans", "Find Location"].forEach(cta => ctaOptions.add(cta));
+  }
 
   return (
     <div className="space-y-6">
@@ -155,13 +178,23 @@ export function LaunchAdsCreatives() {
 
             <div>
               <Label>Call to Action (CTA)</Label>
-              <Input
-                placeholder="e.g., Shop Now, Learn More, Sign Up"
+              <Select
                 value={adCopy.cta}
-                onChange={(e) =>
-                  setAdCopy((prev) => ({ ...prev, cta: e.target.value }))
+                onValueChange={(value) =>
+                  setAdCopy((prev) => ({ ...prev, cta: value }))
                 }
-              />
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a call to action" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from(ctaOptions).sort().map((cta) => (
+                    <SelectItem key={cta} value={cta}>
+                      {cta}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
