@@ -18,11 +18,21 @@ export function useUserData(currentUser: Profile | null) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("*, email")
+        .select(`
+          *,
+          users:id (
+            email
+          )
+        `)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+
+      // Transform the data to flatten the users object
+      return data?.map(profile => ({
+        ...profile,
+        email: profile.users?.email
+      }));
     },
     enabled: currentUser?.role === "super_admin",
   });
