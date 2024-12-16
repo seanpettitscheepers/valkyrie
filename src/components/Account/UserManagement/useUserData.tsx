@@ -18,7 +18,7 @@ export function useUserData(currentUser: Profile | null) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("*")
+        .select("*, email:id")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -42,7 +42,6 @@ export function useUserData(currentUser: Profile | null) {
 
       if (error) throw error;
       
-      // Transform the data to match the UserSubscription type
       return data?.map(sub => ({
         user_id: sub.user_id,
         status: sub.status,
