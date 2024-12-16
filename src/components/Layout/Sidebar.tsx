@@ -57,7 +57,7 @@ export function AppSidebar() {
       <SidebarContent>
         <div className="flex items-center gap-2 px-4 py-4">
           <img 
-            src="/lovable-uploads/8161843e-1491-4fc0-92c8-522cca5f854c.png" 
+            src="/lovable-uploads/1a46432a-b7c0-4cb5-b92b-46b8bcb5b920.png" 
             alt="Valkyrie" 
             className="h-8"
           />
