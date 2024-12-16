@@ -40,7 +40,7 @@ export function ProfileAvatar({ profile, uploading, onAvatarUpload }: ProfileAva
       </div>
       <div>
         <h1 className="text-2xl font-bold">{profile?.business_name || "Business Profile"}</h1>
-        <p className="text-muted-foreground">{profile?.phone_number || "Add your phone number"}</p>
+        <p className="text-muted-foreground">{profile?.email || "Add your email address"}</p>
       </div>
     </div>
   );
