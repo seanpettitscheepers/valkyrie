@@ -44,9 +44,9 @@ export function BrandsList() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Your Brands</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Your Brand, Your Battlefield: Organize and Strategize</h2>
           <p className="text-muted-foreground">
-            Manage your brands and their connected accounts
+            Create and manage your brands with ease. Allocate ad accounts, structure campaigns, and ensure each brand gets the attention it deserves.
           </p>
         </div>
         <Button onClick={() => setIsCreateDialogOpen(true)}>
