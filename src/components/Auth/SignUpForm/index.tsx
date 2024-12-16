@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ReCAPTCHA from "react-google-recaptcha";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -13,9 +12,6 @@ import { AuthFields } from "./AuthFields";
 import { LegalConsentFields } from "./LegalConsentFields";
 import { signUpSchema, type SignUpFormValues } from "./types";
 
-// Get the reCAPTCHA site key from environment variables
-const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
-
 interface SignUpFormProps {
   selectedPlan?: string | null;
   onComplete?: () => void;
@@ -25,7 +21,6 @@ export function SignUpForm({ selectedPlan = 'free', onComplete }: SignUpFormProp
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -41,15 +36,6 @@ export function SignUpForm({ selectedPlan = 'free', onComplete }: SignUpFormProp
   });
 
   const onSubmit = async (data: SignUpFormValues) => {
-    if (!captchaToken) {
-      toast({
-        title: "Error",
-        description: "Please complete the reCAPTCHA verification",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsLoading(true);
 
     try {
@@ -89,16 +75,6 @@ export function SignUpForm({ selectedPlan = 'free', onComplete }: SignUpFormProp
     }
   };
 
-  // If RECAPTCHA_SITE_KEY is not available, show an error message
-  if (!RECAPTCHA_SITE_KEY) {
-    console.error('ReCAPTCHA site key is not configured');
-    return (
-      <div className="text-center text-red-500">
-        Error: ReCAPTCHA is not properly configured. Please contact support.
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       <div>
@@ -116,17 +92,10 @@ export function SignUpForm({ selectedPlan = 'free', onComplete }: SignUpFormProp
           <AuthFields form={form} />
           <LegalConsentFields form={form} />
 
-          <div className="flex justify-center">
-            <ReCAPTCHA
-              sitekey={RECAPTCHA_SITE_KEY}
-              onChange={(token) => setCaptchaToken(token)}
-            />
-          </div>
-
           <Button
             type="submit"
             className="w-full"
-            disabled={isLoading || !captchaToken}
+            disabled={isLoading}
           >
             {isLoading ? (
               <>
