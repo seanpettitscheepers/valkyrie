@@ -23,6 +23,7 @@ interface UserTableProps {
   users: Array<Profile & { 
     subscription?: string;
     status?: string;
+    email?: string;
   }>;
   onUpdateRole: (userId: string, newRole: string) => void;
   onSubscriptionAction: (userId: string, action: "pause" | "cancel") => void;
@@ -48,6 +49,7 @@ export function UserTable({ users, onUpdateRole, onSubscriptionAction, updating 
       <TableHeader>
         <TableRow>
           <TableHead>Business Name</TableHead>
+          <TableHead>Email</TableHead>
           <TableHead>Role</TableHead>
           <TableHead>Subscription</TableHead>
           <TableHead>Status</TableHead>
@@ -58,6 +60,7 @@ export function UserTable({ users, onUpdateRole, onSubscriptionAction, updating 
         {users?.map((user) => (
           <TableRow key={user.id}>
             <TableCell>{user.business_name || "N/A"}</TableCell>
+            <TableCell>{user.email || "N/A"}</TableCell>
             <TableCell>{user.role}</TableCell>
             <TableCell>{user.subscription}</TableCell>
             <TableCell>{getStatusBadge(user.status || "unknown")}</TableCell>
