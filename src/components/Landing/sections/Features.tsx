@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Layers, Brain, Target, Shield, Users, AlertCircle, ArrowRight } from "lucide-react";
+import { Layers, Brain, Target, Shield, Users, AlertCircle } from "lucide-react";
 
 export function Features() {
   return (
@@ -13,7 +13,7 @@ export function Features() {
           Valkyrie offers an arsenal of features designed to simplify your digital marketing efforts and maximize results.
         </p>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[
             {
               icon: Layers,
@@ -54,17 +54,6 @@ export function Features() {
               </CardContent>
             </Card>
           ))}
-        </div>
-
-        <div className="text-center">
-          <Button 
-            size="lg"
-            variant="outline"
-            className="border-primary hover:bg-primary/10"
-          >
-            See All Features
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
         </div>
       </div>
     </section>
