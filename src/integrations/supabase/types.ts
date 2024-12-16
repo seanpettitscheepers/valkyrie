@@ -1777,6 +1777,42 @@ export type Database = {
         }
         Relationships: []
       }
+      tickets: {
+        Row: {
+          admin_response: string | null
+          created_at: string
+          id: string
+          message: string
+          status: Database["public"]["Enums"]["ticket_status"]
+          subject: string
+          type: Database["public"]["Enums"]["ticket_type"]
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          admin_response?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          status?: Database["public"]["Enums"]["ticket_status"]
+          subject: string
+          type: Database["public"]["Enums"]["ticket_type"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          admin_response?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          status?: Database["public"]["Enums"]["ticket_status"]
+          subject?: string
+          type?: Database["public"]["Enums"]["ticket_type"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       tiktok_ad_accounts: {
         Row: {
           access_token: string
@@ -2215,6 +2251,8 @@ export type Database = {
         | "ecommerce"
         | "audio"
       subscription_tier: "free" | "starter" | "growth" | "enterprise" | "freyja"
+      ticket_status: "open" | "in_progress" | "resolved" | "closed"
+      ticket_type: "account_support" | "feature_request" | "technical_support"
       ttd_campaign_objective: "awareness" | "consideration" | "conversion"
       twitter_campaign_objective: "awareness" | "consideration" | "conversion"
     }
