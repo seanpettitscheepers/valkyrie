@@ -13,6 +13,7 @@ import { BudgetInput } from "./BudgetInput";
 import { PlatformsField } from "./PlatformsField";
 import { TargetingObjectivesField } from "./TargetingObjectivesField";
 import { ReferenceFields } from "./ReferenceFields";
+import { AIRecommendationsCard } from "./AIRecommendationsCard";
 
 export function PlanningForm() {
   const { toast } = useToast();
@@ -89,13 +90,15 @@ export function PlanningForm() {
     },
   });
 
-  const onSubmit = (values: PlanningFormValues) => {
-    createPlan.mutate(values);
+  const handleImplementRecommendations = (recommendations: string) => {
+    // Parse recommendations and update form values
+    // This is a simple implementation - you might want to make this more sophisticated
+    form.setValue('notes', recommendations);
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(createPlan.mutate)} className="space-y-6">
         <Card>
           <CardContent className="pt-6">
             <div className="space-y-6">
@@ -107,6 +110,14 @@ export function PlanningForm() {
             </div>
           </CardContent>
         </Card>
+
+        <AIRecommendationsCard
+          objective={form.watch('objective')}
+          totalBudget={form.watch('total_budget')}
+          platforms={form.watch('platforms')}
+          targetingObjectives={form.watch('targeting_objectives')}
+          onImplementRecommendations={handleImplementRecommendations}
+        />
 
         <Button type="submit" className="w-full" disabled={createPlan.isPending}>
           {createPlan.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
