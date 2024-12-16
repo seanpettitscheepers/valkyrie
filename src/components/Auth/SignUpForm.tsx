@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 
 const signUpSchema = z.object({
@@ -41,7 +40,12 @@ const signUpSchema = z.object({
 
 type SignUpFormValues = z.infer<typeof signUpSchema>;
 
-export function SignUpForm() {
+interface SignUpFormProps {
+  selectedPlan?: string | null;
+  onComplete?: () => void;
+}
+
+export function SignUpForm({ selectedPlan = 'free', onComplete }: SignUpFormProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -81,6 +85,7 @@ export function SignUpForm() {
             full_name: data.fullName,
             company_name: data.companyName,
             phone_number: data.phoneNumber,
+            subscription_tier: selectedPlan,
           },
         },
       });
@@ -91,6 +96,10 @@ export function SignUpForm() {
         title: "Success",
         description: "Please check your email to verify your account",
       });
+
+      if (onComplete) {
+        onComplete();
+      }
 
       // Redirect to a verification pending page
       navigate("/auth/verify");
@@ -106,163 +115,167 @@ export function SignUpForm() {
   };
 
   return (
-    <Card className="w-full max-w-lg mx-auto">
-      <CardHeader>
-        <CardTitle>Create your account</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="fullName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Full Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold">Create your account</h2>
+        <p className="text-sm text-muted-foreground">
+          {selectedPlan === 'free' 
+            ? 'Get started with your free account'
+            : `Start your ${selectedPlan} plan with a 14-day free trial`}
+        </p>
+      </div>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="fullName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Full Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="companyName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Company Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Business Email</FormLabel>
+                <FormControl>
+                  <Input type="email" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input type="password" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="phoneNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone Number (Optional)</FormLabel>
+                <FormControl>
+                  <Input type="tel" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="termsAccepted"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>
+                    I agree to the{" "}
+                    <a
+                      href="/terms"
+                      target="_blank"
+                      className="text-primary hover:underline"
+                    >
+                      Terms and Conditions
+                    </a>
+                  </FormLabel>
                   <FormMessage />
-                </FormItem>
-              )}
-            />
+                </div>
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="companyName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Company Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="privacyAccepted"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>
+                    I agree to the{" "}
+                    <a
+                      href="/privacy"
+                      target="_blank"
+                      className="text-primary hover:underline"
+                    >
+                      Privacy Policy
+                    </a>
+                  </FormLabel>
                   <FormMessage />
-                </FormItem>
-              )}
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <div className="flex justify-center">
+            <ReCAPTCHA
+              sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+              onChange={(token) => setCaptchaToken(token)}
             />
+          </div>
 
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Business Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="phoneNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Phone Number (Optional)</FormLabel>
-                  <FormControl>
-                    <Input type="tel" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="termsAccepted"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>
-                      I agree to the{" "}
-                      <a
-                        href="/terms"
-                        target="_blank"
-                        className="text-primary hover:underline"
-                      >
-                        Terms and Conditions
-                      </a>
-                    </FormLabel>
-                    <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="privacyAccepted"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>
-                      I agree to the{" "}
-                      <a
-                        href="/privacy"
-                        target="_blank"
-                        className="text-primary hover:underline"
-                      >
-                        Privacy Policy
-                      </a>
-                    </FormLabel>
-                    <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
-
-            <div className="flex justify-center">
-              <ReCAPTCHA
-                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-                onChange={(token) => setCaptchaToken(token)}
-              />
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading || !captchaToken}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating account...
-                </>
-              ) : (
-                "Create Account"
-              )}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading || !captchaToken}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating account...
+              </>
+            ) : (
+              "Create Account"
+            )}
+          </Button>
+        </form>
+      </Form>
+    </div>
   );
 }

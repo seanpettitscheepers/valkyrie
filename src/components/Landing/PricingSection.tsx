@@ -4,9 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Check, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { SignUpForm } from "@/components/Auth/SignUpForm";
+import { useState } from "react";
 
 export function PricingSection() {
   const { toast } = useToast();
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [showSignUpDialog, setShowSignUpDialog] = useState(false);
 
   const { data: plans, isLoading } = useQuery({
     queryKey: ["subscription-plans"],
@@ -14,7 +19,7 @@ export function PricingSection() {
       const { data, error } = await supabase
         .from("subscription_plans")
         .select("*")
-        .neq('tier', 'freyja') // Filter out the Freyja plan
+        .neq('tier', 'freyja')
         .order("price");
       
       if (error) throw error;
@@ -22,40 +27,9 @@ export function PricingSection() {
     },
   });
 
-  const handleSubscribe = async (priceId: string | null) => {
-    try {
-      if (!priceId && priceId !== null) {
-        toast({
-          title: "Error",
-          description: "Invalid price ID. Please contact support.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // For enterprise plan, redirect to contact
-      if (priceId === null) {
-        window.location.href = "/contact";
-        return;
-      }
-
-      // For free plan, redirect to auth section
-      if (priceId === "free") {
-        document.getElementById("auth-section")?.scrollIntoView({ behavior: "smooth" });
-        return;
-      }
-
-      // For paid plans, redirect to auth section
-      document.getElementById("auth-section")?.scrollIntoView({ behavior: "smooth" });
-      
-    } catch (error) {
-      console.error('Error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to start subscription process. Please try again.",
-        variant: "destructive",
-      });
-    }
+  const handleSubscribe = async (tier: string, priceId: string | null) => {
+    setSelectedPlan(tier);
+    setShowSignUpDialog(true);
   };
 
   if (isLoading) {
@@ -124,7 +98,7 @@ export function PricingSection() {
                   <Button 
                     className="w-full" 
                     variant={plan.tier === 'growth' ? 'default' : 'outline'}
-                    onClick={() => handleSubscribe(plan.price_id)}
+                    onClick={() => handleSubscribe(plan.tier, plan.price_id)}
                   >
                     {plan.price === null 
                       ? "Contact Sales" 
@@ -138,6 +112,12 @@ export function PricingSection() {
           ))}
         </div>
       </div>
+
+      <Dialog open={showSignUpDialog} onOpenChange={setShowSignUpDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <SignUpForm selectedPlan={selectedPlan} onComplete={() => setShowSignUpDialog(false)} />
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
