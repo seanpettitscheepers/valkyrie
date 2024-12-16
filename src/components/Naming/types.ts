@@ -8,7 +8,7 @@ export interface NameComponent {
 export interface FormData {
   strategyName: string;
   brand: string;
-  platforms: string[];  // Changed from single platform to array
+  platforms: string[];
   objective: string;
   placement: string;
 }

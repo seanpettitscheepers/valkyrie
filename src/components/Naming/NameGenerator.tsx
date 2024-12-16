@@ -5,15 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { GeneratorForm } from "./GeneratorForm";
 import { GeneratorResults } from "./GeneratorResults";
-import { GeneratedNames } from "./types";
+import { PlatformGeneratedNames } from "./types";
 
 export function NameGenerator() {
-  const [generatedNames, setGeneratedNames] = useState<GeneratedNames>({
-    campaign: "",
-    adset: "",
-    ad: "",
-    utm: "",
-  });
+  const [generatedNames, setGeneratedNames] = useState<PlatformGeneratedNames>({});
 
   const { data: components, isLoading } = useQuery({
     queryKey: ["name-components"],
@@ -31,29 +26,31 @@ export function NameGenerator() {
     },
   });
 
-  const handleGenerate = async (names: GeneratedNames) => {
-    // Save to database
-    const { error } = await supabase
-      .from("generated_names")
-      .insert({
-        strategy_name: names.campaign.split("_").pop() || "",
-        advertiser: names.campaign.split("_")[0],
-        channel: names.campaign.split("_")[1],
-        objective: names.campaign.split("_")[2],
-        placement: names.adset.split("_")[3],
-        campaign_name: names.campaign,
-        adset_name: names.adset,
-        ad_name: names.ad,
-        utm_tag: names.utm,
-      });
+  const handleGenerate = async (names: PlatformGeneratedNames) => {
+    // Save to database - now handling multiple platforms
+    const savePromises = Object.entries(names).map(([platform, platformNames]) => {
+      return supabase
+        .from("generated_names")
+        .insert({
+          strategy_name: platformNames.campaign.split("_").pop() || "",
+          advertiser: platformNames.campaign.split("_")[0],
+          channel: platform,
+          objective: platformNames.campaign.split("_")[2],
+          placement: platformNames.adset.split("_")[3],
+          campaign_name: platformNames.campaign,
+          adset_name: platformNames.adset,
+          ad_name: platformNames.ad,
+          utm_tag: platformNames.utm,
+        });
+    });
 
-    if (error) {
+    try {
+      await Promise.all(savePromises);
+      setGeneratedNames(names);
+      toast.success("Names generated successfully");
+    } catch (error) {
       toast.error("Failed to save generated names");
-      return;
     }
-
-    setGeneratedNames(names);
-    toast.success("Names generated successfully");
   };
 
   if (isLoading) {
