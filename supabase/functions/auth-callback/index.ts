@@ -22,102 +22,110 @@ serve(async (req) => {
     }
 
     const { userId, redirectUrl } = JSON.parse(atob(state));
-
+    
     // Initialize Supabase client
     const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('SUPABASE_URL') || '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
     );
 
     let tokenData;
-    let accountData;
+    let accountsData;
 
     switch (platform) {
-      case 'facebook':
-        tokenData = await exchangeFacebookToken(code);
-        accountData = await getFacebookAccountInfo(tokenData.access_token);
-        await storeFacebookAccount(supabaseClient, userId, accountData, tokenData);
+      case 'amazon-dsp':
+        tokenData = await exchangeAmazonDSPCode(code);
+        accountsData = await fetchAmazonDSPAccounts(tokenData.access_token);
+        await storeAmazonDSPAccounts(supabaseClient, userId, accountsData, tokenData);
         break;
 
-      case 'google-analytics':
-        tokenData = await exchangeGoogleToken(code, 'analytics');
-        accountData = await getGoogleAnalyticsProperties(tokenData.access_token);
-        await storeGoogleAnalyticsAccount(supabaseClient, userId, accountData, tokenData);
+      case 'pinterest':
+        tokenData = await exchangePinterestCode(code);
+        accountsData = await fetchPinterestAccounts(tokenData.access_token);
+        await storePinterestAccounts(supabaseClient, userId, accountsData, tokenData);
         break;
 
-      case 'linkedin':
-        tokenData = await exchangeLinkedInToken(code);
-        accountData = await getLinkedInAccountInfo(tokenData.access_token);
-        await storeLinkedInAccount(supabaseClient, userId, accountData, tokenData);
-        break;
-
-      // Add other platforms as needed
+      // Add cases for other platforms as needed
       default:
         throw new Error(`Unsupported platform: ${platform}`);
     }
 
-    return Response.redirect(redirectUrl, 302);
+    // Redirect back to the app
+    return new Response(null, {
+      status: 302,
+      headers: {
+        ...corsHeaders,
+        'Location': redirectUrl,
+      },
+    });
   } catch (error) {
     console.error('Error in auth callback:', error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { 
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+      },
+    });
   }
 });
 
-async function exchangeFacebookToken(code: string) {
-  const response = await fetch('https://graph.facebook.com/v18.0/oauth/access_token', {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    // Add Facebook-specific token exchange logic
-  });
-  return response.json();
-}
-
-async function exchangeGoogleToken(code: string, scope: string) {
-  const response = await fetch('https://oauth2.googleapis.com/token', {
+async function exchangeAmazonDSPCode(code: string) {
+  const response = await fetch('https://api.amazon.com/auth/o2/token', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    // Add Google-specific token exchange logic
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      grant_type: 'authorization_code',
+      code,
+      client_id: Deno.env.get('AMAZON_DSP_CLIENT_ID') || '',
+      client_secret: Deno.env.get('AMAZON_DSP_CLIENT_SECRET') || '',
+      redirect_uri: `${Deno.env.get('SUPABASE_URL')}/functions/v1/auth-callback?platform=amazon-dsp`,
+    }),
   });
+
+  if (!response.ok) {
+    throw new Error(`Failed to exchange code: ${await response.text()}`);
+  }
+
   return response.json();
 }
 
-async function exchangeLinkedInToken(code: string) {
-  const response = await fetch('https://www.linkedin.com/oauth/v2/accessToken', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    // Add LinkedIn-specific token exchange logic
+async function fetchAmazonDSPAccounts(accessToken: string) {
+  const response = await fetch('https://advertising-api.amazon.com/v2/accounts', {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+    },
   });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch accounts: ${await response.text()}`);
+  }
+
   return response.json();
 }
 
-// Add platform-specific account info fetching functions
-async function getFacebookAccountInfo(accessToken: string) {
-  // Implement Facebook account info fetching
+async function storeAmazonDSPAccounts(supabaseClient: any, userId: string, accounts: any[], tokenData: any) {
+  for (const account of accounts) {
+    const { error } = await supabaseClient
+      .from('amazon_dsp_accounts')
+      .upsert({
+        user_id: userId,
+        account_id: account.id,
+        account_name: account.name,
+        access_token: tokenData.access_token,
+        refresh_token: tokenData.refresh_token,
+        token_expires_at: new Date(Date.now() + tokenData.expires_in * 1000).toISOString(),
+        status: 'active',
+      }, {
+        onConflict: 'account_id',
+      });
+
+    if (error) {
+      console.error('Error storing account:', error);
+    }
+  }
 }
 
-async function getGoogleAnalyticsProperties(accessToken: string) {
-  // Implement Google Analytics properties fetching
-}
-
-async function getLinkedInAccountInfo(accessToken: string) {
-  // Implement LinkedIn account info fetching
-}
-
-// Add platform-specific storage functions
-async function storeFacebookAccount(supabase: any, userId: string, accountData: any, tokenData: any) {
-  // Implement Facebook account storage
-}
-
-async function storeGoogleAnalyticsAccount(supabase: any, userId: string, accountData: any, tokenData: any) {
-  // Implement Google Analytics account storage
-}
-
-async function storeLinkedInAccount(supabase: any, userId: string, accountData: any, tokenData: any) {
-  // Implement LinkedIn account storage
-}
+// Similar functions for Pinterest and other platforms...

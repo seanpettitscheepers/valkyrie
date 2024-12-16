@@ -1,4 +1,1 @@
 project_id = "qothiaalyhdfuesmvcvu"
-
-[sync-platform-campaigns]
-verify_jwt = true
