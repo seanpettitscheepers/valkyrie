@@ -45,11 +45,11 @@ export function AppSidebar() {
     { icon: Target, label: "Naming Rules", path: "/naming" },
     { icon: FileText, label: "Reports", path: "/reports" },
     { icon: Link, label: "Connections", path: "/connections" },
-    { icon: HelpCircle, label: "Help", path: "/help" },
     { icon: UserCircle, label: "Account", path: "/account" },
     ...(isAdmin ? [{ icon: ShieldCheck, label: "Admin", path: "/admin" }] : []),
     { icon: Building2, label: "Brands", path: "/brands" },
     { icon: MessageSquare, label: "Contact Us", path: "/contact" },
+    { icon: HelpCircle, label: "Help", path: "/help" },
   ];
 
   return (
