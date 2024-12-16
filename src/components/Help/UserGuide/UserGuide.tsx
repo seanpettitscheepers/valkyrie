@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TableOfContents } from "./TableOfContents";
 import { GettingStarted } from "./GettingStarted";
-import { PlatformGuideList } from "../PlatformGuide";
+import { PlatformGuideList } from "../PlatformGuideList";
 
 export function UserGuide() {
   return (
