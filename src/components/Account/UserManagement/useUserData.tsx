@@ -2,12 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Profile } from "@/types/profile";
 
-interface SubscriptionData {
+interface SubscriptionPlan {
+  tier: string;
+}
+
+interface UserSubscription {
   user_id: string;
   status: string;
-  subscription_plans: {
-    tier: string;
-  };
+  subscription_plans: SubscriptionPlan;
 }
 
 export function useUserData(currentUser: Profile | null) {
@@ -25,7 +27,7 @@ export function useUserData(currentUser: Profile | null) {
     enabled: currentUser?.role === "super_admin",
   });
 
-  const { data: subscriptions } = useQuery<SubscriptionData[]>({
+  const { data: subscriptions } = useQuery<UserSubscription[]>({
     queryKey: ["subscriptions"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -39,14 +41,7 @@ export function useUserData(currentUser: Profile | null) {
         `);
 
       if (error) throw error;
-      
-      return data.map(sub => ({
-        user_id: sub.user_id,
-        status: sub.status,
-        subscription_plans: {
-          tier: sub.subscription_plans.tier
-        }
-      }));
+      return data as UserSubscription[];
     },
     enabled: currentUser?.role === "super_admin",
   });
