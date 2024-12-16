@@ -1,13 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Settings2, Link2, AlertCircle } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { IntegrationDialog } from "@/components/Settings/IntegrationDialog";
 import { useState } from "react";
 import { PlatformIntegrationType } from "@/types/platform";
+import { IntegrationDialog } from "@/components/Settings/IntegrationDialog";
+import { Header } from "./Header";
+import { PlatformCard } from "./PlatformCard";
+import { AnalyticsCard } from "./AnalyticsCard";
 
 export const PlatformConnections = () => {
   const [selectedPlatform, setSelectedPlatform] = useState<PlatformIntegrationType | null>(null);
@@ -63,103 +61,30 @@ export const PlatformConnections = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">Forge the Links to Your Digital Arsenal</h2>
-        <p className="text-muted-foreground">
-          Connect your advertising and analytics accounts to unlock Valkyrie's full power. Seamless integration, complete visibility, and precision control.
-        </p>
-      </div>
-
-      <Alert>
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          {connectedPlatforms} of {totalPlatforms} platforms connected
-        </AlertDescription>
-      </Alert>
+      <Header 
+        connectedPlatforms={connectedPlatforms}
+        totalPlatforms={totalPlatforms}
+      />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {/* Analytics Platforms */}
         {analyticsIntegrations?.map((integration) => (
-          <Card key={integration.id} className={integration.is_active ? "border-primary" : ""}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {integration.platform_type === 'google_analytics_4' ? 'Google Analytics 4' : 'Universal Analytics'}
-              </CardTitle>
-              <Badge variant="secondary" className={platformTypes.analytics.className}>
-                Analytics
-              </Badge>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Link2 className="h-4 w-4" />
-                    <span className={integration.is_active ? "text-green-600" : "text-gray-500"}>
-                      {integration.is_active ? "Connected" : "Not Connected"}
-                    </span>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedPlatform(integration as any)}
-                  >
-                    <Settings2 className="h-4 w-4" />
-                  </Button>
-                </div>
-                {integration.last_sync_at && (
-                  <p className="text-xs text-muted-foreground">
-                    Last synced: {new Date(integration.last_sync_at).toLocaleString()}
-                  </p>
-                )}
-                {integration.property_id && (
-                  <p className="text-xs text-muted-foreground">
-                    Property ID: {integration.property_id}
-                  </p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+          <AnalyticsCard
+            key={integration.id}
+            integration={integration}
+            platformType={platformTypes.analytics}
+            onSelectPlatform={setSelectedPlatform}
+          />
         ))}
 
         {/* Advertising Platforms */}
         {platforms?.map((platform) => (
-          <Card key={platform.id} className={platform.is_active ? "border-primary" : ""}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {platform.platform_name}
-              </CardTitle>
-              <Badge 
-                variant="secondary" 
-                className={platformTypes[platform.platform_type]?.className}
-              >
-                {platformTypes[platform.platform_type]?.label}
-              </Badge>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Link2 className="h-4 w-4" />
-                    <span className={platform.is_active ? "text-green-600" : "text-gray-500"}>
-                      {platform.is_active ? "Connected" : "Not Connected"}
-                    </span>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedPlatform(platform)}
-                  >
-                    <Settings2 className="h-4 w-4" />
-                  </Button>
-                </div>
-                {platform.last_sync_at && (
-                  <p className="text-xs text-muted-foreground">
-                    Last synced: {new Date(platform.last_sync_at).toLocaleString()}
-                  </p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+          <PlatformCard
+            key={platform.id}
+            platform={platform}
+            platformType={platformTypes[platform.platform_type]}
+            onSelectPlatform={setSelectedPlatform}
+          />
         ))}
       </div>
 
