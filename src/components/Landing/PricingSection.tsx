@@ -3,13 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, Loader2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { SignUpForm } from "@/components/Auth/SignUpForm";
 import { useState } from "react";
 
 export function PricingSection() {
-  const { toast } = useToast();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
 
@@ -27,7 +25,7 @@ export function PricingSection() {
     },
   });
 
-  const handleSubscribe = async (tier: string, priceId: string | null) => {
+  const handlePlanSelect = (tier: string) => {
     setSelectedPlan(tier);
     setShowSignUpDialog(true);
   };
@@ -98,7 +96,7 @@ export function PricingSection() {
                   <Button 
                     className="w-full" 
                     variant={plan.tier === 'growth' ? 'default' : 'outline'}
-                    onClick={() => handleSubscribe(plan.tier, plan.price_id)}
+                    onClick={() => handlePlanSelect(plan.tier)}
                   >
                     {plan.price === null 
                       ? "Contact Sales" 
@@ -115,7 +113,10 @@ export function PricingSection() {
 
       <Dialog open={showSignUpDialog} onOpenChange={setShowSignUpDialog}>
         <DialogContent className="sm:max-w-[500px]">
-          <SignUpForm selectedPlan={selectedPlan} onComplete={() => setShowSignUpDialog(false)} />
+          <SignUpForm 
+            selectedPlan={selectedPlan} 
+            onComplete={() => setShowSignUpDialog(false)}
+          />
         </DialogContent>
       </Dialog>
     </section>
