@@ -17,9 +17,9 @@ export default function Naming() {
       <div className="space-y-8">
         {/* Introduction Section */}
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Campaign Naming System</h1>
+          <h1 className="text-3xl font-bold tracking-tight">The Power of Consistency: Campaign Naming Made Simple</h1>
           <p className="text-muted-foreground mt-2">
-            Standardize your campaign naming conventions and generate consistent names across all platforms.
+            Standardize your campaign names across platforms with ease. Build clarity, improve tracking, and leave chaos behind.
           </p>
         </div>
 
