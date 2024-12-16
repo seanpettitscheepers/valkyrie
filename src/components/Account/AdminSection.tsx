@@ -68,13 +68,21 @@ export function AdminSection() {
         .select(`
           user_id,
           status,
-          subscription_plans (
+          subscription_plans!inner (
             tier
           )
         `);
 
       if (error) throw error;
-      return data;
+      
+      // Transform the data to match SubscriptionData interface
+      return data.map(sub => ({
+        user_id: sub.user_id,
+        status: sub.status,
+        subscription_plans: {
+          tier: sub.subscription_plans.tier
+        }
+      }));
     },
     enabled: currentUser?.role === "super_admin",
   });
