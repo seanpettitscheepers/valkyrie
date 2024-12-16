@@ -29,7 +29,7 @@ export function InsightsReport() {
         and valuable information on a specific topic, issue, or dataset
       </p>
 
-      <div className="flex items-center justify-between">
+      <div className="space-y-4">
         <div className="flex items-center gap-4">
           <h2 className="text-lg font-medium">
             Analyze by{" "}
