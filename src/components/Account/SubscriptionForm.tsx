@@ -2,11 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowUpCircle } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { SubscriptionBadge } from "./SubscriptionBadge";
 import { SubscriptionPlanCard } from "./SubscriptionPlanCard";
 import { useToast } from "@/components/ui/use-toast";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 export function SubscriptionForm() {
   const { toast } = useToast();
@@ -112,6 +114,18 @@ export function SubscriptionForm() {
     }
   };
 
+  const getNextTier = (currentTier: string) => {
+    const tiers = ['free', 'growth', 'pro', 'enterprise'];
+    const currentIndex = tiers.indexOf(currentTier);
+    return currentIndex < tiers.length - 1 ? tiers[currentIndex + 1] : null;
+  };
+
+  const getUpgradeFeatures = (nextTier: string | null) => {
+    if (!nextTier || !plans) return [];
+    const nextPlan = plans.find(p => p.tier === nextTier);
+    return nextPlan?.features || [];
+  };
+
   if (profileLoading || subscriptionLoading || plansLoading) {
     return (
       <div className="flex items-center justify-center p-12">
@@ -119,6 +133,11 @@ export function SubscriptionForm() {
       </div>
     );
   }
+
+  const currentPlan = plans?.find(p => p.tier === profile?.subscription_tier);
+  const nextTier = getNextTier(profile?.subscription_tier || 'free');
+  const upgradeFeatures = getUpgradeFeatures(nextTier);
+  const nextPlan = plans?.find(p => p.tier === nextTier);
 
   const getTrialStatus = () => {
     if (!profile?.trial_ends_at) return null;
@@ -155,6 +174,45 @@ export function SubscriptionForm() {
             </Button>
           )}
         </div>
+
+        {/* Current Plan Features */}
+        <div className="space-y-4">
+          <h4 className="font-medium">What's included in your plan:</h4>
+          <ul className="space-y-2">
+            {currentPlan?.features.map((feature: string, index: number) => (
+              <li key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span className="text-primary">•</span>
+                {feature}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {nextTier && (
+          <>
+            <Separator />
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <ArrowUpCircle className="h-5 w-5 text-primary" />
+                <h4 className="font-medium">Upgrade to {nextPlan?.name} to get:</h4>
+              </div>
+              <ul className="space-y-2">
+                {upgradeFeatures.map((feature: string, index: number) => (
+                  <li key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span className="text-primary">•</span>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+              <Button 
+                className="w-full" 
+                onClick={() => nextPlan && handleSubscribe(nextPlan)}
+              >
+                Upgrade to {nextPlan?.name}
+              </Button>
+            </div>
+          </>
+        )}
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {plans?.map((plan) => (
