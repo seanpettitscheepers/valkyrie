@@ -6,9 +6,27 @@ import { useToast } from "@/components/ui/use-toast";
 import { CurrentSubscription } from "./CurrentSubscription";
 import { PlanFeatures } from "./PlanFeatures";
 import { SubscriptionPlanCard } from "./SubscriptionPlanCard";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function SubscriptionForm() {
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  // Check for Stripe session status
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const sessionId = queryParams.get('session_id');
+    
+    if (sessionId) {
+      toast({
+        title: "Subscription updated",
+        description: "Your subscription has been successfully updated.",
+      });
+      // Clear the URL parameters
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, [toast]);
 
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ["profile"],
@@ -53,6 +71,7 @@ export function SubscriptionForm() {
       const { data, error } = await supabase
         .from("subscription_plans")
         .select("*")
+        .neq('tier', 'freyja')
         .order("price");
 
       if (error) throw error;
@@ -71,11 +90,13 @@ export function SubscriptionForm() {
         return;
       }
 
+      // For enterprise plan, redirect to contact
       if (plan.price_id === null) {
-        window.location.href = "/contact";
+        navigate("/contact");
         return;
       }
 
+      // For free plan
       if (plan.tier === "free") {
         const { error } = await supabase
           .from("profiles")
@@ -91,6 +112,7 @@ export function SubscriptionForm() {
         return;
       }
 
+      // For paid plans
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: { priceId: plan.price_id },
       });
@@ -104,6 +126,45 @@ export function SubscriptionForm() {
       toast({
         title: "Error",
         description: "Failed to start subscription process. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    try {
+      if (!subscription?.cancel_at_period_end) {
+        // Cancel subscription at period end
+        const { error } = await supabase
+          .from("user_subscriptions")
+          .update({ cancel_at_period_end: true })
+          .eq("id", subscription?.id);
+
+        if (error) throw error;
+        
+        toast({
+          title: "Subscription cancelled",
+          description: "Your subscription will be cancelled at the end of the billing period.",
+        });
+      } else {
+        // Resume subscription
+        const { error } = await supabase
+          .from("user_subscriptions")
+          .update({ cancel_at_period_end: false })
+          .eq("id", subscription?.id);
+
+        if (error) throw error;
+        
+        toast({
+          title: "Subscription resumed",
+          description: "Your subscription has been resumed.",
+        });
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update subscription. Please try again.",
         variant: "destructive",
       });
     }
@@ -147,10 +208,7 @@ export function SubscriptionForm() {
           profile={profile}
           subscription={subscription}
           currentPlan={currentPlan}
-          onManageSubscription={() => {
-            // Handle subscription management
-            console.log("Managing subscription");
-          }}
+          onManageSubscription={handleManageSubscription}
         />
 
         <PlanFeatures 
