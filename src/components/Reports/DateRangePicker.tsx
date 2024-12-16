@@ -1,7 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
+import { DateRange } from "react-day-picker";
 
-export function DateRangePicker() {
+interface DateRangePickerProps {
+  date?: DateRange;
+  onDateChange?: (date: DateRange | undefined) => void;
+}
+
+export function DateRangePicker({ date, onDateChange }: DateRangePickerProps) {
   return (
     <div className="flex items-center gap-2 text-sm">
       <Button variant="ghost" size="sm" className="text-primary">Today</Button>
