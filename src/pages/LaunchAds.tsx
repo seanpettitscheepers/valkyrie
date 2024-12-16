@@ -12,9 +12,9 @@ export default function LaunchAds() {
     <PageLayout title="Launch Ads">
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Launch New Ads</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Ready, Aim, Launch: Seamless Ad Creation</h1>
           <p className="text-muted-foreground">
-            Create and launch ads across multiple platforms from a single interface.
+            Deploy your campaigns across platforms with precision. Valkyrie ensures smooth ad launches that deliver results.
           </p>
         </div>
 
