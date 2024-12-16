@@ -2,12 +2,12 @@ import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardHeader } from "./DashboardHeader";
-import { EngagementChart } from "./EngagementChart";
-import { ConversionChart } from "./ConversionChart";
-import { KPIProgressCard } from "./KPIProgressCard";
-import { ROICard } from "./ROICard";
+import { EngagementChart } from "./Charts/EngagementChart";
+import { ConversionChart } from "./Charts/ConversionChart";
+import { KPIProgressCard } from "./Metrics/KPIProgressCard";
+import { ROICard } from "./Metrics/ROICard";
 import { CreateCampaignDialog } from "./CreateCampaignDialog";
-import { CampaignTrendsChart } from "./CampaignTrendsChart";
+import { CampaignTrendsChart } from "./Charts/CampaignTrendsChart";
 
 export function CampaignDashboard() {
   const [selectedCampaign, setSelectedCampaign] = useState("all");
@@ -28,7 +28,6 @@ export function CampaignDashboard() {
     },
   });
 
-  // Fetch campaign KPIs
   const { data: campaignKPIs } = useQuery({
     queryKey: ["campaign-kpis", selectedCampaign],
     queryFn: async () => {
@@ -44,7 +43,6 @@ export function CampaignDashboard() {
     },
   });
 
-  // Calculate KPI progress
   const kpiProgress = {
     signups: {
       completed: campaignKPIs?.find(k => k.kpi_type === "signups")?.current_value || 0,
@@ -60,18 +58,14 @@ export function CampaignDashboard() {
     },
   };
 
-  // Process trends data for the chart
-  const trendsData = performanceData?.map(d => {
-    const revenue = d.conversions * 100; // Assuming $100 per conversion
-    return {
-      date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
-      spend: d.spend,
-      signups: Math.round(d.impressions * 0.1),
-      purchases: d.conversions,
-      revenue: revenue,
-      profit: revenue - d.spend,
-    };
-  }) || [];
+  const trendsData = performanceData?.map(d => ({
+    date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
+    spend: d.spend,
+    signups: Math.round(d.impressions * 0.1),
+    purchases: d.conversions,
+    revenue: d.conversions * 100,
+    profit: (d.conversions * 100) - d.spend,
+  })) || [];
 
   const engagementData = performanceData?.map(d => ({
     date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
@@ -82,14 +76,11 @@ export function CampaignDashboard() {
 
   return (
     <div className="space-y-8 p-6" ref={dashboardRef}>
-      <div className="flex items-center justify-between gap-3">
-        <DashboardHeader
-          selectedCampaign={selectedCampaign}
-          onCampaignChange={setSelectedCampaign}
-          dashboardRef={dashboardRef}
-        />
-        <CreateCampaignDialog />
-      </div>
+      <DashboardHeader
+        selectedCampaign={selectedCampaign}
+        onCampaignChange={setSelectedCampaign}
+        dashboardRef={dashboardRef}
+      />
 
       <div className="grid gap-4 md:grid-cols-4">
         {Object.entries(kpiProgress).map(([key, value]) => (
@@ -107,9 +98,7 @@ export function CampaignDashboard() {
       </div>
 
       <CampaignTrendsChart data={trendsData} />
-
       <EngagementChart data={engagementData} />
-
       <ConversionChart
         signupsCompleted={kpiProgress.signups.completed}
         purchasesCompleted={kpiProgress.purchases.completed}
