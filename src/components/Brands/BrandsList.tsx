@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 import { BrandCard } from "./BrandCard";
 import { CreateBrandDialog } from "./CreateBrandDialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { PageHeader } from "@/components/ui/page-header";
 
 export function BrandsList() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -43,12 +44,10 @@ export function BrandsList() {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Your Brand, Your Battlefield: Organize and Strategize</h2>
-          <p className="text-muted-foreground">
-            Create and manage your brands with ease. Allocate ad accounts, structure campaigns, and ensure each brand gets the attention it deserves.
-          </p>
-        </div>
+        <PageHeader
+          title="Your Brand, Your Battlefield: Organize and Strategize"
+          description="Create and manage your brands with ease. Allocate ad accounts, structure campaigns, and ensure each brand gets the attention it deserves."
+        />
         <Button onClick={() => setIsCreateDialogOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Add Brand
