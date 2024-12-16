@@ -18,7 +18,7 @@ export function Hero() {
         <Button 
           size="lg" 
           className="bg-gradient-brand hover:opacity-90 transition-opacity group"
-          onClick={() => document.getElementById("auth-section")?.scrollIntoView({ behavior: "smooth" })}
+          onClick={() => document.getElementById("pricing-section")?.scrollIntoView({ behavior: "smooth" })}
         >
           Get Started for Free
           <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
