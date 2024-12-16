@@ -7,7 +7,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { NameComponent, FormData, PlatformGeneratedNames } from "./types";
 import { PlatformSelector } from "./PlatformSelector";
-import { useConnectedPlatforms } from "@/hooks/useConnectedPlatforms";
 
 interface GeneratorFormProps {
   components: NameComponent[] | undefined;
@@ -36,20 +35,12 @@ export function GeneratorForm({ components, onGenerate }: GeneratorFormProps) {
     },
   });
 
-  const { data: connectedPlatforms } = useConnectedPlatforms();
-
   const handleInputChange = (field: keyof FormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handlePlatformAdd = (platform: string) => {
-    if (!formData.platforms.includes(platform)) {
-      handleInputChange('platforms', [...formData.platforms, platform]);
-    }
-  };
-
-  const handlePlatformRemove = (platform: string) => {
-    handleInputChange('platforms', formData.platforms.filter(p => p !== platform));
+  const handlePlatformChange = (platforms: string[]) => {
+    handleInputChange('platforms', platforms);
   };
 
   const generateNames = async () => {
@@ -109,10 +100,8 @@ export function GeneratorForm({ components, onGenerate }: GeneratorFormProps) {
       </div>
 
       <PlatformSelector
-        platforms={connectedPlatforms || []}
         selectedPlatforms={formData.platforms}
-        onPlatformAdd={handlePlatformAdd}
-        onPlatformRemove={handlePlatformRemove}
+        onPlatformChange={handlePlatformChange}
       />
 
       {components?.filter(component => !["advertiser", "channel"].includes(component.type)).map((component) => (
