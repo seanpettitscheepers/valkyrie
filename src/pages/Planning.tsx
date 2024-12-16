@@ -5,7 +5,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Planning() {
   return (
-    <PageLayout title="Campaign Planning">
+    <PageLayout title="Battle Plans for Digital Domination">
+      <div className="space-y-4 mb-6">
+        <h1 className="text-2xl font-semibold">Battle Plans for Digital Domination</h1>
+        <p className="text-muted-foreground">
+          Set your campaign objectives, allocate budgets, and let Valkyrie craft a winning strategy tailored to your connected platforms and business goals.
+        </p>
+      </div>
       <Tabs defaultValue="new" className="space-y-6">
         <TabsList>
           <TabsTrigger value="new">New Plan</TabsTrigger>
