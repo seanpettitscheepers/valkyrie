@@ -84,9 +84,9 @@ const Performance = () => {
     <PageLayout title="Ad Performance Analysis">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold">Ad Performance Analysis</h1>
+          <h1 className="text-3xl font-bold">Your Ad Arsenal: Measure. Optimize. Dominate.</h1>
           <p className="text-muted-foreground mt-1">
-            Comprehensive analysis of ad performance metrics and insights across all platforms
+            Dive deep into your ad performance metrics across platforms. See what's working, what's not, and adjust your tactics in real time.
           </p>
         </div>
         <div className="flex gap-4">
