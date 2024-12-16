@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TableOfContents } from "./TableOfContents";
 import { GettingStarted } from "./GettingStarted";
-import { PlatformGuideList } from "../PlatformGuideList";
 
 export function UserGuide() {
   return (
@@ -37,16 +36,6 @@ export function UserGuide() {
               <li>Follow the on-screen instructions to authenticate and grant permissions</li>
               <li>Once connected, Valkyrie will begin syncing data</li>
             </ol>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Platform-Specific Guides</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4">For detailed, step-by-step instructions for each platform, refer to the guides below:</p>
-            <PlatformGuideList />
           </CardContent>
         </Card>
       </section>
