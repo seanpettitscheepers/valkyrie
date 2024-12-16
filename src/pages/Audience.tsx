@@ -1,89 +1,58 @@
-import { useState } from "react";
 import { PageLayout } from "@/components/Layout/PageLayout";
-import { CampaignFilter } from "@/components/Audience/CampaignFilter";
-import { PlatformFilter } from "@/components/Audience/PlatformFilter";
+import { PageHeader } from "@/components/ui/page-header";
+import { AudienceInsights } from "@/components/Audience/AudienceInsights";
 import { DemographicsCard } from "@/components/Audience/DemographicsCard";
 import { InterestsCard } from "@/components/Audience/InterestsCard";
-import { AIRecommendationsCard } from "@/components/Audience/AIRecommendationsCard";
+import { BehaviorAnalysis } from "@/components/Audience/BehaviorAnalysis";
+import { CampaignFilter } from "@/components/Audience/CampaignFilter";
+import { DateRangePicker } from "@/components/Reports/DateRangePicker";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Filter, Share2, MoreHorizontal, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 
-const Audience = () => {
+export default function Audience() {
   const [selectedCampaign, setSelectedCampaign] = useState("all");
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(["all"]);
 
   const { data: audienceData } = useQuery({
-    queryKey: ["audience-insights", selectedCampaign, selectedPlatforms],
+    queryKey: ["audience-data", selectedCampaign],
     queryFn: async () => {
-      let query = supabase.from("audience_insights").select("*");
+      let query = supabase.from("audience_data").select("*");
       
       if (selectedCampaign !== "all") {
         query = query.eq("campaign_id", selectedCampaign);
       }
-      if (!selectedPlatforms.includes("all")) {
-        query = query.in("platform", selectedPlatforms);
-      }
       
       const { data, error } = await query;
       if (error) throw error;
-      return data[0] || { demographics: {}, interests: {} };
+      return data;
     },
   });
 
   return (
     <PageLayout title="Audience Insights">
-      <div className="space-y-8 animate-fade-in">
-        <div className="space-y-6">
-          <div className="space-y-1">
-            <h1 className="text-3xl font-semibold tracking-tight">Know Your Allies: Deep Audience Intelligence.</h1>
-            <p className="text-muted-foreground">
-              Discover the people who power your campaigns. Leverage detailed insights to build stronger connections and smarter strategies.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="text-muted-foreground hover:text-foreground">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </Button>
-            <Button variant="outline" size="sm" className="text-muted-foreground hover:text-foreground">
-              <Share2 className="h-4 w-4 mr-2" />
-              Share
-            </Button>
-            <Button variant="outline" size="sm" className="text-muted-foreground hover:text-foreground">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-            <Button size="sm" className="bg-gradient-brand hover:opacity-90">
-              <Plus className="h-4 w-4 mr-2" />
-              Add
-            </Button>
-          </div>
-          <div className="flex items-center gap-4 bg-gradient-subtle p-4 rounded-lg border animate-fade-in">
-            <CampaignFilter
-              selectedCampaign={selectedCampaign}
-              onCampaignChange={setSelectedCampaign}
-            />
-            <PlatformFilter
-              selectedPlatforms={selectedPlatforms}
-              onPlatformChange={setSelectedPlatforms}
-            />
-          </div>
+      <div className="space-y-6">
+        <PageHeader
+          title="Know Your Warriors: Audience Intelligence"
+          description="Understand who your campaigns reach, engage, and convert. Use data-driven insights to refine your targeting and maximize impact."
+        />
+        
+        <div className="flex items-center justify-between">
+          <CampaignFilter
+            selectedCampaign={selectedCampaign}
+            onCampaignChange={setSelectedCampaign}
+          />
+          <DateRangePicker />
         </div>
 
-        <Separator className="bg-border/5" />
+        <AudienceInsights data={audienceData} />
 
-        <div className="grid gap-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            <DemographicsCard demographics={audienceData?.demographics || {}} />
-            <InterestsCard interests={audienceData?.interests || {}} />
-          </div>
-          <AIRecommendationsCard audienceData={audienceData} />
+        <div className="grid gap-6 md:grid-cols-2">
+          <DemographicsCard demographics={audienceData?.[0]?.demographics} />
+          <InterestsCard interests={audienceData?.[0]?.interests} />
         </div>
+
+        <BehaviorAnalysis data={audienceData} />
       </div>
     </PageLayout>
   );
-};
-
-export default Audience;
+}

@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageLayout } from "@/components/Layout/PageLayout";
+import { PageHeader } from "@/components/ui/page-header";
 import { AIInsightsCard } from "@/components/Dashboard/AIInsightsCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CampaignFilter } from "@/components/Audience/CampaignFilter";
@@ -83,13 +84,10 @@ const Performance = () => {
   return (
     <PageLayout title="Ad Performance Analysis">
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Your Ad Arsenal: Measure. Optimize. Dominate.</h1>
-          <p className="text-muted-foreground mt-1">
-            Dive deep into your ad performance metrics across platforms. See what's working, what's not, and adjust your tactics in real time.
-          </p>
-        </div>
-        
+        <PageHeader
+          title="Your Ad Arsenal: Measure. Optimize. Dominate."
+          description="Dive deep into your ad performance metrics across platforms. See what's working, what's not, and adjust your tactics in real time."
+        />
         <div className="flex gap-4">
           <CampaignFilter
             selectedCampaign={selectedCampaign}

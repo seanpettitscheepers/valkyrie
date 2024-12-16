@@ -8,6 +8,7 @@ import { CreatePatternSheet } from "@/components/Naming/CreatePatternSheet";
 import { NameGenerator } from "@/components/Naming/NameGenerator";
 import { UTMGenerator } from "@/components/Naming/UTMGenerator";
 import { Separator } from "@/components/ui/separator";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default function Naming() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -15,17 +16,11 @@ export default function Naming() {
   return (
     <PageLayout title="Campaign Naming">
       <div className="space-y-8">
-        {/* Introduction Section */}
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">The Power of Consistency: Campaign Naming Made Simple</h1>
-          <p className="text-muted-foreground mt-2">
-            Standardize your campaign names across platforms with ease. Build clarity, improve tracking, and leave chaos behind.
-          </p>
-        </div>
-
+        <PageHeader
+          title="The Power of Consistency: Campaign Naming Made Simple"
+          description="Standardize your campaign names across platforms with ease. Build clarity, improve tracking, and leave chaos behind."
+        />
         <Separator />
-
-        {/* Naming Rules Card */}
         <Card>
           <CardHeader>
             <CardTitle>Naming Convention Guidelines</CardTitle>
@@ -57,20 +52,14 @@ export default function Naming() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Name Generator Section */}
         <div>
           <h2 className="text-2xl font-semibold mb-4">Generate Campaign Names</h2>
           <NameGenerator />
         </div>
-
-        {/* UTM Generator Section */}
         <div>
           <h2 className="text-2xl font-semibold mb-4">Generate UTM URLs</h2>
           <UTMGenerator />
         </div>
-
-        {/* Patterns Management Section */}
         <div>
           <div className="flex justify-between items-center mb-4">
             <div>
