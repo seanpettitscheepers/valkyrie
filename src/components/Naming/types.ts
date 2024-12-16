@@ -8,7 +8,7 @@ export interface NameComponent {
 export interface FormData {
   strategyName: string;
   brand: string;
-  platform: string;  // Changed from channel to platform
+  platforms: string[];  // Changed from single platform to array
   objective: string;
   placement: string;
 }
@@ -18,4 +18,8 @@ export interface GeneratedNames {
   adset: string;
   ad: string;
   utm: string;
+}
+
+export interface PlatformGeneratedNames {
+  [platform: string]: GeneratedNames;
 }

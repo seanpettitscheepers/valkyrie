@@ -2,21 +2,23 @@ import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { NameComponent, FormData, GeneratedNames } from "./types";
+import { NameComponent, FormData, PlatformGeneratedNames } from "./types";
 
 interface GeneratorFormProps {
   components: NameComponent[] | undefined;
-  onGenerate: (names: GeneratedNames) => void;
+  onGenerate: (names: PlatformGeneratedNames) => void;
 }
 
 export function GeneratorForm({ components, onGenerate }: GeneratorFormProps) {
   const [formData, setFormData] = useState<FormData>({
     strategyName: "",
     brand: "",
-    platform: "", // Changed from channel to platform
+    platforms: [], // Now an array
     objective: "",
     placement: "",
   });
@@ -69,29 +71,45 @@ export function GeneratorForm({ components, onGenerate }: GeneratorFormProps) {
     },
   });
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
+  const handleInputChange = (field: keyof FormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handlePlatformAdd = (platform: string) => {
+    if (!formData.platforms.includes(platform)) {
+      handleInputChange('platforms', [...formData.platforms, platform]);
+    }
+  };
+
+  const handlePlatformRemove = (platform: string) => {
+    handleInputChange('platforms', formData.platforms.filter(p => p !== platform));
   };
 
   const generateNames = async () => {
     // Basic validation
-    if (!formData.strategyName || !formData.brand || !formData.platform || 
+    if (!formData.strategyName || !formData.brand || formData.platforms.length === 0 || 
         !formData.objective || !formData.placement) {
-      toast.error("Please fill in all fields");
+      toast.error("Please fill in all fields and select at least one platform");
       return;
     }
 
-    const campaignName = `${formData.brand}_${formData.platform}_${formData.objective}`;
-    const adsetName = `${campaignName}_${formData.placement}`;
-    const adName = `${adsetName}_${formData.strategyName}`;
-    const utmTag = `utm_source=${formData.platform.toLowerCase()}&utm_medium=${formData.placement.toLowerCase()}&utm_campaign=${formData.strategyName.toLowerCase()}`;
+    const generatedNames: PlatformGeneratedNames = {};
+    
+    formData.platforms.forEach(platform => {
+      const campaignName = `${formData.brand}_${platform}_${formData.objective}`;
+      const adsetName = `${campaignName}_${formData.placement}`;
+      const adName = `${adsetName}_${formData.strategyName}`;
+      const utmTag = `utm_source=${platform.toLowerCase()}&utm_medium=${formData.placement.toLowerCase()}&utm_campaign=${formData.strategyName.toLowerCase()}`;
 
-    onGenerate({
-      campaign: campaignName,
-      adset: adsetName,
-      ad: adName,
-      utm: utmTag,
+      generatedNames[platform] = {
+        campaign: campaignName,
+        adset: adsetName,
+        ad: adName,
+        utm: utmTag,
+      };
     });
+
+    onGenerate(generatedNames);
   };
 
   return (
@@ -125,29 +143,51 @@ export function GeneratorForm({ components, onGenerate }: GeneratorFormProps) {
       </div>
 
       <div>
-        <label className="text-sm font-medium">Platform</label>
+        <label className="text-sm font-medium">Platforms</label>
         <Select
-          value={formData.platform}
-          onValueChange={(value) => handleInputChange("platform", value)}
+          value=""
+          onValueChange={handlePlatformAdd}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select platform" />
+            <SelectValue placeholder="Select platforms" />
           </SelectTrigger>
           <SelectContent>
             {connectedPlatforms?.map((platform) => (
-              <SelectItem key={platform.value} value={platform.value}>
+              <SelectItem 
+                key={platform.value} 
+                value={platform.value}
+                disabled={formData.platforms.includes(platform.value)}
+              >
                 {platform.label}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
+        <div className="flex flex-wrap gap-2 mt-2">
+          {formData.platforms.map(platform => {
+            const platformLabel = connectedPlatforms?.find(p => p.value === platform)?.label || platform;
+            return (
+              <Badge 
+                key={platform} 
+                variant="secondary"
+                className="flex items-center gap-1"
+              >
+                {platformLabel}
+                <X 
+                  className="h-3 w-3 cursor-pointer" 
+                  onClick={() => handlePlatformRemove(platform)}
+                />
+              </Badge>
+            );
+          })}
+        </div>
       </div>
 
       {components?.filter(component => !["advertiser", "channel"].includes(component.type)).map((component) => (
         <div key={component.id}>
           <label className="text-sm font-medium">{component.name}</label>
           <Select
-            value={formData[component.type as keyof Omit<FormData, "strategyName" | "brand" | "platform">]}
+            value={formData[component.type as keyof Omit<FormData, "strategyName" | "brand" | "platforms">]}
             onValueChange={(value) => handleInputChange(component.type as keyof FormData, value)}
           >
             <SelectTrigger>
