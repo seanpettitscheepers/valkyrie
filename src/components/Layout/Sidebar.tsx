@@ -16,7 +16,6 @@ import {
 export function AppSidebar() {
   const location = useLocation();
   
-  // Fetch user profile to check admin status
   const { data: profile } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
@@ -48,7 +47,6 @@ export function AppSidebar() {
     { icon: Link, label: "Connections", path: "/connections" },
     { icon: HelpCircle, label: "Help", path: "/help" },
     { icon: UserCircle, label: "Account", path: "/account" },
-    // Only show Admin link if user is admin
     ...(isAdmin ? [{ icon: ShieldCheck, label: "Admin", path: "/admin" }] : []),
     { icon: Building2, label: "Brands", path: "/brands" },
     { icon: MessageSquare, label: "Contact Us", path: "/contact" },
@@ -58,10 +56,11 @@ export function AppSidebar() {
     <Sidebar className="border-r border-border/5 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <SidebarContent>
         <div className="flex items-center gap-2 px-4 py-4">
-          <div className="w-8 h-8 rounded-lg bg-gradient-brand" />
-          <h1 className="text-xl font-bold bg-gradient-brand bg-clip-text text-transparent">
-            Valkyrie
-          </h1>
+          <img 
+            src="/lovable-uploads/8161843e-1491-4fc0-92c8-522cca5f854c.png" 
+            alt="Valkyrie" 
+            className="h-8"
+          />
         </div>
         <SidebarGroup>
           <SidebarGroupLabel>Main Menu</SidebarGroupLabel>

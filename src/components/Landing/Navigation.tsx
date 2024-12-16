@@ -7,10 +7,11 @@ export function Navigation() {
     <nav className="sticky top-0 z-50 w-full border-b border-border/5 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-brand" />
-          <h1 className="text-xl font-bold bg-gradient-brand bg-clip-text text-transparent">
-            Valkyrie
-          </h1>
+          <img 
+            src="/lovable-uploads/8161843e-1491-4fc0-92c8-522cca5f854c.png" 
+            alt="Valkyrie" 
+            className="h-8"
+          />
         </div>
         <div className="hidden md:flex items-center gap-6 text-sm">
           <a href="#features" className="text-foreground/60 hover:text-primary transition-colors">Features</a>
