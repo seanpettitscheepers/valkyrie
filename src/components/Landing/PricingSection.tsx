@@ -21,14 +21,6 @@ export function PricingSection() {
     },
   });
 
-  const { data: session } = useQuery({
-    queryKey: ["session"],
-    queryFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      return session;
-    },
-  });
-
   const handleSubscribe = async (priceId: string | null) => {
     try {
       if (!priceId && priceId !== null) {
@@ -46,35 +38,15 @@ export function PricingSection() {
         return;
       }
 
-      if (!session) {
+      // For free plan, redirect to auth section
+      if (priceId === "free") {
         document.getElementById("auth-section")?.scrollIntoView({ behavior: "smooth" });
         return;
       }
 
-      // For free plan, just update the profile
-      if (priceId === "free") {
-        const { error } = await supabase
-          .from("profiles")
-          .update({ subscription_tier: "free" })
-          .eq("id", session.user.id);
-
-        if (error) throw error;
-        
-        toast({
-          title: "Success",
-          description: "You've been subscribed to the free plan.",
-        });
-        return;
-      }
-
-      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-        body: { priceId },
-      });
-
-      if (error) throw error;
-      if (data?.url) {
-        window.location.href = data.url;
-      }
+      // For paid plans, redirect to auth section
+      document.getElementById("auth-section")?.scrollIntoView({ behavior: "smooth" });
+      
     } catch (error) {
       console.error('Error:', error);
       toast({
