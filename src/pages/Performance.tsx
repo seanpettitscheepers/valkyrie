@@ -82,13 +82,14 @@ const Performance = () => {
 
   return (
     <PageLayout title="Ad Performance Analysis">
-      <div className="flex justify-between items-center mb-6">
+      <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold">Your Ad Arsenal: Measure. Optimize. Dominate.</h1>
           <p className="text-muted-foreground mt-1">
             Dive deep into your ad performance metrics across platforms. See what's working, what's not, and adjust your tactics in real time.
           </p>
         </div>
+        
         <div className="flex gap-4">
           <CampaignFilter
             selectedCampaign={selectedCampaign}
@@ -99,56 +100,56 @@ const Performance = () => {
             onPlatformChange={handlePlatformChange}
           />
         </div>
-      </div>
       
-      <div className="space-y-6">
-        <div className="flex gap-2 flex-wrap">
-          {selectedPlatforms.map(platform => (
-            <Badge key={platform} variant="secondary">
-              {platform === "all" ? "All Platforms" : platform}
-            </Badge>
-          ))}
+        <div className="space-y-6">
+          <div className="flex gap-2 flex-wrap">
+            {selectedPlatforms.map(platform => (
+              <Badge key={platform} variant="secondary">
+                {platform === "all" ? "All Platforms" : platform}
+              </Badge>
+            ))}
+          </div>
+
+          <Tabs defaultValue="awareness" className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="awareness">Awareness</TabsTrigger>
+              <TabsTrigger value="consideration">Consideration</TabsTrigger>
+              <TabsTrigger value="conversion">Conversion</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="awareness">
+              <div className="space-y-6">
+                <PerformanceMetricsGrid metrics={performanceMetrics} />
+                <AIInsightsCard
+                  campaignType="awareness"
+                  insights={generateInsights("awareness")}
+                />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="consideration">
+              <div className="space-y-6">
+                <PerformanceMetricsGrid metrics={performanceMetrics} />
+                <AIInsightsCard
+                  campaignType="consideration"
+                  insights={generateInsights("consideration")}
+                />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="conversion">
+              <div className="space-y-6">
+                <PerformanceMetricsGrid metrics={performanceMetrics} />
+                <AIInsightsCard
+                  campaignType="conversion"
+                  insights={generateInsights("conversion")}
+                />
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          <MetricsExplanation />
         </div>
-
-        <Tabs defaultValue="awareness" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="awareness">Awareness</TabsTrigger>
-            <TabsTrigger value="consideration">Consideration</TabsTrigger>
-            <TabsTrigger value="conversion">Conversion</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="awareness">
-            <div className="space-y-6">
-              <PerformanceMetricsGrid metrics={performanceMetrics} />
-              <AIInsightsCard
-                campaignType="awareness"
-                insights={generateInsights("awareness")}
-              />
-            </div>
-          </TabsContent>
-
-          <TabsContent value="consideration">
-            <div className="space-y-6">
-              <PerformanceMetricsGrid metrics={performanceMetrics} />
-              <AIInsightsCard
-                campaignType="consideration"
-                insights={generateInsights("consideration")}
-              />
-            </div>
-          </TabsContent>
-
-          <TabsContent value="conversion">
-            <div className="space-y-6">
-              <PerformanceMetricsGrid metrics={performanceMetrics} />
-              <AIInsightsCard
-                campaignType="conversion"
-                insights={generateInsights("conversion")}
-              />
-            </div>
-          </TabsContent>
-        </Tabs>
-
-        <MetricsExplanation />
       </div>
     </PageLayout>
   );
