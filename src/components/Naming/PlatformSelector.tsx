@@ -1,61 +1,87 @@
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { X } from "lucide-react";
-import { ConnectedPlatform } from "@/hooks/useConnectedPlatforms";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Filter } from "lucide-react";
+import { useConnectedPlatforms } from "@/hooks/useConnectedPlatforms";
 
-interface PlatformSelectorProps {
-  platforms: ConnectedPlatform[];
+interface PlatformFilterProps {
   selectedPlatforms: string[];
-  onPlatformAdd: (platform: string) => void;
-  onPlatformRemove: (platform: string) => void;
+  onPlatformChange: (platforms: string[]) => void;
 }
 
-export function PlatformSelector({ 
-  platforms, 
-  selectedPlatforms, 
-  onPlatformAdd, 
-  onPlatformRemove 
-}: PlatformSelectorProps) {
+export function PlatformSelector({ selectedPlatforms, onPlatformChange }: PlatformFilterProps) {
+  const { data: connectedPlatforms, isLoading } = useConnectedPlatforms();
+
+  const platforms = [
+    { value: "all", label: "All Platforms" },
+    { value: "Facebook", label: "Facebook" },
+    { value: "Instagram", label: "Instagram" },
+    { value: "TikTok", label: "TikTok" },
+    { value: "Snapchat", label: "Snapchat" },
+    { value: "Pinterest", label: "Pinterest" },
+    { value: "Google Ads", label: "Google Ads" },
+    { value: "DV360", label: "DV360" },
+  ];
+
+  const handlePlatformToggle = (platform: string) => {
+    if (platform === "all") {
+      onPlatformChange(["all"]);
+      return;
+    }
+
+    let newPlatforms: string[];
+    if (selectedPlatforms.includes("all")) {
+      newPlatforms = [platform];
+    } else {
+      if (selectedPlatforms.includes(platform)) {
+        newPlatforms = selectedPlatforms.filter(p => p !== platform);
+        if (newPlatforms.length === 0) {
+          newPlatforms = ["all"];
+        }
+      } else {
+        newPlatforms = [...selectedPlatforms, platform];
+      }
+    }
+    onPlatformChange(newPlatforms);
+  };
+
+  if (isLoading) {
+    return (
+      <Button variant="outline" size="sm" disabled>
+        <Filter className="h-4 w-4 mr-2" />
+        Loading...
+      </Button>
+    );
+  }
+
   return (
-    <div>
-      <label className="text-sm font-medium">Platforms</label>
-      <Select
-        value=""
-        onValueChange={onPlatformAdd}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Select platforms" />
-        </SelectTrigger>
-        <SelectContent>
-          {platforms?.map((platform) => (
-            <SelectItem 
-              key={platform.value} 
-              value={platform.value}
-              disabled={selectedPlatforms.includes(platform.value)}
-            >
-              {platform.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <div className="flex flex-wrap gap-2 mt-2">
-        {selectedPlatforms.map(platform => {
-          const platformLabel = platforms?.find(p => p.value === platform)?.label || platform;
-          return (
-            <Badge 
-              key={platform} 
-              variant="secondary"
-              className="flex items-center gap-1"
-            >
-              {platformLabel}
-              <X 
-                className="h-3 w-3 cursor-pointer" 
-                onClick={() => onPlatformRemove(platform)}
-              />
-            </Badge>
-          );
-        })}
-      </div>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Filter className="h-4 w-4 mr-2" />
+          Platforms
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuLabel>Select Platforms</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {platforms.map((platform) => (
+          <DropdownMenuCheckboxItem
+            key={platform.value}
+            checked={selectedPlatforms.includes(platform.value)}
+            onCheckedChange={() => handlePlatformToggle(platform.value)}
+          >
+            {platform.label}
+          </DropdownMenuCheckboxItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
