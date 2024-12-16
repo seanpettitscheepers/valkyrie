@@ -64,9 +64,9 @@ export const PlatformConnections = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Platform Connections</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Forge the Links to Your Digital Arsenal</h2>
         <p className="text-muted-foreground">
-          Connect your advertising and analytics platforms to enable automated data synchronization.
+          Connect your advertising and analytics accounts to unlock Valkyrie's full power. Seamless integration, complete visibility, and precision control.
         </p>
       </div>
 
