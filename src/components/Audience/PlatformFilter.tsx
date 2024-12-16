@@ -13,9 +13,14 @@ import { Filter } from "lucide-react";
 interface PlatformFilterProps {
   selectedPlatforms: string[];
   onPlatformChange: (platforms: string[]) => void;
+  multiSelect?: boolean;
 }
 
-export function PlatformFilter({ selectedPlatforms, onPlatformChange }: PlatformFilterProps) {
+export function PlatformFilter({ 
+  selectedPlatforms, 
+  onPlatformChange,
+  multiSelect = true 
+}: PlatformFilterProps) {
   const platforms = [
     { value: "all", label: "All Platforms" },
     { value: "Facebook", label: "Facebook" },
@@ -33,20 +38,25 @@ export function PlatformFilter({ selectedPlatforms, onPlatformChange }: Platform
       return;
     }
 
-    let newPlatforms: string[];
-    if (selectedPlatforms.includes("all")) {
-      newPlatforms = [platform];
-    } else {
-      if (selectedPlatforms.includes(platform)) {
-        newPlatforms = selectedPlatforms.filter(p => p !== platform);
-        if (newPlatforms.length === 0) {
-          newPlatforms = ["all"];
-        }
+    if (multiSelect) {
+      let newPlatforms: string[];
+      if (selectedPlatforms.includes("all")) {
+        newPlatforms = [platform];
       } else {
-        newPlatforms = [...selectedPlatforms, platform];
+        if (selectedPlatforms.includes(platform)) {
+          newPlatforms = selectedPlatforms.filter(p => p !== platform);
+          if (newPlatforms.length === 0) {
+            newPlatforms = ["all"];
+          }
+        } else {
+          newPlatforms = [...selectedPlatforms, platform];
+        }
       }
+      onPlatformChange(newPlatforms);
+    } else {
+      // Single select mode
+      onPlatformChange([platform]);
     }
-    onPlatformChange(newPlatforms);
   };
 
   return (
@@ -54,11 +64,15 @@ export function PlatformFilter({ selectedPlatforms, onPlatformChange }: Platform
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm">
           <Filter className="h-4 w-4 mr-2" />
-          Platforms
+          {selectedPlatforms.includes("all") 
+            ? "All Platforms" 
+            : selectedPlatforms.length === 1 
+              ? platforms.find(p => p.value === selectedPlatforms[0])?.label 
+              : `${selectedPlatforms.length} Platforms`}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>Select Platforms</DropdownMenuLabel>
+        <DropdownMenuLabel>Select Platform{multiSelect ? 's' : ''}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {platforms.map((platform) => (
           <DropdownMenuCheckboxItem

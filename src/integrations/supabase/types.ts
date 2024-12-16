@@ -493,51 +493,101 @@ export type Database = {
         }
         Relationships: []
       }
+      campaign_plan_versions: {
+        Row: {
+          changes: Json | null
+          created_at: string
+          created_by: string | null
+          id: string
+          plan_id: string | null
+          version: number
+        }
+        Insert: {
+          changes?: Json | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          plan_id?: string | null
+          version: number
+        }
+        Update: {
+          changes?: Json | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          plan_id?: string | null
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_plan_versions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "campaign_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaign_plans: {
         Row: {
+          ad_formats: string[] | null
           audience_insights_id: string | null
           budget_allocation: Json
+          budget_caps: Json | null
           created_at: string
+          geographical_targeting: string[] | null
           id: string
           name: string
           notes: string | null
           objective: Database["public"]["Enums"]["campaign_objective"]
           platforms: Json
           previous_campaign_id: string | null
+          previous_version_id: string | null
           status: string
           targeting_objectives: Json
           total_budget: number
           updated_at: string
+          version: number | null
         }
         Insert: {
+          ad_formats?: string[] | null
           audience_insights_id?: string | null
           budget_allocation?: Json
+          budget_caps?: Json | null
           created_at?: string
+          geographical_targeting?: string[] | null
           id?: string
           name: string
           notes?: string | null
           objective: Database["public"]["Enums"]["campaign_objective"]
           platforms?: Json
           previous_campaign_id?: string | null
+          previous_version_id?: string | null
           status?: string
           targeting_objectives?: Json
           total_budget?: number
           updated_at?: string
+          version?: number | null
         }
         Update: {
+          ad_formats?: string[] | null
           audience_insights_id?: string | null
           budget_allocation?: Json
+          budget_caps?: Json | null
           created_at?: string
+          geographical_targeting?: string[] | null
           id?: string
           name?: string
           notes?: string | null
           objective?: Database["public"]["Enums"]["campaign_objective"]
           platforms?: Json
           previous_campaign_id?: string | null
+          previous_version_id?: string | null
           status?: string
           targeting_objectives?: Json
           total_budget?: number
           updated_at?: string
+          version?: number | null
         }
         Relationships: [
           {
@@ -552,6 +602,13 @@ export type Database = {
             columns: ["previous_campaign_id"]
             isOneToOne: false
             referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_plans_previous_version_id_fkey"
+            columns: ["previous_version_id"]
+            isOneToOne: false
+            referencedRelation: "campaign_plans"
             referencedColumns: ["id"]
           },
         ]
