@@ -16,6 +16,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PauseCircle, StopCircle, Eye } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { Profile } from "@/types/profile";
 
 interface UserTableProps {
@@ -80,27 +85,50 @@ export function UserTable({ users, onUpdateRole, onSubscriptionAction, updating 
             <TableCell>{getStatusBadge(user.status || "unknown")}</TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => onSubscriptionAction(user.id, "pause")}
-                >
-                  <PauseCircle className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => onSubscriptionAction(user.id, "cancel")}
-                >
-                  <StopCircle className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => {/* Navigate to user profile */}}
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => onSubscriptionAction(user.id, "pause")}
+                    >
+                      <PauseCircle className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Pause subscription</p>
+                  </TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => onSubscriptionAction(user.id, "cancel")}
+                    >
+                      <StopCircle className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Cancel subscription</p>
+                  </TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => {/* Navigate to user profile */}}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>View user profile</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
             </TableCell>
           </TableRow>
