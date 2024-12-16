@@ -86,7 +86,7 @@ export function BusinessInfoForm({ profile, email, onUpdate }: BusinessInfoFormP
 
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-lg">Demographic Information</CardTitle>
+          <CardTitle className="text-lg">Contact Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <DemographicSection
