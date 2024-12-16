@@ -66,7 +66,10 @@ export function WebsitePerformanceMetrics() {
                 dataKey="value" 
                 fill="#496946"
                 radius={[4, 4, 0, 0]}
-                hover={{ fill: "#858071" }}
+                onMouseEnter={(data, index) => {
+                  // You can handle hover state here if needed
+                  console.log('Bar hover:', data, index);
+                }}
               />
             </BarChart>
           </ResponsiveContainer>
