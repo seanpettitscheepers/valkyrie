@@ -12,9 +12,9 @@ export default function WebsitePerformance() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Website Performance Analytics</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Fortify Your Stronghold: Website Insights That Convert.</h1>
             <p className="text-muted-foreground">
-              Analyze website performance metrics and user behavior to optimize your digital presence.
+              Uncover how your campaigns are driving website traffic and engagement. Monitor visitor behavior and maximize conversions.
             </p>
           </div>
           <DateRangePicker />
