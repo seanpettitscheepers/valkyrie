@@ -1,27 +1,14 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
-import { AddUserDialog } from "./UserManagement/AddUserDialog";
+import { Card, CardContent } from "@/components/ui/card";
+import { UserManagementHeader } from "./UserManagement/UserManagementHeader";
 import { UserTable } from "./UserManagement/UserTable";
-import { Button } from "@/components/ui/button";
-import { FileDown } from "lucide-react";
-import * as XLSX from 'xlsx';
 import { UserFilters } from "./UserManagement/UserFilters";
-import type { Profile } from "@/types/profile";
-
-interface SubscriptionData {
-  user_id: string;
-  status: string;
-  subscription_plans: {
-    tier: string;
-  };
-}
+import { useUserData } from "./UserManagement/useUserData";
+import { useUserActions } from "./UserManagement/useUserActions";
 
 export function AdminSection() {
-  const { toast } = useToast();
-  const [updating, setUpdating] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     businessName: "",
     role: "all",
@@ -46,56 +33,8 @@ export function AdminSection() {
     },
   });
 
-  const { data: profiles } = useQuery({
-    queryKey: ["profiles"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: currentUser?.role === "super_admin",
-  });
-
-  const { data: subscriptions } = useQuery<SubscriptionData[]>({
-    queryKey: ["subscriptions"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("user_subscriptions")
-        .select(`
-          user_id,
-          status,
-          subscription_plans!inner (
-            tier
-          )
-        `);
-
-      if (error) throw error;
-      
-      // Transform the data to match SubscriptionData interface
-      return data.map(sub => ({
-        user_id: sub.user_id,
-        status: sub.status,
-        subscription_plans: {
-          tier: sub.subscription_plans.tier
-        }
-      }));
-    },
-    enabled: currentUser?.role === "super_admin",
-  });
-
-  // Combine the data
-  const users = profiles?.map(profile => {
-    const userSubscription = subscriptions?.find(sub => sub.user_id === profile.id);
-    return {
-      ...profile,
-      subscription: userSubscription?.subscription_plans?.tier || "free",
-      status: userSubscription?.status || "active"
-    };
-  });
+  const { users } = useUserData(currentUser);
+  const { updating, updateUserRole, handleSubscriptionAction, handleAddUser } = useUserActions();
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -110,107 +49,14 @@ export function AdminSection() {
     );
   });
 
-  const updateUserRole = async (userId: string, newRole: string) => {
-    try {
-      setUpdating(userId);
-      const { error } = await supabase
-        .from("profiles")
-        .update({ role: newRole })
-        .eq("id", userId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Role updated",
-        description: "User role has been updated successfully.",
-      });
-      
-    } catch (error) {
-      console.error("Error updating role:", error);
-      toast({
-        title: "Error updating role",
-        description: "There was an error updating the user role.",
-        variant: "destructive",
-      });
-    } finally {
-      setUpdating(null);
-    }
-  };
-
-  const handleAddUser = async (userData: {
-    email: string;
-    businessName: string;
-    role: string;
-    subscription: string;
-  }) => {
-    try {
-      toast({
-        title: "User invited",
-        description: "An invitation has been sent to the user's email.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "There was an error creating the user.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleSubscriptionAction = async (userId: string, action: "pause" | "cancel") => {
-    try {
-      const newStatus = action === "pause" ? "paused" : "cancelled";
-      const { error } = await supabase
-        .from("user_subscriptions")
-        .update({ status: newStatus })
-        .eq("user_id", userId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Subscription updated",
-        description: `Subscription has been ${action}ed successfully.`,
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: `There was an error ${action}ing the subscription.`,
-        variant: "destructive",
-      });
-    }
-  };
-
-  const exportToExcel = () => {
-    if (!filteredUsers?.length) return;
-
-    const exportData = filteredUsers.map(user => ({
-      'Business Name': user.business_name || '',
-      'Email': user.email || '',
-      'Role': user.role,
-      'Subscription': user.subscription,
-      'Status': user.status,
-    }));
-
-    const ws = XLSX.utils.json_to_sheet(exportData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Users');
-    XLSX.writeFile(wb, 'users.xlsx');
-  };
-
   if (currentUser?.role !== "super_admin") return null;
 
   return (
     <Card className="mt-8">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>User Management</CardTitle>
-        <div className="flex gap-2">
-          <Button onClick={exportToExcel} variant="outline" className="flex items-center gap-2">
-            <FileDown className="h-4 w-4" />
-            Export Excel
-          </Button>
-          <AddUserDialog onAddUser={handleAddUser} />
-        </div>
-      </CardHeader>
+      <UserManagementHeader 
+        filteredUsers={filteredUsers || []}
+        onAddUser={handleAddUser}
+      />
       <CardContent>
         <UserFilters 
           filters={filters}
