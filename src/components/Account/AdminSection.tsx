@@ -44,13 +44,27 @@ export function AdminSection() {
   const { data: users, refetch } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      const { data: profiles, error } = await supabase
+      // First get profiles
+      const { data: profiles, error: profilesError } = await supabase
         .from("profiles")
-        .select("*, user_subscriptions(subscription_plans(tier, name))")
+        .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      return profiles;
+      if (profilesError) throw profilesError;
+
+      // Then get subscriptions separately
+      const { data: subscriptions, error: subsError } = await supabase
+        .from("user_subscriptions")
+        .select("user_id, subscription_plans(tier)")
+        .eq("status", "active");
+
+      if (subsError) throw subsError;
+
+      // Merge the data
+      return profiles.map(profile => ({
+        ...profile,
+        subscription: subscriptions?.find(sub => sub.user_id === profile.id)?.subscription_plans?.tier || "free"
+      }));
     },
     enabled: currentUser?.role === "super_admin",
   });
@@ -104,7 +118,7 @@ export function AdminSection() {
               <TableRow key={user.id}>
                 <TableCell>{user.business_name || "N/A"}</TableCell>
                 <TableCell>{user.role}</TableCell>
-                <TableCell>{user.user_subscriptions?.[0]?.subscription_plans?.tier || "free"}</TableCell>
+                <TableCell>{user.subscription}</TableCell>
                 <TableCell>
                   <Select
                     disabled={updating === user.id}
