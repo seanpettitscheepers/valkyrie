@@ -18,17 +18,19 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     queryKey: ["session"],
     queryFn: async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) throw error;
-        return session;
+        // First clear any potentially invalid session data
+        const currentSession = await supabase.auth.getSession();
+        if (currentSession.error) {
+          await supabase.auth.signOut();
+          throw currentSession.error;
+        }
+        return currentSession.data.session;
       } catch (error) {
         console.error("Error fetching session:", error);
-        // Clear any invalid session data
-        await supabase.auth.signOut();
         throw error;
       }
     },
-    retry: false
+    retry: false // Don't retry on failure to prevent infinite loops
   });
 
   useEffect(() => {
@@ -50,8 +52,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
       setIsCheckingSession(false);
       if (!session) {
         toast({
-          title: "Authentication required",
-          description: "Please sign in to access this page",
+          title: "Session expired",
+          description: "Please sign in to continue",
           variant: "destructive",
         });
         navigate("/auth");
