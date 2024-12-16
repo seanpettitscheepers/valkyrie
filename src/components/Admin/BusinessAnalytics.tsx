@@ -25,16 +25,13 @@ export function BusinessAnalytics() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("user_subscriptions")
-        .select(`
-          status,
-          subscription_plans(tier, name)
-        `)
+        .select("subscription_plans!inner(tier, name)")
         .eq("status", "active");
 
       if (error) throw error;
 
-      const trends = data.reduce((acc: any, curr) => {
-        const tier = curr.subscription_plans?.tier || "free";
+      const trends = data.reduce((acc: Record<string, number>, curr) => {
+        const tier = curr.subscription_plans.tier || "free";
         acc[tier] = (acc[tier] || 0) + 1;
         return acc;
       }, {});

@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import type { User } from "@supabase/supabase-js";
 import type { Profile } from "@/types/profile";
 
 export function AdminSection() {
@@ -45,34 +44,13 @@ export function AdminSection() {
   const { data: users, refetch } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      // First get all auth users to get their emails
-      const { data: { users }, error: authError } = await supabase.auth.admin.listUsers();
-      if (authError) throw authError;
-
-      // Then get all profiles
-      const { data: profiles, error: profilesError } = await supabase
+      const { data: profiles, error } = await supabase
         .from("profiles")
-        .select("*")
+        .select("*, user_subscriptions(subscription_plans(tier, name))")
         .order("created_at", { ascending: false });
 
-      if (profilesError) throw profilesError;
-
-      // Merge the data to include emails
-      const mergedUsers = profiles.map(profile => {
-        const authUser = (users as User[]).find(user => user.id === profile.id);
-        return {
-          ...profile,
-          email: authUser?.email || null
-        };
-      });
-
-      // Set sean@pettitscheepers.com as admin if they exist
-      const seanUser = mergedUsers.find(user => user.email === "sean@pettitscheepers.com");
-      if (seanUser && seanUser.role !== "admin") {
-        await updateUserRole(seanUser.id, "admin");
-      }
-
-      return mergedUsers;
+      if (error) throw error;
+      return profiles;
     },
     enabled: currentUser?.role === "super_admin",
   });
@@ -116,7 +94,6 @@ export function AdminSection() {
           <TableHeader>
             <TableRow>
               <TableHead>Business Name</TableHead>
-              <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Subscription</TableHead>
               <TableHead>Actions</TableHead>
@@ -126,9 +103,8 @@ export function AdminSection() {
             {users?.map((user) => (
               <TableRow key={user.id}>
                 <TableCell>{user.business_name || "N/A"}</TableCell>
-                <TableCell>{user.email}</TableCell>
                 <TableCell>{user.role}</TableCell>
-                <TableCell>{user.subscription_tier}</TableCell>
+                <TableCell>{user.user_subscriptions?.[0]?.subscription_plans?.tier || "free"}</TableCell>
                 <TableCell>
                   <Select
                     disabled={updating === user.id}
