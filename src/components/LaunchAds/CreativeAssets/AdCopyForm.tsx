@@ -15,7 +15,7 @@ interface AdCopyFormProps {
 }
 
 export function AdCopyForm({ adCopy, onAdCopyChange }: AdCopyFormProps) {
-  const { data: platforms } = useConnectedPlatforms();
+  const { data: platforms, isLoading } = useConnectedPlatforms();
   
   // CTA options based on platforms
   const ctaOptions = new Set<string>();
@@ -25,16 +25,18 @@ export function AdCopyForm({ adCopy, onAdCopyChange }: AdCopyFormProps) {
   defaultCTAs.forEach(cta => ctaOptions.add(cta));
 
   // Platform-specific CTAs
-  if (platforms?.find(p => p.value === "facebook")) {
-    ["Book Now", "Watch More", "Send Message", "Get Offer", "Get Showtimes"].forEach(cta => ctaOptions.add(cta));
-  }
+  if (platforms && Array.isArray(platforms)) {
+    if (platforms.some(p => p.value === "facebook")) {
+      ["Book Now", "Watch More", "Send Message", "Get Offer", "Get Showtimes"].forEach(cta => ctaOptions.add(cta));
+    }
 
-  if (platforms?.find(p => p.value === "linkedin")) {
-    ["Apply Now", "Register", "Request Demo", "Subscribe"].forEach(cta => ctaOptions.add(cta));
-  }
+    if (platforms.some(p => p.value === "linkedin")) {
+      ["Apply Now", "Register", "Request Demo", "Subscribe"].forEach(cta => ctaOptions.add(cta));
+    }
 
-  if (platforms?.find(p => p.value === "google_ads")) {
-    ["Get Quote", "Call Now", "View Plans", "Find Location"].forEach(cta => ctaOptions.add(cta));
+    if (platforms.some(p => p.value === "google_ads")) {
+      ["Get Quote", "Call Now", "View Plans", "Find Location"].forEach(cta => ctaOptions.add(cta));
+    }
   }
 
   return (
@@ -71,6 +73,7 @@ export function AdCopyForm({ adCopy, onAdCopyChange }: AdCopyFormProps) {
         <Select
           value={adCopy.cta}
           onValueChange={(value) => onAdCopyChange("cta", value)}
+          disabled={isLoading}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select a call to action" />
