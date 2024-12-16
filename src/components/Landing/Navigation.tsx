@@ -10,7 +10,7 @@ export function Navigation() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const { data: session } = useQuery({
+  const { data: session, refetch } = useQuery({
     queryKey: ["session"],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -20,16 +20,27 @@ export function Navigation() {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error("Logout error:", error);
+        throw error;
+      }
+
+      // Force a session refetch after logout
+      await refetch();
+      
       toast({
         title: "Logged out successfully",
         description: "You have been logged out of your account.",
       });
+      
       navigate("/");
     } catch (error) {
+      console.error("Error during logout:", error);
       toast({
         title: "Error logging out",
-        description: "Please try again.",
+        description: "Please try refreshing the page and trying again.",
         variant: "destructive",
       });
     }
