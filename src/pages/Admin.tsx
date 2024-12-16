@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AdminSection } from "@/components/Account/AdminSection";
+import { AdminInbox } from "@/components/Admin/AdminInbox";
+import { BusinessAnalytics } from "@/components/Admin/BusinessAnalytics";
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -43,7 +47,25 @@ export default function Admin() {
     <PageLayout title="Admin">
       <div className="space-y-6">
         <h2 className="text-2xl font-bold">Admin Dashboard</h2>
-        {/* Add admin functionality here */}
+        <Tabs defaultValue="users" className="w-full">
+          <TabsList>
+            <TabsTrigger value="users">User Management</TabsTrigger>
+            <TabsTrigger value="inbox">Inbox</TabsTrigger>
+            <TabsTrigger value="analytics">Business Analytics</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="users" className="space-y-4">
+            <AdminSection />
+          </TabsContent>
+
+          <TabsContent value="inbox" className="space-y-4">
+            <AdminInbox />
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-4">
+            <BusinessAnalytics />
+          </TabsContent>
+        </Tabs>
       </div>
     </PageLayout>
   );

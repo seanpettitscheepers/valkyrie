@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_inbox: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       amazon_dsp_accounts: {
         Row: {
           access_token: string
@@ -318,6 +348,36 @@ export type Database = {
           name?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      business_analytics: {
+        Row: {
+          active_users: number
+          created_at: string
+          date: string
+          id: string
+          subscription_breakdown: Json
+          total_revenue: number
+          total_users: number
+        }
+        Insert: {
+          active_users?: number
+          created_at?: string
+          date?: string
+          id?: string
+          subscription_breakdown?: Json
+          total_revenue?: number
+          total_users?: number
+        }
+        Update: {
+          active_users?: number
+          created_at?: string
+          date?: string
+          id?: string
+          subscription_breakdown?: Json
+          total_revenue?: number
+          total_users?: number
         }
         Relationships: []
       }
