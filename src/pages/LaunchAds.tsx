@@ -6,16 +6,18 @@ import { LaunchAdsTargeting } from "@/components/LaunchAds/LaunchAdsTargeting";
 import { LaunchAdsPlatforms } from "@/components/LaunchAds/LaunchAdsPlatforms";
 import { LaunchAdsBudget } from "@/components/LaunchAds/LaunchAdsBudget";
 import { LaunchAdsAIRecommendations } from "@/components/LaunchAds/LaunchAdsAIRecommendations";
-import { PageHeader } from "@/components/ui/page-header";
 
 export default function LaunchAds() {
   return (
     <PageLayout title="Launch Ads">
       <div className="space-y-6">
-        <PageHeader
-          title="Ready, Aim, Launch: Seamless Ad Creation"
-          description="Deploy your campaigns across platforms with precision. Valkyrie ensures smooth ad launches that deliver results."
-        />
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Ready, Aim, Launch: Seamless Ad Creation</h1>
+          <p className="text-muted-foreground">
+            Deploy your campaigns across platforms with precision. Valkyrie ensures smooth ad launches that deliver results.
+          </p>
+        </div>
+
         <Card className="p-6">
           <Tabs defaultValue="platforms" className="space-y-6">
             <TabsList>

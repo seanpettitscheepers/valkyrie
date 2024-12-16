@@ -5,16 +5,17 @@ import { WebsitePerformanceMetrics } from "@/components/WebsitePerformance/Websi
 import { WebsitePerformanceInsights } from "@/components/WebsitePerformance/WebsitePerformanceInsights";
 import { TrafficSourceAnalysis } from "@/components/WebsitePerformance/TrafficSourceAnalysis";
 import { DateRangePicker } from "@/components/Reports/DateRangePicker";
-import { PageHeader } from "@/components/ui/page-header";
 
 export default function WebsitePerformance() {
   return (
     <PageLayout title="Website Performance">
       <div className="space-y-6">
-        <PageHeader
-          title="Fortify Your Stronghold: Website Insights That Convert"
-          description="Uncover how your campaigns are driving website traffic and engagement. Monitor visitor behavior and maximize conversions."
-        />
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Fortify Your Stronghold: Website Insights That Convert.</h1>
+          <p className="text-muted-foreground">
+            Uncover how your campaigns are driving website traffic and engagement. Monitor visitor behavior and maximize conversions.
+          </p>
+        </div>
         <div className="flex justify-end">
           <DateRangePicker />
         </div>
