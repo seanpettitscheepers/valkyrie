@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Rocket, ArrowRight, Play } from "lucide-react";
+import { Shield, ArrowRight, Play } from "lucide-react";
 
 export function Hero() {
   return (
     <header className="container mx-auto px-4 py-24 text-center">
       <div className="inline-flex items-center rounded-full border px-3 py-1 text-sm mb-4 bg-muted/50 animate-fade-in">
-        <Rocket className="h-4 w-4 mr-2 text-primary" />
+        <Shield className="h-4 w-4 mr-2 text-primary" />
         Your Digital Advertising Guardian
       </div>
       <h1 className="text-4xl md:text-6xl font-bold tracking-tight bg-gradient-brand bg-clip-text text-transparent mb-4 animate-fade-in [animation-delay:200ms]">
