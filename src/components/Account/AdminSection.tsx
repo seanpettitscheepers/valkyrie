@@ -11,6 +11,14 @@ import * as XLSX from 'xlsx';
 import { UserFilters } from "./UserManagement/UserFilters";
 import type { Profile } from "@/types/profile";
 
+interface SubscriptionData {
+  user_id: string;
+  status: string;
+  subscription_plans: {
+    tier: string;
+  };
+}
+
 export function AdminSection() {
   const { toast } = useToast();
   const [updating, setUpdating] = useState<string | null>(null);
@@ -38,7 +46,6 @@ export function AdminSection() {
     },
   });
 
-  // Separate queries for profiles and subscriptions
   const { data: profiles } = useQuery({
     queryKey: ["profiles"],
     queryFn: async () => {
@@ -53,7 +60,7 @@ export function AdminSection() {
     enabled: currentUser?.role === "super_admin",
   });
 
-  const { data: subscriptions } = useQuery({
+  const { data: subscriptions } = useQuery<SubscriptionData[]>({
     queryKey: ["subscriptions"],
     queryFn: async () => {
       const { data, error } = await supabase
