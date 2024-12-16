@@ -1702,6 +1702,33 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_campaign_names: {
+        Row: {
+          campaign_name: string
+          created_at: string
+          id: string
+          platform_names: Json
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          campaign_name: string
+          created_at?: string
+          id?: string
+          platform_names: Json
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          campaign_name?: string
+          created_at?: string
+          id?: string
+          platform_names?: Json
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       snapchat_ad_accounts: {
         Row: {
           access_token: string
