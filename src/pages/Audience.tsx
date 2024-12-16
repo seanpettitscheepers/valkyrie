@@ -39,9 +39,9 @@ const Audience = () => {
         <div>
           <div className="flex items-center justify-between mb-6">
             <div className="space-y-1">
-              <h1 className="text-3xl font-semibold tracking-tight">User Analysis</h1>
+              <h1 className="text-3xl font-semibold tracking-tight">Know Your Allies: Deep Audience Intelligence.</h1>
               <p className="text-muted-foreground">
-                Unlock valuable insights into user behavior and preferences through our comprehensive user analysis.
+                Discover the people who power your campaigns. Leverage detailed insights to build stronger connections and smarter strategies.
               </p>
             </div>
             <div className="flex items-center gap-2">
