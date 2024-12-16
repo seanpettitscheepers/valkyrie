@@ -4,15 +4,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+import { Form } from "@/components/ui/form";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { planningFormSchema, PlanningFormValues } from "./types";
-import { BasicInfoFields } from "./BasicInfoFields";
+import { ObjectiveSelection } from "./ObjectiveSelection";
+import { BudgetInput } from "./BudgetInput";
 import { PlatformsField } from "./PlatformsField";
-import { ReferenceFields } from "./ReferenceFields";
 import { TargetingObjectivesField } from "./TargetingObjectivesField";
+import { ReferenceFields } from "./ReferenceFields";
 
 export function PlanningForm() {
   const { toast } = useToast();
@@ -24,6 +24,9 @@ export function PlanningForm() {
       platforms: [],
       notes: "",
       targeting_objectives: [],
+      budget_caps: [],
+      geographical_targeting: [],
+      ad_formats: [],
     },
   });
 
@@ -37,9 +40,12 @@ export function PlanningForm() {
             objective: values.objective,
             platforms: values.platforms,
             totalBudget: values.total_budget,
+            budgetCaps: values.budget_caps,
             audienceInsightsId: values.audience_insights_id,
             previousCampaignId: values.previous_campaign_id,
             targetingObjectives: values.targeting_objectives,
+            geographicalTargeting: values.geographical_targeting,
+            adFormats: values.ad_formats,
           },
         }
       );
@@ -57,6 +63,9 @@ export function PlanningForm() {
         previous_campaign_id: values.previous_campaign_id,
         notes: values.notes,
         targeting_objectives: values.targeting_objectives,
+        geographical_targeting: values.geographical_targeting,
+        ad_formats: values.ad_formats,
+        budget_caps: values.budget_caps,
       });
 
       if (error) throw error;
@@ -90,35 +99,17 @@ export function PlanningForm() {
         <Card>
           <CardContent className="pt-6">
             <div className="space-y-6">
-              <BasicInfoFields form={form} />
+              <ObjectiveSelection form={form} />
+              <BudgetInput form={form} />
               <PlatformsField form={form} />
               <TargetingObjectivesField form={form} />
               <ReferenceFields form={form} />
-
-              <FormField
-                control={form.control}
-                name="notes"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Notes</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Add any additional notes or requirements"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
           </CardContent>
         </Card>
 
         <Button type="submit" className="w-full" disabled={createPlan.isPending}>
-          {createPlan.isPending && (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          )}
+          {createPlan.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Create Plan
         </Button>
       </form>

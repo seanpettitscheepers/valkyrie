@@ -12,7 +12,17 @@ serve(async (req) => {
   }
 
   try {
-    const { objective, platforms, totalBudget, audienceInsightsId, previousCampaignId } = await req.json();
+    const {
+      objective,
+      platforms,
+      totalBudget,
+      budgetCaps,
+      audienceInsightsId,
+      previousCampaignId,
+      targetingObjectives,
+      geographicalTargeting,
+      adFormats,
+    } = await req.json();
 
     // Initialize Supabase client
     const supabaseClient = createClient(
@@ -24,8 +34,10 @@ serve(async (req) => {
       objective,
       platforms,
       totalBudget,
-      audienceInsightsId,
-      previousCampaignId
+      budgetCaps,
+      targetingObjectives,
+      geographicalTargeting,
+      adFormats,
     });
 
     // Fetch previous campaign performance if available
@@ -40,48 +52,65 @@ serve(async (req) => {
       previousPerformance = metrics;
     }
 
-    // Simple budget allocation logic (can be enhanced with more sophisticated algorithms)
+    // Initialize budget allocation
     const budgetAllocation = {};
-    const platformCount = platforms.length;
+    
+    // Apply budget caps first
+    let remainingBudget = totalBudget;
+    if (budgetCaps?.length) {
+      budgetCaps.forEach(cap => {
+        if (platforms.includes(cap.platform)) {
+          const cappedAmount = Math.min(cap.amount, totalBudget);
+          budgetAllocation[cap.platform] = cappedAmount;
+          remainingBudget -= cappedAmount;
+        }
+      });
+    }
 
-    // Basic allocation strategies based on objective
-    switch (objective) {
-      case 'awareness':
-        // Prioritize reach-focused platforms
-        platforms.forEach(platform => {
-          if (platform === 'facebook' || platform === 'instagram') {
-            budgetAllocation[platform] = totalBudget * 0.3;
-          } else if (platform === 'tiktok') {
-            budgetAllocation[platform] = totalBudget * 0.25;
-          } else {
-            budgetAllocation[platform] = totalBudget * 0.15;
-          }
-        });
-        break;
+    // Calculate weights for remaining platforms
+    const uncappedPlatforms = platforms.filter(
+      platform => !budgetCaps?.find(cap => cap.platform === platform)
+    );
 
-      case 'consideration':
-        // Balance between reach and engagement
-        platforms.forEach(platform => {
-          if (platform === 'instagram' || platform === 'tiktok') {
-            budgetAllocation[platform] = totalBudget * 0.35;
-          } else {
-            budgetAllocation[platform] = totalBudget * 0.3;
-          }
-        });
-        break;
+    if (uncappedPlatforms.length > 0) {
+      const baseWeight = remainingBudget / uncappedPlatforms.length;
+      
+      // Adjust weights based on objective
+      switch (objective) {
+        case 'awareness':
+          uncappedPlatforms.forEach(platform => {
+            if (platform === 'facebook' || platform === 'instagram') {
+              budgetAllocation[platform] = baseWeight * 1.2;
+            } else if (platform === 'tiktok') {
+              budgetAllocation[platform] = baseWeight * 1.1;
+            } else {
+              budgetAllocation[platform] = baseWeight * 0.8;
+            }
+          });
+          break;
 
-      case 'conversion':
-        // Prioritize conversion-focused platforms
-        platforms.forEach(platform => {
-          if (platform === 'facebook') {
-            budgetAllocation[platform] = totalBudget * 0.4;
-          } else if (platform === 'instagram') {
-            budgetAllocation[platform] = totalBudget * 0.35;
-          } else {
-            budgetAllocation[platform] = totalBudget * 0.25;
-          }
-        });
-        break;
+        case 'consideration':
+          uncappedPlatforms.forEach(platform => {
+            if (platform === 'instagram' || platform === 'tiktok') {
+              budgetAllocation[platform] = baseWeight * 1.3;
+            } else {
+              budgetAllocation[platform] = baseWeight * 0.9;
+            }
+          });
+          break;
+
+        case 'conversion':
+          uncappedPlatforms.forEach(platform => {
+            if (platform === 'facebook') {
+              budgetAllocation[platform] = baseWeight * 1.4;
+            } else if (platform === 'google_ads') {
+              budgetAllocation[platform] = baseWeight * 1.3;
+            } else {
+              budgetAllocation[platform] = baseWeight * 0.8;
+            }
+          });
+          break;
+      }
     }
 
     // Normalize allocations to ensure total equals budget
