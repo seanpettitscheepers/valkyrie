@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import ReCAPTCHA from "react-google-recaptcha";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -18,27 +17,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2 } from "lucide-react";
+import { signUpSchema } from "./SignUpForm/types";
+import type { SignUpFormValues } from "./SignUpForm/types";
 
-const signUpSchema = z.object({
-  fullName: z.string().min(2, "Full name must be at least 2 characters"),
-  companyName: z.string().min(2, "Company name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .regex(/[0-9]/, "Password must contain at least one number")
-    .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
-  phoneNumber: z.string().optional(),
-  termsAccepted: z.boolean().refine((val) => val === true, {
-    message: "You must accept the Terms and Conditions",
-  }),
-  privacyAccepted: z.boolean().refine((val) => val === true, {
-    message: "You must accept the Privacy Policy",
-  }),
-});
-
-type SignUpFormValues = z.infer<typeof signUpSchema>;
+const RECAPTCHA_SITE_KEY = "6LfHxGApAAAAADkxZHRGXfyZKAQjnCPXjOXN5Qxe";
 
 interface SignUpFormProps {
   selectedPlan?: string | null;
@@ -101,7 +83,6 @@ export function SignUpForm({ selectedPlan = 'free', onComplete }: SignUpFormProp
         onComplete();
       }
 
-      // Redirect to a verification pending page
       navigate("/auth/verify");
     } catch (error: any) {
       toast({
@@ -255,7 +236,7 @@ export function SignUpForm({ selectedPlan = 'free', onComplete }: SignUpFormProp
 
           <div className="flex justify-center">
             <ReCAPTCHA
-              sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+              sitekey={RECAPTCHA_SITE_KEY}
               onChange={(token) => setCaptchaToken(token)}
             />
           </div>
