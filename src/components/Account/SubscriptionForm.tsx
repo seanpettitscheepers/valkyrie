@@ -1,14 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Loader2, ArrowUpCircle } from "lucide-react";
-import { formatDate } from "@/lib/utils";
-import { SubscriptionBadge } from "./SubscriptionBadge";
-import { SubscriptionPlanCard } from "./SubscriptionPlanCard";
+import { Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { CurrentSubscription } from "./CurrentSubscription";
+import { PlanFeatures } from "./PlanFeatures";
+import { SubscriptionPlanCard } from "./SubscriptionPlanCard";
 
 export function SubscriptionForm() {
   const { toast } = useToast();
@@ -74,13 +71,11 @@ export function SubscriptionForm() {
         return;
       }
 
-      // For enterprise plan, redirect to contact
       if (plan.price_id === null) {
         window.location.href = "/contact";
         return;
       }
 
-      // For free plan, just update the profile
       if (plan.tier === "free") {
         const { error } = await supabase
           .from("profiles")
@@ -139,16 +134,6 @@ export function SubscriptionForm() {
   const upgradeFeatures = getUpgradeFeatures(nextTier);
   const nextPlan = plans?.find(p => p.tier === nextTier);
 
-  const getTrialStatus = () => {
-    if (!profile?.trial_ends_at) return null;
-    const trialEnd = new Date(profile.trial_ends_at);
-    const now = new Date();
-    if (trialEnd > now) {
-      return `Trial ends on ${formatDate(trialEnd)}`;
-    }
-    return "Trial ended";
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -158,61 +143,23 @@ export function SubscriptionForm() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-medium">Current Plan</h3>
-            <div className="flex items-center gap-2 mt-1">
-              <SubscriptionBadge tier={profile?.subscription_tier} />
-              {getTrialStatus() && (
-                <Badge variant="outline">{getTrialStatus()}</Badge>
-              )}
-            </div>
-          </div>
-          {subscription && (
-            <Button variant="outline">
-              {subscription.cancel_at_period_end ? "Resume Subscription" : "Cancel Subscription"}
-            </Button>
-          )}
-        </div>
+        <CurrentSubscription 
+          profile={profile}
+          subscription={subscription}
+          currentPlan={currentPlan}
+          onManageSubscription={() => {
+            // Handle subscription management
+            console.log("Managing subscription");
+          }}
+        />
 
-        {/* Current Plan Features */}
-        <div className="space-y-4">
-          <h4 className="font-medium">What's included in your plan:</h4>
-          <ul className="space-y-2">
-            {currentPlan?.features.map((feature: string, index: number) => (
-              <li key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span className="text-primary">•</span>
-                {feature}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {nextTier && (
-          <>
-            <Separator />
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <ArrowUpCircle className="h-5 w-5 text-primary" />
-                <h4 className="font-medium">Upgrade to {nextPlan?.name} to get:</h4>
-              </div>
-              <ul className="space-y-2">
-                {upgradeFeatures.map((feature: string, index: number) => (
-                  <li key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span className="text-primary">•</span>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <Button 
-                className="w-full" 
-                onClick={() => nextPlan && handleSubscribe(nextPlan)}
-              >
-                Upgrade to {nextPlan?.name}
-              </Button>
-            </div>
-          </>
-        )}
+        <PlanFeatures 
+          currentPlan={currentPlan}
+          nextPlan={nextPlan}
+          nextTier={nextTier}
+          upgradeFeatures={upgradeFeatures}
+          onUpgrade={() => nextPlan && handleSubscribe(nextPlan)}
+        />
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {plans?.map((plan) => (
