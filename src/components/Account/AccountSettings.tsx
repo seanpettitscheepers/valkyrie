@@ -91,7 +91,11 @@ export function AccountSettings() {
         </TabsList>
 
         <TabsContent value="business" className="space-y-4">
-          <BusinessInfoForm profile={profile} onUpdate={updateProfile} />
+          <BusinessInfoForm 
+            profile={profile} 
+            email={email}
+            onUpdate={updateProfile} 
+          />
         </TabsContent>
 
         <TabsContent value="subscription" className="space-y-4">
