@@ -38,30 +38,48 @@ export function AdminSection() {
     },
   });
 
-  const { data: users, refetch } = useQuery({
-    queryKey: ["users"],
+  // Separate queries for profiles and subscriptions
+  const { data: profiles } = useQuery({
+    queryKey: ["profiles"],
     queryFn: async () => {
-      const { data: profiles, error } = await supabase
+      const { data, error } = await supabase
         .from("profiles")
-        .select(`
-          *,
-          user_subscriptions (
-            status,
-            subscription_plans (
-              tier
-            )
-          )
-        `)
+        .select("*")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return profiles.map(profile => ({
-        ...profile,
-        subscription: profile.user_subscriptions?.[0]?.subscription_plans?.tier || "free",
-        status: profile.user_subscriptions?.[0]?.status || "active"
-      }));
+      return data;
     },
     enabled: currentUser?.role === "super_admin",
+  });
+
+  const { data: subscriptions } = useQuery({
+    queryKey: ["subscriptions"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_subscriptions")
+        .select(`
+          user_id,
+          status,
+          subscription_plans (
+            tier
+          )
+        `);
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: currentUser?.role === "super_admin",
+  });
+
+  // Combine the data
+  const users = profiles?.map(profile => {
+    const userSubscription = subscriptions?.find(sub => sub.user_id === profile.id);
+    return {
+      ...profile,
+      subscription: userSubscription?.subscription_plans?.tier || "free",
+      status: userSubscription?.status || "active"
+    };
   });
 
   const handleFilterChange = (key: string, value: string) => {
@@ -91,7 +109,7 @@ export function AdminSection() {
         title: "Role updated",
         description: "User role has been updated successfully.",
       });
-      refetch();
+      
     } catch (error) {
       console.error("Error updating role:", error);
       toast({
@@ -138,7 +156,6 @@ export function AdminSection() {
         title: "Subscription updated",
         description: `Subscription has been ${action}ed successfully.`,
       });
-      refetch();
     } catch (error) {
       toast({
         title: "Error",
