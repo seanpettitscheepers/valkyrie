@@ -28,10 +28,10 @@ export function CustomerJourneyAnalysis() {
   });
 
   const funnelData = [
-    { name: "Website Visits", value: 1200, fill: "#4F46E5" },
-    { name: "Product Views", value: 800, fill: "#6366F1" },
-    { name: "Add to Cart", value: 400, fill: "#818CF8" },
-    { name: "Purchases", value: 200, fill: "#A5B4FC" }
+    { name: "Website Visits", value: 1200, fill: "#496946" },
+    { name: "Product Views", value: 800, fill: "#858071" },
+    { name: "Add to Cart", value: 400, fill: "#C2B8B0" },
+    { name: "Purchases", value: 200, fill: "#EBE5D5" }
   ];
 
   return (
@@ -48,8 +48,18 @@ export function CustomerJourneyAnalysis() {
                 dataKey="value"
                 nameKey="name"
               >
-                <LabelList position="right" fill="#888" stroke="none" dataKey="name" />
-                <LabelList position="right" fill="#888" stroke="none" dataKey="value" />
+                <LabelList 
+                  position="right" 
+                  fill="#1F1E1B" 
+                  stroke="none" 
+                  dataKey="name" 
+                />
+                <LabelList 
+                  position="right" 
+                  fill="#858071" 
+                  stroke="none" 
+                  dataKey="value" 
+                />
               </Funnel>
             </FunnelChart>
           </ResponsiveContainer>
