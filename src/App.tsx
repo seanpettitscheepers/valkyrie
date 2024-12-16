@@ -21,6 +21,7 @@ import Brands from "./pages/Brands";
 import WebsitePerformance from "./pages/WebsitePerformance";
 import LaunchAds from "./pages/LaunchAds";
 import Auth from "./pages/Auth";
+import Terms from "./pages/Terms";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
           <Route path="/account" element={<Account />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/brands" element={<Brands />} />
+          <Route path="/terms" element={<Terms />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
