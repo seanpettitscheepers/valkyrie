@@ -1377,6 +1377,59 @@ export type Database = {
           },
         ]
       }
+      naming_history: {
+        Row: {
+          campaign_name: string
+          created_at: string
+          custom_tags: Json | null
+          date_range: Json | null
+          funnel_stage: Database["public"]["Enums"]["funnel_stage"] | null
+          id: string
+          objective: Database["public"]["Enums"]["campaign_objective"] | null
+          platform: string
+          target_audience: Json | null
+          template_id: string | null
+          user_id: string | null
+          utm_parameters: Json | null
+        }
+        Insert: {
+          campaign_name: string
+          created_at?: string
+          custom_tags?: Json | null
+          date_range?: Json | null
+          funnel_stage?: Database["public"]["Enums"]["funnel_stage"] | null
+          id?: string
+          objective?: Database["public"]["Enums"]["campaign_objective"] | null
+          platform: string
+          target_audience?: Json | null
+          template_id?: string | null
+          user_id?: string | null
+          utm_parameters?: Json | null
+        }
+        Update: {
+          campaign_name?: string
+          created_at?: string
+          custom_tags?: Json | null
+          date_range?: Json | null
+          funnel_stage?: Database["public"]["Enums"]["funnel_stage"] | null
+          id?: string
+          objective?: Database["public"]["Enums"]["campaign_objective"] | null
+          platform?: string
+          target_audience?: Json | null
+          template_id?: string | null
+          user_id?: string | null
+          utm_parameters?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "naming_history_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "naming_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       naming_patterns: {
         Row: {
           created_at: string
@@ -1404,6 +1457,39 @@ export type Database = {
           name?: string
           pattern?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      naming_templates: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_default: boolean | null
+          name: string
+          structure: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_default?: boolean | null
+          name: string
+          structure: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_default?: boolean | null
+          name?: string
+          structure?: string
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -1776,6 +1862,50 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      template_components: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          options: Json | null
+          position: number
+          required: boolean | null
+          template_id: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          options?: Json | null
+          position: number
+          required?: boolean | null
+          template_id?: string | null
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          options?: Json | null
+          position?: number
+          required?: boolean | null
+          template_id?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_components_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "naming_templates"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tickets: {
         Row: {
@@ -2208,6 +2338,51 @@ export type Database = {
           },
         ]
       }
+      utm_templates: {
+        Row: {
+          campaign_template: string | null
+          content_template: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_default: boolean | null
+          medium_template: string | null
+          name: string
+          source_template: string | null
+          term_template: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          campaign_template?: string | null
+          content_template?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_default?: boolean | null
+          medium_template?: string | null
+          name: string
+          source_template?: string | null
+          term_template?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          campaign_template?: string | null
+          content_template?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_default?: boolean | null
+          medium_template?: string | null
+          name?: string
+          source_template?: string | null
+          term_template?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       super_admin_cache: {
@@ -2233,6 +2408,7 @@ export type Database = {
       amazon_dsp_objective: "awareness" | "consideration" | "conversion"
       analytics_platform_type: "google_analytics_4" | "universal_analytics"
       campaign_objective: "awareness" | "consideration" | "conversion"
+      funnel_stage: "top" | "middle" | "bottom"
       google_ads_status: "pending" | "active" | "error" | "disconnected"
       industry_type:
         | "e_commerce"

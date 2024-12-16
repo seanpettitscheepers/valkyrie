@@ -3,6 +3,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { NameComponent, FormData, GeneratedNames } from "./types";
 
 interface GeneratorFormProps {
@@ -13,10 +15,23 @@ interface GeneratorFormProps {
 export function GeneratorForm({ components, onGenerate }: GeneratorFormProps) {
   const [formData, setFormData] = useState<FormData>({
     strategyName: "",
-    advertiser: "",
+    brand: "",  // Changed from advertiser to brand
     channel: "",
     objective: "",
     placement: "",
+  });
+
+  // Fetch user's brands
+  const { data: brands } = useQuery({
+    queryKey: ["brands"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("brands")
+        .select("*");
+      
+      if (error) throw error;
+      return data;
+    },
   });
 
   const handleInputChange = (field: keyof FormData, value: string) => {
@@ -25,13 +40,13 @@ export function GeneratorForm({ components, onGenerate }: GeneratorFormProps) {
 
   const generateNames = async () => {
     // Basic validation
-    if (!formData.strategyName || !formData.advertiser || !formData.channel || 
+    if (!formData.strategyName || !formData.brand || !formData.channel || 
         !formData.objective || !formData.placement) {
       toast.error("Please fill in all fields");
       return;
     }
 
-    const campaignName = `${formData.advertiser}_${formData.channel}_${formData.objective}`;
+    const campaignName = `${formData.brand}_${formData.channel}_${formData.objective}`;
     const adsetName = `${campaignName}_${formData.placement}`;
     const adName = `${adsetName}_${formData.strategyName}`;
     const utmTag = `utm_source=${formData.channel.toLowerCase()}&utm_medium=${formData.placement.toLowerCase()}&utm_campaign=${formData.strategyName.toLowerCase()}`;
@@ -55,11 +70,30 @@ export function GeneratorForm({ components, onGenerate }: GeneratorFormProps) {
         />
       </div>
 
-      {components?.map((component) => (
+      <div>
+        <label className="text-sm font-medium">Brand</label>
+        <Select
+          value={formData.brand}
+          onValueChange={(value) => handleInputChange("brand", value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select brand" />
+          </SelectTrigger>
+          <SelectContent>
+            {brands?.map((brand) => (
+              <SelectItem key={brand.id} value={brand.name}>
+                {brand.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {components?.filter(component => component.type !== "advertiser").map((component) => (
         <div key={component.id}>
           <label className="text-sm font-medium">{component.name}</label>
           <Select
-            value={formData[component.type as keyof Omit<FormData, "strategyName">]}
+            value={formData[component.type as keyof Omit<FormData, "strategyName" | "brand">]}
             onValueChange={(value) => handleInputChange(component.type as keyof FormData, value)}
           >
             <SelectTrigger>

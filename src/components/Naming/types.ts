@@ -7,7 +7,7 @@ export interface NameComponent {
 
 export interface FormData {
   strategyName: string;
-  advertiser: string;
+  brand: string;  // Changed from advertiser to brand
   channel: string;
   objective: string;
   placement: string;
