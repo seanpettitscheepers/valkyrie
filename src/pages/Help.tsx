@@ -1,10 +1,10 @@
 import { PageLayout } from "@/components/Layout/PageLayout";
-import { APIGuides } from "@/components/Help/APIGuides";
+import { UserGuide } from "@/components/Help/UserGuide/UserGuide";
 
 export default function Help() {
   return (
     <PageLayout title="Help & Documentation">
-      <APIGuides />
+      <UserGuide />
     </PageLayout>
   );
 }
