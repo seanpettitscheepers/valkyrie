@@ -83,6 +83,15 @@ export function CampaignDashboard() {
     },
   };
 
+  // Transform performanceData to match TrendsData interface
+  const trendsData = performanceData?.map(metric => ({
+    date: new Date(metric.date).toLocaleDateString(),
+    spend: metric.spend || 0,
+    impressions: metric.impressions || 0,
+    clicks: metric.clicks || 0,
+    conversions: metric.conversions || 0,
+  })) || [];
+
   return (
     <div className="space-y-8 p-6" ref={dashboardRef}>
       <DashboardHeader
@@ -106,14 +115,13 @@ export function CampaignDashboard() {
         />
       </div>
 
+      <CampaignTrendsChart data={trendsData} />
+      
       {campaignAnalysis && (
-        <>
-          <CampaignTrendsChart data={campaignAnalysis.trends} />
-          <AIInsightsCard
-            campaignType="awareness"
-            insights={campaignAnalysis.insights}
-          />
-        </>
+        <AIInsightsCard
+          campaignType="awareness"
+          insights={campaignAnalysis.insights}
+        />
       )}
 
       <EngagementChart data={performanceData || []} />

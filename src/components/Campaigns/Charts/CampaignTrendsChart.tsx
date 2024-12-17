@@ -4,10 +4,9 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YA
 interface TrendsData {
   date: string;
   spend: number;
-  signups: number;
-  purchases: number;
-  revenue: number;
-  profit: number;
+  impressions: number;
+  clicks: number;
+  conversions: number;
 }
 
 interface CampaignTrendsChartProps {
@@ -28,9 +27,38 @@ export function CampaignTrendsChart({ data }: CampaignTrendsChartProps) {
               <XAxis dataKey="date" />
               <YAxis />
               <Tooltip />
-              <Area type="monotone" dataKey="spend" stackId="1" stroke="#8884d8" fill="#8884d8" />
-              <Area type="monotone" dataKey="revenue" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
-              <Area type="monotone" dataKey="profit" stackId="1" stroke="#ffc658" fill="#ffc658" />
+              <Area 
+                type="monotone" 
+                dataKey="spend" 
+                stackId="1" 
+                stroke="#8884d8" 
+                fill="#8884d8" 
+                name="Spend"
+              />
+              <Area 
+                type="monotone" 
+                dataKey="impressions" 
+                stackId="1" 
+                stroke="#82ca9d" 
+                fill="#82ca9d" 
+                name="Impressions"
+              />
+              <Area 
+                type="monotone" 
+                dataKey="clicks" 
+                stackId="1" 
+                stroke="#ffc658" 
+                fill="#ffc658" 
+                name="Clicks"
+              />
+              <Area 
+                type="monotone" 
+                dataKey="conversions" 
+                stackId="1" 
+                stroke="#ff8042" 
+                fill="#ff8042" 
+                name="Conversions"
+              />
             </AreaChart>
           </ResponsiveContainer>
         </div>
