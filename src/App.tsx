@@ -21,6 +21,7 @@ import Campaigns from "./pages/Campaigns";
 import Brands from "./pages/Brands";
 import WebsitePerformance from "./pages/WebsitePerformance";
 import LaunchAds from "./pages/LaunchAds";
+import Optimization from "./pages/Optimization";
 import Auth from "./pages/Auth";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
@@ -47,6 +48,7 @@ const App = () => (
           <Route path="/sentiment" element={<ProtectedRoute><Sentiment /></ProtectedRoute>} />
           <Route path="/website-performance" element={<ProtectedRoute><WebsitePerformance /></ProtectedRoute>} />
           <Route path="/launch-ads" element={<ProtectedRoute><LaunchAds /></ProtectedRoute>} />
+          <Route path="/optimization" element={<ProtectedRoute><Optimization /></ProtectedRoute>} />
           <Route path="/ad-performance" element={<ProtectedRoute><Performance /></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
           <Route path="/planning" element={<ProtectedRoute><Planning /></ProtectedRoute>} />
