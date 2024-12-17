@@ -24,16 +24,16 @@ export function AIRecommendationsCard({ audienceData }: AIRecommendationsCardPro
     queryKey: ['targeting-recommendations', audienceData],
     queryFn: async () => {
       try {
-        console.log('Calling AI service with data:', audienceData);
-        const { data, error } = await supabase.functions.invoke('ai-service', {
-          body: { 
-            action: 'generate-targeting',
-            data: { audienceData }
+        console.log('Calling edge function with data:', audienceData);
+        const { data, error } = await supabase.functions.invoke('generate-targeting-recommendations', {
+          body: { audienceData },
+          headers: {
+            'Content-Type': 'application/json',
           },
         });
         
         if (error) {
-          console.error('Error calling AI service:', error);
+          console.error('Error calling edge function:', error);
           toast({
             title: "Error",
             description: "Failed to generate recommendations. Please try again.",
@@ -42,7 +42,7 @@ export function AIRecommendationsCard({ audienceData }: AIRecommendationsCardPro
           throw error;
         }
 
-        console.log('AI service response:', data);
+        console.log('Edge function response:', data);
         return data.recommendations as Recommendation[];
       } catch (err) {
         console.error('Error in query function:', err);

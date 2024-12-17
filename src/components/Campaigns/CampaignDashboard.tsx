@@ -1,28 +1,47 @@
-import { useRef, useState } from "react";
+import { useState, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { DashboardHeader } from "./DashboardHeader";
-import { MetricsGrid } from "./Metrics/MetricsGrid";
-import { ChartsSection } from "./Charts/ChartsSection";
-import { useCampaignAnalysis } from "@/hooks/useCampaignAnalysis";
-import { useCampaignData } from "@/hooks/useCampaignData";
-import { LoadingState } from "./LoadingState";
-import { ErrorState } from "./ErrorState";
+import { EngagementChart } from "./Charts/EngagementChart";
+import { ConversionChart } from "./Charts/ConversionChart";
+import { KPIProgressCard } from "./Metrics/KPIProgressCard";
+import { ROICard } from "./Metrics/ROICard";
+import { CreateCampaignDialog } from "./CreateCampaignDialog";
+import { CampaignTrendsChart } from "./Charts/CampaignTrendsChart";
 
 export function CampaignDashboard() {
   const [selectedCampaign, setSelectedCampaign] = useState("all");
   const dashboardRef = useRef<HTMLDivElement>(null);
 
-  const { data: campaignAnalysis, isLoading: isAnalysisLoading, error: analysisError } = 
-    useCampaignAnalysis(selectedCampaign);
+  const { data: performanceData } = useQuery({
+    queryKey: ["campaign-metrics", selectedCampaign],
+    queryFn: async () => {
+      let query = supabase.from("campaign_metrics").select("*");
+      
+      if (selectedCampaign !== "all") {
+        query = query.eq("campaign_id", selectedCampaign);
+      }
+      
+      const { data, error } = await query.order("date", { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
 
-  const { performanceData, campaignKPIs } = useCampaignData(selectedCampaign);
-
-  if (isAnalysisLoading) {
-    return <LoadingState />;
-  }
-
-  if (analysisError) {
-    return <ErrorState />;
-  }
+  const { data: campaignKPIs } = useQuery({
+    queryKey: ["campaign-kpis", selectedCampaign],
+    queryFn: async () => {
+      let query = supabase.from("campaign_kpis").select("*");
+      
+      if (selectedCampaign !== "all") {
+        query = query.eq("campaign_id", selectedCampaign);
+      }
+      
+      const { data, error } = await query;
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const kpiProgress = {
     signups: {
@@ -39,12 +58,20 @@ export function CampaignDashboard() {
     },
   };
 
-  const trendsData = performanceData?.map(metric => ({
-    date: new Date(metric.date).toLocaleDateString(),
-    spend: metric.spend || 0,
-    impressions: metric.impressions || 0,
-    clicks: metric.clicks || 0,
-    conversions: metric.conversions || 0,
+  const trendsData = performanceData?.map(d => ({
+    date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
+    spend: d.spend,
+    signups: Math.round(d.impressions * 0.1),
+    purchases: d.conversions,
+    revenue: d.conversions * 100,
+    profit: (d.conversions * 100) - d.spend,
+  })) || [];
+
+  const engagementData = performanceData?.map(d => ({
+    date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
+    sign_in: Math.round(d.impressions * 0.1),
+    buy_product: d.conversions,
+    revenue: d.spend,
   })) || [];
 
   return (
@@ -55,16 +82,26 @@ export function CampaignDashboard() {
         dashboardRef={dashboardRef}
       />
 
-      <MetricsGrid 
-        kpiProgress={kpiProgress}
-        campaign={{ id: selectedCampaign, campaign_metrics: performanceData }}
-      />
+      <div className="grid gap-4 md:grid-cols-4">
+        {Object.entries(kpiProgress).map(([key, value]) => (
+          <KPIProgressCard
+            key={key}
+            title={key}
+            completed={value.completed}
+            target={value.target}
+          />
+        ))}
+        <ROICard
+          campaign={{ id: selectedCampaign, campaign_metrics: performanceData }}
+          kpis={kpiProgress}
+        />
+      </div>
 
-      <ChartsSection
-        trendsData={trendsData}
-        performanceData={performanceData || []}
-        campaignAnalysis={campaignAnalysis}
-        kpiProgress={kpiProgress}
+      <CampaignTrendsChart data={trendsData} />
+      <EngagementChart data={engagementData} />
+      <ConversionChart
+        signupsCompleted={kpiProgress.signups.completed}
+        purchasesCompleted={kpiProgress.purchases.completed}
       />
     </div>
   );

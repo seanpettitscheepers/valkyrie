@@ -1583,100 +1583,6 @@ export type Database = {
         }
         Relationships: []
       }
-      optimization_recommendations: {
-        Row: {
-          campaign_id: string
-          created_at: string
-          estimated_impact: Json
-          id: string
-          implemented_at: string | null
-          performance_after: Json | null
-          performance_before: Json | null
-          platform_specific_data: Json | null
-          rationale: string
-          recommendation: string
-          status: Database["public"]["Enums"]["optimization_status"]
-          type: Database["public"]["Enums"]["optimization_type"]
-          updated_at: string
-          user_feedback: string | null
-        }
-        Insert: {
-          campaign_id: string
-          created_at?: string
-          estimated_impact?: Json
-          id?: string
-          implemented_at?: string | null
-          performance_after?: Json | null
-          performance_before?: Json | null
-          platform_specific_data?: Json | null
-          rationale: string
-          recommendation: string
-          status?: Database["public"]["Enums"]["optimization_status"]
-          type: Database["public"]["Enums"]["optimization_type"]
-          updated_at?: string
-          user_feedback?: string | null
-        }
-        Update: {
-          campaign_id?: string
-          created_at?: string
-          estimated_impact?: Json
-          id?: string
-          implemented_at?: string | null
-          performance_after?: Json | null
-          performance_before?: Json | null
-          platform_specific_data?: Json | null
-          rationale?: string
-          recommendation?: string
-          status?: Database["public"]["Enums"]["optimization_status"]
-          type?: Database["public"]["Enums"]["optimization_type"]
-          updated_at?: string
-          user_feedback?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "optimization_recommendations_campaign_id_fkey"
-            columns: ["campaign_id"]
-            isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      optimization_results: {
-        Row: {
-          created_at: string
-          id: string
-          improvement_percentage: number | null
-          metrics_after: Json
-          metrics_before: Json
-          recommendation_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          improvement_percentage?: number | null
-          metrics_after: Json
-          metrics_before: Json
-          recommendation_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          improvement_percentage?: number | null
-          metrics_after?: Json
-          metrics_before?: Json
-          recommendation_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "optimization_results_recommendation_id_fkey"
-            columns: ["recommendation_id"]
-            isOneToOne: false
-            referencedRelation: "optimization_recommendations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       pinterest_ad_accounts: {
         Row: {
           access_token: string
@@ -2631,12 +2537,6 @@ export type Database = {
         | "other"
       integration_status: "pending" | "active" | "error" | "disconnected"
       linkedin_campaign_objective: "awareness" | "engagement" | "conversion"
-      optimization_status: "pending" | "approved" | "rejected" | "implemented"
-      optimization_type:
-        | "targeting"
-        | "budget"
-        | "creative"
-        | "platform_specific"
       platform_type:
         | "social_media"
         | "video"

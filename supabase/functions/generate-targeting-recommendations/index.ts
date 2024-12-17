@@ -77,7 +77,7 @@ serve(async (req) => {
 
     // Call OpenAI API
     const completion = await openai.createChatCompletion({
-      model: "gpt-4o",
+      model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",

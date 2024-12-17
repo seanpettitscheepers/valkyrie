@@ -13,7 +13,7 @@ export type SidebarContext = {
   toggleSidebar: () => void
 }
 
-export type SidebarMenuButtonProps = ComponentProps<"button"> & {
+export type SidebarMenuButtonProps = React.ComponentProps<"button"> & {
   asChild?: boolean
   isActive?: boolean
   tooltip?: string | ComponentProps<typeof TooltipContent>
