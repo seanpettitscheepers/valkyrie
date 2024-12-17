@@ -1,14 +1,10 @@
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardHeader } from "./DashboardHeader";
-import { EngagementChart } from "./Charts/EngagementChart";
-import { ConversionChart } from "./Charts/ConversionChart";
-import { KPIProgressCard } from "./Metrics/KPIProgressCard";
-import { ROICard } from "./Metrics/ROICard";
-import { CampaignTrendsChart } from "./Charts/CampaignTrendsChart";
+import { MetricsGrid } from "./Metrics/MetricsGrid";
+import { ChartsSection } from "./Charts/ChartsSection";
 import { useCampaignAnalysis } from "@/hooks/useCampaignAnalysis";
-import { AIInsightsCard } from "@/components/Dashboard/AIInsightsCard";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Loader2 } from "lucide-react";
 
@@ -83,7 +79,6 @@ export function CampaignDashboard() {
     },
   };
 
-  // Transform performanceData to match TrendsData interface
   const trendsData = performanceData?.map(metric => ({
     date: new Date(metric.date).toLocaleDateString(),
     spend: metric.spend || 0,
@@ -100,34 +95,16 @@ export function CampaignDashboard() {
         dashboardRef={dashboardRef}
       />
 
-      <div className="grid gap-4 md:grid-cols-4">
-        {Object.entries(kpiProgress).map(([key, value]) => (
-          <KPIProgressCard
-            key={key}
-            title={key}
-            completed={value.completed}
-            target={value.target}
-          />
-        ))}
-        <ROICard
-          campaign={{ id: selectedCampaign, campaign_metrics: performanceData }}
-          kpis={kpiProgress}
-        />
-      </div>
+      <MetricsGrid 
+        kpiProgress={kpiProgress}
+        campaign={{ id: selectedCampaign, campaign_metrics: performanceData }}
+      />
 
-      <CampaignTrendsChart data={trendsData} />
-      
-      {campaignAnalysis && (
-        <AIInsightsCard
-          campaignType="awareness"
-          insights={campaignAnalysis.insights}
-        />
-      )}
-
-      <EngagementChart data={performanceData || []} />
-      <ConversionChart
-        signupsCompleted={kpiProgress.signups.completed}
-        purchasesCompleted={kpiProgress.purchases.completed}
+      <ChartsSection
+        trendsData={trendsData}
+        performanceData={performanceData || []}
+        campaignAnalysis={campaignAnalysis}
+        kpiProgress={kpiProgress}
       />
     </div>
   );
