@@ -6,7 +6,6 @@ import { EngagementChart } from "./Charts/EngagementChart";
 import { ConversionChart } from "./Charts/ConversionChart";
 import { KPIProgressCard } from "./Metrics/KPIProgressCard";
 import { ROICard } from "./Metrics/ROICard";
-import { CreateCampaignDialog } from "./CreateCampaignDialog";
 import { CampaignTrendsChart } from "./Charts/CampaignTrendsChart";
 
 export function CampaignDashboard() {
@@ -18,6 +17,7 @@ export function CampaignDashboard() {
     queryFn: async () => {
       let query = supabase.from("campaign_metrics").select("*");
       
+      // Only apply campaign_id filter if a specific campaign is selected
       if (selectedCampaign !== "all") {
         query = query.eq("campaign_id", selectedCampaign);
       }
@@ -33,6 +33,7 @@ export function CampaignDashboard() {
     queryFn: async () => {
       let query = supabase.from("campaign_kpis").select("*");
       
+      // Only apply campaign_id filter if a specific campaign is selected
       if (selectedCampaign !== "all") {
         query = query.eq("campaign_id", selectedCampaign);
       }
