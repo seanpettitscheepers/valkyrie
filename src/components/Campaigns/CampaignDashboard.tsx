@@ -18,13 +18,14 @@ export function CampaignDashboard() {
   const { data: performanceData } = useQuery({
     queryKey: ["campaign-metrics", selectedCampaign],
     queryFn: async () => {
-      let query = supabase
+      const query = supabase
         .from("campaign_metrics")
         .select("*")
         .order("date", { ascending: true });
       
+      // Only apply campaign_id filter if a specific campaign is selected
       if (selectedCampaign !== "all") {
-        query = query.eq("campaign_id", selectedCampaign);
+        query.eq("campaign_id", selectedCampaign);
       }
       
       const { data, error } = await query;
@@ -36,12 +37,13 @@ export function CampaignDashboard() {
   const { data: campaignKPIs } = useQuery({
     queryKey: ["campaign-kpis", selectedCampaign],
     queryFn: async () => {
-      let query = supabase
+      const query = supabase
         .from("campaign_kpis")
         .select("*");
       
+      // Only apply campaign_id filter if a specific campaign is selected
       if (selectedCampaign !== "all") {
-        query = query.eq("campaign_id", selectedCampaign);
+        query.eq("campaign_id", selectedCampaign);
       }
       
       const { data, error } = await query;
