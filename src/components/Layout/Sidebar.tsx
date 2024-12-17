@@ -1,4 +1,4 @@
-import { BarChart, Target, Users, Settings, Signal, LineChart, FileText, CalendarRange, UserCircle, Link, HelpCircle, Globe, MessageSquare, Building2, Megaphone, ShieldCheck } from "lucide-react";
+import { BarChart, Target, Users, Settings, Signal, LineChart, FileText, CalendarRange, UserCircle, Link, HelpCircle, Globe, MessageSquare, Building2, Megaphone, ShieldCheck, Tune } from "lucide-react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,6 +39,7 @@ export function AppSidebar() {
     { icon: CalendarRange, label: "Planning", path: "/planning" },
     { icon: Target, label: "Naming Rules", path: "/naming" },
     { icon: Megaphone, label: "Launch Ads", path: "/launch-ads" },
+    { icon: Tune, label: "Optimization", path: "/optimization" },
     { icon: LineChart, label: "Ad Performance", path: "/ad-performance" },
     { icon: Globe, label: "Website Performance", path: "/website-performance" },
     { icon: Users, label: "Audience", path: "/audience" },
