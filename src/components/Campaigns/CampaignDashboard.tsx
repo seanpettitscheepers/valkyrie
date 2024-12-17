@@ -18,13 +18,16 @@ export function CampaignDashboard() {
   const { data: performanceData } = useQuery({
     queryKey: ["campaign-metrics", selectedCampaign],
     queryFn: async () => {
-      let query = supabase.from("campaign_metrics").select("*");
+      let query = supabase
+        .from("campaign_metrics")
+        .select("*")
+        .order("date", { ascending: true });
       
       if (selectedCampaign !== "all") {
         query = query.eq("campaign_id", selectedCampaign);
       }
       
-      const { data, error } = await query.order("date", { ascending: true });
+      const { data, error } = await query;
       if (error) throw error;
       return data;
     },
@@ -33,7 +36,9 @@ export function CampaignDashboard() {
   const { data: campaignKPIs } = useQuery({
     queryKey: ["campaign-kpis", selectedCampaign],
     queryFn: async () => {
-      let query = supabase.from("campaign_kpis").select("*");
+      let query = supabase
+        .from("campaign_kpis")
+        .select("*");
       
       if (selectedCampaign !== "all") {
         query = query.eq("campaign_id", selectedCampaign);
