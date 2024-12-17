@@ -6,16 +6,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { Check, X, ArrowRight, TrendingUp, AlertCircle } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
+interface PerformanceMetrics {
+  [key: string]: number | string;
+}
+
 interface Recommendation {
   id: string;
   campaign_id: string;
   type: string;
   recommendation: string;
   rationale: string;
-  estimated_impact: any;
+  estimated_impact: {
+    [key: string]: number;
+  };
   status: string;
-  performance_before: any;
-  performance_after: any;
+  performance_before: PerformanceMetrics;
+  performance_after: PerformanceMetrics;
 }
 
 interface RecommendationsListProps {
@@ -61,6 +67,13 @@ export function RecommendationsList({ recommendations }: RecommendationsListProp
       default:
         return "bg-gray-100 text-gray-800";
     }
+  };
+
+  const formatMetricValue = (value: number | string): string => {
+    if (typeof value === 'number') {
+      return value.toLocaleString();
+    }
+    return String(value);
   };
 
   return (
@@ -125,7 +138,7 @@ export function RecommendationsList({ recommendations }: RecommendationsListProp
                           <span className="text-muted-foreground capitalize">
                             {key.replace(/_/g, " ")}
                           </span>
-                          <span>{value}</span>
+                          <span>{formatMetricValue(value)}</span>
                         </div>
                       ))}
                     </div>
