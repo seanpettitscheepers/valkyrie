@@ -8,29 +8,32 @@ export function WebsitePerformanceOverview() {
   const { data: analyticsData, error } = useQuery({
     queryKey: ["analytics-overview"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("analytics_integrations")
-        .select("*")
-        .eq("platform_type", "google_analytics_4")
-        .limit(1)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from("analytics_integrations")
+          .select("*")
+          .eq("platform_type", "google_analytics_4")
+          .maybeSingle(); // Use maybeSingle() instead of single() to handle no results
 
-      if (error) {
-        if (error.code === 'PGRST116') {
-          // No data found, return null to show default metrics
-          return null;
+        if (error) throw error;
+        
+        if (!data) {
+          return null; // Return null if no integration exists
         }
+
+        // Fetch data from GA4 via Edge Function
+        const { data: gaData, error: gaError } = await supabase.functions.invoke("fetch-ga4-overview", {
+          body: { propertyId: data.property_id }
+        });
+
+        if (gaError) throw gaError;
+        return gaData;
+      } catch (error) {
+        console.error("Error fetching analytics data:", error);
         throw error;
       }
-
-      // Fetch data from GA4 via Edge Function
-      const { data: gaData, error: gaError } = await supabase.functions.invoke("fetch-ga4-overview", {
-        body: { propertyId: data.property_id }
-      });
-
-      if (gaError) throw gaError;
-      return gaData;
     },
+    retry: false,
   });
 
   // Default metrics to show even when no data is available
@@ -47,7 +50,7 @@ export function WebsitePerformanceOverview() {
         <Alert variant="destructive" className="col-span-full">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Failed to load analytics data. Please try again later.
+            {error instanceof Error ? error.message : "Failed to load analytics data. Please try again later."}
           </AlertDescription>
         </Alert>
       )}

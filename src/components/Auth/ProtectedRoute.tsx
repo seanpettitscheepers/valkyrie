@@ -14,23 +14,41 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { toast } = useToast();
   const [isCheckingSession, setIsCheckingSession] = useState(true);
 
-  const { data: session, isLoading, error } = useQuery({
+  const { data: session, isLoading } = useQuery({
     queryKey: ["session"],
     queryFn: async () => {
       try {
-        // First clear any potentially invalid session data
-        const currentSession = await supabase.auth.getSession();
-        if (currentSession.error) {
+        // First try to get the current session
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error("Session error:", error);
           await supabase.auth.signOut();
-          throw currentSession.error;
+          throw error;
         }
-        return currentSession.data.session;
+
+        if (!session) {
+          throw new Error("No session found");
+        }
+
+        // Verify the session is still valid
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) {
+          console.error("User verification error:", userError);
+          await supabase.auth.signOut();
+          throw new Error("Invalid session");
+        }
+
+        return session;
       } catch (error) {
-        console.error("Error fetching session:", error);
+        console.error("Auth error:", error);
+        // Clear any invalid session data
+        await supabase.auth.signOut();
         throw error;
       }
     },
-    retry: false // Don't retry on failure to prevent infinite loops
+    retry: false, // Don't retry on failure
+    staleTime: 1000 * 60 * 5, // Consider the session fresh for 5 minutes
   });
 
   useEffect(() => {
@@ -67,16 +85,6 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
-  }
-
-  if (error) {
-    toast({
-      title: "Authentication Error",
-      description: "Please try signing in again",
-      variant: "destructive",
-    });
-    navigate("/auth");
-    return null;
   }
 
   if (!session) {
