@@ -18,17 +18,15 @@ export function CampaignDashboard() {
   const { data: performanceData } = useQuery({
     queryKey: ["campaign-metrics", selectedCampaign],
     queryFn: async () => {
-      const query = supabase
+      const baseQuery = supabase
         .from("campaign_metrics")
-        .select("*")
-        .order("date", { ascending: true });
+        .select("*");
       
-      // Only apply campaign_id filter if a specific campaign is selected
-      if (selectedCampaign !== "all") {
-        query.eq("campaign_id", selectedCampaign);
-      }
+      const finalQuery = selectedCampaign !== "all" 
+        ? baseQuery.eq("campaign_id", selectedCampaign).order("date", { ascending: true })
+        : baseQuery.order("date", { ascending: true });
       
-      const { data, error } = await query;
+      const { data, error } = await finalQuery;
       if (error) throw error;
       return data;
     },
@@ -37,16 +35,15 @@ export function CampaignDashboard() {
   const { data: campaignKPIs } = useQuery({
     queryKey: ["campaign-kpis", selectedCampaign],
     queryFn: async () => {
-      const query = supabase
+      const baseQuery = supabase
         .from("campaign_kpis")
         .select("*");
       
-      // Only apply campaign_id filter if a specific campaign is selected
-      if (selectedCampaign !== "all") {
-        query.eq("campaign_id", selectedCampaign);
-      }
+      const finalQuery = selectedCampaign !== "all" 
+        ? baseQuery.eq("campaign_id", selectedCampaign)
+        : baseQuery;
       
-      const { data, error } = await query;
+      const { data, error } = await finalQuery;
       if (error) throw error;
       return data;
     },
