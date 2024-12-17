@@ -1,12 +1,11 @@
 import { useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { DashboardHeader } from "./DashboardHeader";
 import { MetricsGrid } from "./Metrics/MetricsGrid";
 import { ChartsSection } from "./Charts/ChartsSection";
 import { useCampaignAnalysis } from "@/hooks/useCampaignAnalysis";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { useCampaignData } from "@/hooks/useCampaignData";
+import { LoadingState } from "./LoadingState";
+import { ErrorState } from "./ErrorState";
 
 export function CampaignDashboard() {
   const [selectedCampaign, setSelectedCampaign] = useState("all");
@@ -15,58 +14,14 @@ export function CampaignDashboard() {
   const { data: campaignAnalysis, isLoading: isAnalysisLoading, error: analysisError } = 
     useCampaignAnalysis(selectedCampaign);
 
-  const { data: performanceData } = useQuery({
-    queryKey: ["campaign-metrics", selectedCampaign],
-    queryFn: async () => {
-      let query = supabase
-        .from("campaign_metrics")
-        .select("*")
-        .order("date", { ascending: true });
-      
-      if (selectedCampaign !== "all") {
-        query = query.eq("campaign_id", selectedCampaign);
-      }
-      
-      const { data, error } = await query;
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const { data: campaignKPIs } = useQuery({
-    queryKey: ["campaign-kpis", selectedCampaign],
-    queryFn: async () => {
-      let query = supabase
-        .from("campaign_kpis")
-        .select("*");
-      
-      if (selectedCampaign !== "all") {
-        query = query.eq("campaign_id", selectedCampaign);
-      }
-      
-      const { data, error } = await query;
-      if (error) throw error;
-      return data;
-    },
-  });
+  const { performanceData, campaignKPIs } = useCampaignData(selectedCampaign);
 
   if (isAnalysisLoading) {
-    return (
-      <div className="flex items-center justify-center h-[200px]">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
+    return <LoadingState />;
   }
 
   if (analysisError) {
-    return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          Failed to load campaign analysis. Please try again later.
-        </AlertDescription>
-      </Alert>
-    );
+    return <ErrorState />;
   }
 
   const kpiProgress = {
