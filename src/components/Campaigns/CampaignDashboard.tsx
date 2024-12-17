@@ -6,12 +6,18 @@ import { EngagementChart } from "./Charts/EngagementChart";
 import { ConversionChart } from "./Charts/ConversionChart";
 import { KPIProgressCard } from "./Metrics/KPIProgressCard";
 import { ROICard } from "./Metrics/ROICard";
-import { CreateCampaignDialog } from "./CreateCampaignDialog";
 import { CampaignTrendsChart } from "./Charts/CampaignTrendsChart";
+import { useCampaignAnalysis } from "@/hooks/useCampaignAnalysis";
+import { AIInsightsCard } from "@/components/Dashboard/AIInsightsCard";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 export function CampaignDashboard() {
   const [selectedCampaign, setSelectedCampaign] = useState("all");
   const dashboardRef = useRef<HTMLDivElement>(null);
+
+  const { data: campaignAnalysis, isLoading: isAnalysisLoading, error: analysisError } = 
+    useCampaignAnalysis(selectedCampaign);
 
   const { data: performanceData } = useQuery({
     queryKey: ["campaign-metrics", selectedCampaign],
@@ -43,6 +49,25 @@ export function CampaignDashboard() {
     },
   });
 
+  if (isAnalysisLoading) {
+    return (
+      <div className="flex items-center justify-center h-[200px]">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (analysisError) {
+    return (
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          Failed to load campaign analysis. Please try again later.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
   const kpiProgress = {
     signups: {
       completed: campaignKPIs?.find(k => k.kpi_type === "signups")?.current_value || 0,
@@ -57,22 +82,6 @@ export function CampaignDashboard() {
       target: campaignKPIs?.find(k => k.kpi_type === "revenue")?.target_value || 20000,
     },
   };
-
-  const trendsData = performanceData?.map(d => ({
-    date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
-    spend: d.spend,
-    signups: Math.round(d.impressions * 0.1),
-    purchases: d.conversions,
-    revenue: d.conversions * 100,
-    profit: (d.conversions * 100) - d.spend,
-  })) || [];
-
-  const engagementData = performanceData?.map(d => ({
-    date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
-    sign_in: Math.round(d.impressions * 0.1),
-    buy_product: d.conversions,
-    revenue: d.spend,
-  })) || [];
 
   return (
     <div className="space-y-8 p-6" ref={dashboardRef}>
@@ -97,8 +106,17 @@ export function CampaignDashboard() {
         />
       </div>
 
-      <CampaignTrendsChart data={trendsData} />
-      <EngagementChart data={engagementData} />
+      {campaignAnalysis && (
+        <>
+          <CampaignTrendsChart data={campaignAnalysis.trends} />
+          <AIInsightsCard
+            campaignType="awareness"
+            insights={campaignAnalysis.insights}
+          />
+        </>
+      )}
+
+      <EngagementChart data={performanceData || []} />
       <ConversionChart
         signupsCompleted={kpiProgress.signups.completed}
         purchasesCompleted={kpiProgress.purchases.completed}
