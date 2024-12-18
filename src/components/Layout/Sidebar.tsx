@@ -39,6 +39,7 @@ export function AppSidebar() {
     { icon: CalendarRange, label: "Planning", path: "/planning" },
     { icon: Target, label: "Naming Rules", path: "/naming" },
     { icon: Megaphone, label: "Launch Ads", path: "/launch-ads" },
+    { icon: Settings, label: "Optimization", path: "/optimization" },
     { icon: LineChart, label: "Ad Performance", path: "/ad-performance" },
     { icon: Globe, label: "Website Performance", path: "/website-performance" },
     { icon: Users, label: "Audience", path: "/audience" },
