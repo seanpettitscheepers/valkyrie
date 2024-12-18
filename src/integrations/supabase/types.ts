@@ -356,8 +356,12 @@ export type Database = {
           active_users: number
           created_at: string
           date: string
+          growth_projections: Json | null
           id: string
+          monthly_profit: number | null
+          monthly_revenue: number | null
           subscription_breakdown: Json
+          total_profit: number | null
           total_revenue: number
           total_users: number
         }
@@ -365,8 +369,12 @@ export type Database = {
           active_users?: number
           created_at?: string
           date?: string
+          growth_projections?: Json | null
           id?: string
+          monthly_profit?: number | null
+          monthly_revenue?: number | null
           subscription_breakdown?: Json
+          total_profit?: number | null
           total_revenue?: number
           total_users?: number
         }
@@ -374,10 +382,44 @@ export type Database = {
           active_users?: number
           created_at?: string
           date?: string
+          growth_projections?: Json | null
           id?: string
+          monthly_profit?: number | null
+          monthly_revenue?: number | null
           subscription_breakdown?: Json
+          total_profit?: number | null
           total_revenue?: number
           total_users?: number
+        }
+        Relationships: []
+      }
+      business_costs: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string | null
+          date: string
+          description: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string | null
+          date: string
+          description?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string | null
+          date?: string
+          description?: string | null
+          id?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
