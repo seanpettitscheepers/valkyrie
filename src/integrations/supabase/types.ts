@@ -397,28 +397,40 @@ export type Database = {
         Row: {
           amount: number
           category: string
+          cost_type: string
           created_at: string | null
           date: string
           description: string | null
           id: string
+          is_recurring: boolean | null
+          recurrence_end_date: string | null
+          recurrence_frequency: string | null
           updated_at: string | null
         }
         Insert: {
           amount: number
           category: string
+          cost_type?: string
           created_at?: string | null
           date: string
           description?: string | null
           id?: string
+          is_recurring?: boolean | null
+          recurrence_end_date?: string | null
+          recurrence_frequency?: string | null
           updated_at?: string | null
         }
         Update: {
           amount?: number
           category?: string
+          cost_type?: string
           created_at?: string | null
           date?: string
           description?: string | null
           id?: string
+          is_recurring?: boolean | null
+          recurrence_end_date?: string | null
+          recurrence_frequency?: string | null
           updated_at?: string | null
         }
         Relationships: []
