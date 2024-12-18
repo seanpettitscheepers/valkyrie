@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
@@ -32,25 +32,44 @@ export function RecommendationsList({ recommendations }: RecommendationsListProp
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const handleImplement = async (recommendation: Recommendation) => {
+  const handleAction = async (recommendation: Recommendation, action: 'approved' | 'ignored') => {
     try {
-      const { error } = await supabase.functions.invoke("implement-optimization", {
-        body: { recommendationId: recommendation.id },
-      });
+      // First, insert the action record
+      const { error: actionError } = await supabase
+        .from('recommendation_actions')
+        .insert({
+          recommendation_id: recommendation.id,
+          action,
+          impact_metrics: recommendation.estimated_impact
+        });
 
-      if (error) throw error;
+      if (actionError) throw actionError;
 
-      toast({
-        title: "Success",
-        description: "Optimization has been implemented successfully.",
-      });
+      // If approved, implement the optimization
+      if (action === 'approved') {
+        const { error } = await supabase.functions.invoke("implement-optimization", {
+          body: { recommendationId: recommendation.id },
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Success",
+          description: "Optimization has been implemented successfully.",
+        });
+      } else {
+        toast({
+          title: "Ignored",
+          description: "Recommendation has been ignored.",
+        });
+      }
 
       queryClient.invalidateQueries({ queryKey: ["optimization-recommendations"] });
     } catch (error) {
-      console.error("Error implementing optimization:", error);
+      console.error("Error handling recommendation:", error);
       toast({
         title: "Error",
-        description: "Failed to implement optimization. Please try again.",
+        description: "Failed to process recommendation. Please try again.",
         variant: "destructive",
       });
     }
@@ -109,18 +128,13 @@ export function RecommendationsList({ recommendations }: RecommendationsListProp
                         variant="outline"
                         size="sm"
                         className="text-red-600 hover:text-red-700"
-                        onClick={() => {
-                          toast({
-                            title: "Recommendation Dismissed",
-                            description: "The recommendation has been removed from your list.",
-                          });
-                        }}
+                        onClick={() => handleAction(rec, 'ignored')}
                       >
                         <X className="h-4 w-4" />
                       </Button>
                       <Button
                         size="sm"
-                        onClick={() => handleImplement(rec)}
+                        onClick={() => handleAction(rec, 'approved')}
                       >
                         <Check className="h-4 w-4 mr-2" />
                         Implement

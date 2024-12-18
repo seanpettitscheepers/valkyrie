@@ -1886,6 +1886,44 @@ export type Database = {
         }
         Relationships: []
       }
+      recommendation_actions: {
+        Row: {
+          action: string
+          created_at: string | null
+          id: string
+          impact_metrics: Json | null
+          implemented_at: string | null
+          recommendation_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          id?: string
+          impact_metrics?: Json | null
+          implemented_at?: string | null
+          recommendation_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          id?: string
+          impact_metrics?: Json | null
+          implemented_at?: string | null
+          recommendation_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recommendation_actions_recommendation_id_fkey"
+            columns: ["recommendation_id"]
+            isOneToOne: false
+            referencedRelation: "optimization_recommendations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       saved_campaign_names: {
         Row: {
           campaign_name: string
