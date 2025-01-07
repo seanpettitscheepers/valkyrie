@@ -8,6 +8,7 @@ import { AdminSection } from "@/components/Account/AdminSection";
 import { AdminInbox } from "@/components/Admin/AdminInbox";
 import { BusinessAnalytics } from "@/components/Admin/BusinessAnalytics";
 import { TicketManagement } from "@/components/Admin/TicketManagement";
+import { InfluencerDiscovery } from "@/components/Admin/Influencers/InfluencerDiscovery";
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -28,7 +29,6 @@ export default function Admin() {
     }
   });
 
-  // Redirect non-admin users
   if (!isLoading && (!profile || (profile.role !== "admin" && profile.role !== "super_admin"))) {
     navigate("/");
     return null;
@@ -54,6 +54,7 @@ export default function Admin() {
             <TabsTrigger value="tickets">Support Tickets</TabsTrigger>
             <TabsTrigger value="inbox">Inbox</TabsTrigger>
             <TabsTrigger value="analytics">Business Analytics</TabsTrigger>
+            <TabsTrigger value="influencers">Influencers</TabsTrigger>
           </TabsList>
 
           <TabsContent value="users" className="space-y-4">
@@ -70,6 +71,10 @@ export default function Admin() {
 
           <TabsContent value="analytics" className="space-y-4">
             <BusinessAnalytics />
+          </TabsContent>
+
+          <TabsContent value="influencers" className="space-y-4">
+            <InfluencerDiscovery />
           </TabsContent>
         </Tabs>
       </div>

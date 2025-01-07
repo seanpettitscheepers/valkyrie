@@ -1358,6 +1358,180 @@ export type Database = {
         }
         Relationships: []
       }
+      influencer_campaigns: {
+        Row: {
+          brief: string | null
+          campaign_id: string | null
+          created_at: string
+          deliverables: Json | null
+          end_date: string | null
+          id: string
+          influencer_id: string | null
+          payment_amount: number | null
+          payment_status: string | null
+          performance_metrics: Json | null
+          start_date: string | null
+          status: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          brief?: string | null
+          campaign_id?: string | null
+          created_at?: string
+          deliverables?: Json | null
+          end_date?: string | null
+          id?: string
+          influencer_id?: string | null
+          payment_amount?: number | null
+          payment_status?: string | null
+          performance_metrics?: Json | null
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          brief?: string | null
+          campaign_id?: string | null
+          created_at?: string
+          deliverables?: Json | null
+          end_date?: string | null
+          id?: string
+          influencer_id?: string | null
+          payment_amount?: number | null
+          payment_status?: string | null
+          performance_metrics?: Json | null
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "influencer_campaigns_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "influencer_campaigns_influencer_id_fkey"
+            columns: ["influencer_id"]
+            isOneToOne: false
+            referencedRelation: "influencers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      influencer_content: {
+        Row: {
+          campaign_id: string | null
+          caption: string | null
+          content_type: Database["public"]["Enums"]["content_type"]
+          content_url: string | null
+          created_at: string
+          id: string
+          influencer_id: string | null
+          performance_metrics: Json | null
+          posted_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          campaign_id?: string | null
+          caption?: string | null
+          content_type: Database["public"]["Enums"]["content_type"]
+          content_url?: string | null
+          created_at?: string
+          id?: string
+          influencer_id?: string | null
+          performance_metrics?: Json | null
+          posted_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          campaign_id?: string | null
+          caption?: string | null
+          content_type?: Database["public"]["Enums"]["content_type"]
+          content_url?: string | null
+          created_at?: string
+          id?: string
+          influencer_id?: string | null
+          performance_metrics?: Json | null
+          posted_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "influencer_content_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "influencer_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "influencer_content_influencer_id_fkey"
+            columns: ["influencer_id"]
+            isOneToOne: false
+            referencedRelation: "influencers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      influencers: {
+        Row: {
+          bio: string | null
+          brand_safety_score: number | null
+          created_at: string
+          demographics: Json | null
+          email: string | null
+          engagement_rate: number | null
+          follower_count: number | null
+          id: string
+          location: string | null
+          metrics: Json | null
+          name: string
+          social_links: Json | null
+          status: Database["public"]["Enums"]["influencer_status"] | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          bio?: string | null
+          brand_safety_score?: number | null
+          created_at?: string
+          demographics?: Json | null
+          email?: string | null
+          engagement_rate?: number | null
+          follower_count?: number | null
+          id?: string
+          location?: string | null
+          metrics?: Json | null
+          name: string
+          social_links?: Json | null
+          status?: Database["public"]["Enums"]["influencer_status"] | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          bio?: string | null
+          brand_safety_score?: number | null
+          created_at?: string
+          demographics?: Json | null
+          email?: string | null
+          engagement_rate?: number | null
+          follower_count?: number | null
+          id?: string
+          location?: string | null
+          metrics?: Json | null
+          name?: string
+          social_links?: Json | null
+          status?: Database["public"]["Enums"]["influencer_status"] | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       linkedin_ad_accounts: {
         Row: {
           access_token: string
@@ -2711,6 +2885,7 @@ export type Database = {
       amazon_dsp_objective: "awareness" | "consideration" | "conversion"
       analytics_platform_type: "google_analytics_4" | "universal_analytics"
       campaign_objective: "awareness" | "consideration" | "conversion"
+      content_type: "photo" | "video" | "story" | "reel" | "blog" | "tweet"
       funnel_stage: "top" | "middle" | "bottom"
       google_ads_status: "pending" | "active" | "error" | "disconnected"
       industry_type:
@@ -2721,6 +2896,7 @@ export type Database = {
         | "retail"
         | "technology"
         | "other"
+      influencer_status: "active" | "inactive" | "pending" | "blacklisted"
       integration_status: "pending" | "active" | "error" | "disconnected"
       linkedin_campaign_objective: "awareness" | "engagement" | "conversion"
       optimization_status: "pending" | "approved" | "rejected" | "implemented"
