@@ -20,3 +20,8 @@ export const signUpSchema = z.object({
 });
 
 export type SignUpFormValues = z.infer<typeof signUpSchema>;
+
+export type AuthError = {
+  message: string;
+  code?: string;
+};

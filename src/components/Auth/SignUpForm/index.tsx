@@ -10,7 +10,7 @@ import { Loader2 } from "lucide-react";
 import { PersonalInfoFields } from "./PersonalInfoFields";
 import { AuthFields } from "./AuthFields";
 import { LegalConsentFields } from "./LegalConsentFields";
-import { signUpSchema, type SignUpFormValues } from "./types";
+import { signUpSchema, type SignUpFormValues, type AuthError } from "./types";
 
 interface SignUpFormProps {
   selectedPlan?: string | null;
@@ -34,6 +34,24 @@ export function SignUpForm({ selectedPlan = 'free', onComplete }: SignUpFormProp
       privacyAccepted: false,
     },
   });
+
+  const handleAuthError = (error: AuthError) => {
+    let errorMessage = "An error occurred during sign up. Please try again.";
+    
+    if (error.code === "invalid_credentials") {
+      errorMessage = "Invalid email or password format. Please check your credentials.";
+    } else if (error.code === "user_already_registered") {
+      errorMessage = "This email is already registered. Please try signing in instead.";
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    toast({
+      title: "Sign Up Error",
+      description: errorMessage,
+      variant: "destructive",
+    });
+  };
 
   const onSubmit = async (data: SignUpFormValues) => {
     setIsLoading(true);
@@ -65,11 +83,7 @@ export function SignUpForm({ selectedPlan = 'free', onComplete }: SignUpFormProp
 
       navigate("/auth/verify");
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      handleAuthError(error);
     } finally {
       setIsLoading(false);
     }
