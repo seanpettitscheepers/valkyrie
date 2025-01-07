@@ -14,7 +14,6 @@ export function useProfile() {
   useEffect(() => {
     getProfile();
 
-    // Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
         setProfile(null);
@@ -32,15 +31,15 @@ export function useProfile() {
     try {
       setLoading(true);
       
-      // First check if we have a valid session
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError) {
-        throw sessionError;
+        console.error("Session error:", sessionError);
+        await handleAuthError(sessionError);
+        return;
       }
 
       if (!session) {
-        // No valid session, redirect to auth
         navigate('/auth');
         return;
       }
@@ -48,7 +47,9 @@ export function useProfile() {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       
       if (userError) {
-        throw userError;
+        console.error("User error:", userError);
+        await handleAuthError(userError);
+        return;
       }
 
       if (!user) {
@@ -63,29 +64,35 @@ export function useProfile() {
         .eq("id", user.id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Profile error:", error);
+        throw error;
+      }
+      
       setProfile(data as Profile);
     } catch (error: any) {
       console.error("Error loading user data:", error);
-      
-      // Handle session-specific errors
-      if (error.message?.includes('JWT')) {
-        await supabase.auth.signOut();
-        navigate('/auth');
-        toast({
-          title: "Session expired",
-          description: "Please sign in again.",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Error loading profile",
-          description: "Please try again later.",
-          variant: "destructive",
-        });
-      }
+      await handleAuthError(error);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleAuthError(error: any) {
+    if (error.message?.includes('JWT') || error.message?.includes('token')) {
+      await supabase.auth.signOut();
+      navigate('/auth');
+      toast({
+        title: "Session expired",
+        description: "Please sign in again.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Error loading profile",
+        description: error.message || "Please try again later.",
+        variant: "destructive",
+      });
     }
   }
 
@@ -115,11 +122,11 @@ export function useProfile() {
         title: "Profile updated",
         description: "Your profile has been updated successfully.",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating profile:", error);
       toast({
         title: "Error updating profile",
-        description: "Please try again later.",
+        description: error.message || "Please try again later.",
         variant: "destructive",
       });
     }
