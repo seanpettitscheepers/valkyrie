@@ -36,12 +36,15 @@ export function SignUpForm({ selectedPlan = 'free', onComplete }: SignUpFormProp
   });
 
   const handleAuthError = (error: AuthError) => {
+    console.error("Auth error:", error);
     let errorMessage = "An error occurred during sign up. Please try again.";
     
     if (error.code === "invalid_credentials") {
       errorMessage = "Invalid email or password format. Please check your credentials.";
     } else if (error.code === "user_already_registered") {
       errorMessage = "This email is already registered. Please try signing in instead.";
+    } else if (error.status === 400) {
+      errorMessage = "Please check your email and password format.";
     } else if (error.message) {
       errorMessage = error.message;
     }
@@ -58,7 +61,7 @@ export function SignUpForm({ selectedPlan = 'free', onComplete }: SignUpFormProp
 
     try {
       const { error: signUpError } = await supabase.auth.signUp({
-        email: data.email,
+        email: data.email.toLowerCase(),
         password: data.password,
         options: {
           data: {
